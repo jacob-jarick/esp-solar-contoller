@@ -1,19 +1,19 @@
 #!/bin/bash
 
-HTMLDIR=/var/www/html/esp8266/1mb
-PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp8266_scv2
+HTMLDIR=/var/www/html/esp32
+PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp32
 FWDIR=/home/mem/git/esp-solar-contoller/firmwares
 
 mkdir -p $HTMLDIR/data
 
 cp -rv $PROJDIR/data/* $HTMLDIR/data
 
-latest=`ls -Art \`find /tmp -name esp8266_scv2.ino.bin 2>/dev/null\` | tail -n1`
+latest=`ls -Art \`find /tmp -name esp32_solar_controller.ino.bin 2>/dev/null\` | tail -n1`
 
 cp -v $latest $HTMLDIR/firmware.bin
-cp -v $latest $FWDIR/esp8266-1mb-firmware.bin
+cp -v $latest $FWDIR/esp32-firmware.bin
 
-CV=`grep "#define FW_VERSION" $PROJDIR/esp8266_scv2.ino | awk '{print $3}'`
+CV=`grep "#define FW_VERSION" $PROJDIR/esp32_solar_controller.ino | awk '{print $3}'`
 
 echo
 echo Current Version: $CV

@@ -1,23 +1,29 @@
 #!/bin/bash
 
-cp -rv /home/mem/git/solar-controller/esp8266_scv2/data/* /var/www/html/esp8266/4mb/data
+HTMLDIR=/var/www/html/esp8266/4mb
+PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp8266_scv2
+FWDIR=/home/mem/git/esp-solar-contoller/firmwares
+
+mkdir -p $HTMLDIR/data
+
+cp -rv $PROJDIR/data/* $HTMLDIR/data
 
 latest=`ls -Art \`find /tmp -name esp8266_scv2.ino.bin 2>/dev/null\` | tail -n1`
 
-cp -v $latest /var/www/html/esp8266/4mb/firmware.bin
-cp -v $latest /home/mem/git/solar-controller/esp8266-4mb-firmware.bin
+cp -v $latest $HTMLDIR/firmware.bin
+cp -v $latest $FWDIR/esp8266-4mb-firmware.bin
 
-CV=`grep "#define FW_VERSION"  /home/mem/git/solar-controller/esp8266_scv2/esp8266_scv2.ino | awk '{print $3}'`
+CV=`grep "#define FW_VERSION" $PROJDIR/esp8266_scv2.ino | awk '{print $3}'`
 
 echo
 echo Current Version: $CV
-echo $CV > /var/www/html/esp8266/4mb/cv.txt
+echo $CV > $HTMLDIR/cv.txt
 
 echo
 echo updating changelog.
-git log --oneline | nl -v0 | sed 's/^ \+/&HEAD~/' | head -20 > changelog.txt
+git log --oneline | nl -v0 | sed 's/^ \+/&HEAD~/' | head -20 > $PROJDIR/changelog.txt
 
-cp -rv /home/mem/git/solar-controller/changelog.txt /var/www/html/esp8266/4mb/
+cp -rv $PROJDIR/changelog.txt $HTMLDIR
 
 echo
 echo Done.
