@@ -1,7 +1,7 @@
 # esp-solar-contoller
  esp8266 and esp32 based solar controllers targetting fronius inverter users
 
-== Use ==
+## Use
 
 Houses with solar.
 
@@ -9,7 +9,7 @@ I use this device to monitor my Fronius Inverters. It queries the JSON API and f
 
 Two loads are supported per controller, one for day and one for night.
 
-=== Day (charger) ===
+### Day (charger)
 
 If solar export is greater than configured charger size (watts) turn on charger.
 
@@ -19,7 +19,7 @@ Common Day devices:
 * powerwall / UPS / Battery Bank charger
 * roof exhuast fan
 
-=== Night (Drain) ===
+### Night (Drain)
 
 When the house power import is greater than the night device size (watts) turn on the device.
 
@@ -28,7 +28,7 @@ Common Night time Devices:
 * UPS mains disconnect
 * Grid tie inverter turn on
 
-== esp8266 ==
+## esp8266
 
 Supporrt for all common esp8266 boards.
 
@@ -38,7 +38,7 @@ Supporrt for all common esp8266 boards.
 
 Supports adding OLED display the above.
 
-== ESP32 Board ==
+## ESP32 Board
 
 Custom designed board.
 
