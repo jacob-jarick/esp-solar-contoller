@@ -9,6 +9,16 @@ I use this device to monitor my Fronius Inverters. It queries the JSON API and f
 
 Two loads are supported per controller, one for day and one for night.
 
+additionally the device can be configured as a timer or a button bassed timer.
+
+## Features
+
+* Self hosted solution, no external servers needed everything runs on the microchip.
+* Support querying Fronius inverters directly
+* Complete Web Interface for confguration and monitoring.
+* OLED display
+* NTP time sync
+
 ### Day (charger)
 
 If solar export is greater than configured charger size (watts) turn on charger.
