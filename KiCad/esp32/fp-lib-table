@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name ST-TF-003A)(type KiCad)(uri ${KIPRJMOD}/ST-TF-003A)(options "")(descr ""))
+  (lib (name mylib)(type KiCad)(uri ${KIPRJMOD}/mylib)(options "")(descr ""))
+)

@@ -1,0 +1,41 @@
+Manual - Inverter ON.
+Manual - IDLE.
+Manual - Charger ON.
+LED Blink mode Enabled.
+LED mode Toggled.
+LED Off.
+LED On.
+<a href=/activate>Please Activate</a>
+Charger IDLE - phase_sum > 20.
+Charger ON - solar export > charger size.
+x
+Inverter IDLE - phase_sum < -20.
+x
+cell over volt. force IDLE.
+Vmon: no solar.
+Vmon: phase_sum < 0.
+Vmon: Charge: export > charger.
+Button - IDLE.
+cell above max.
+CHG IDLE: cell HV cooldown
+CHG IDLE: Cell HV shutdown
+Timer - Day Device ON.
+BAD MODE !
+CHG: solar export > bms size.
+ - HV reconnect, cells:
+ - HV disconnect, cells:
+ - LV recon, cells:
+ - LV Shutdown, cells:
+SPARE!!!
+SPARE!!!
+SPARE!!!
+SPARE!!!
+ to high.
+ to low.
+charge cell:_
+Cell under volt, force IDLE
+time unsynced
+x
+charger cooldown
+SPARE!!!
+Inverter - LV Shutdown

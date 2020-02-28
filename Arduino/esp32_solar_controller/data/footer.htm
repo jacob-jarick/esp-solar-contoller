@@ -1,0 +1,118 @@
+<br>
+<center>
+
+
+
+<div class="dropdown">
+<button onclick="drop_down_func('myDropdown6')" class="dropbtn">Info</button>
+  <div id="myDropdown6" class="dropdown-content">
+    <a href="/">Stats</a>
+    <a href="/battery_info">Battery</a>
+    <a href="/sys_info">System</a>
+    <a href="/ntc10k_info">Temperature</a>
+    <a href="/port_info">Misc info</a>
+    <a href="/i2c_scan">i2c Scan</a>
+  </div>
+</div>
+
+
+<div class="dropdown">
+<button onclick="drop_down_func('myDropdown4')" class="dropbtn">LED</button>
+  <div id="myDropdown4" class="dropdown-content">
+    <a href="/ledon">LED On</a>
+    <a href="/ledoff">LED Off</a>
+    <a href="/ledtoggle">LED Toggle</a>
+    <a href="/ledblink">LED Blink</a>
+  </div>
+</div>
+
+<div class="dropdown">
+<button onclick="drop_down_func('myDropdown3')" class="dropbtn">Mode</button>
+  <div id="myDropdown3" class="dropdown-content">
+    <a href="/idle">IDLE</a>
+    <a href="/charger_on">Charger On</a>
+    <a href="/inverter_on">Inverter On</a>
+    <a href="/force_refresh">Force Refresh</a>
+  </div>
+</div>
+
+
+<div class="dropdown">
+<button onclick="drop_down_func('myDropdown2')" class="dropbtn">Config</button>
+  <div id="myDropdown2" class="dropdown-content">
+    <a href="/config">Main</a>
+    <a href="/network">Network</a>
+    <a href="/battery_config">Battery</a>
+    <a href="/datasrcs">Data Sources</a>
+    <a href="/advance">System</a>
+    <a href="/port_config">Ports</a>
+    <a href="/ntc10k_config">Temp Sensors</a>
+    <a href="/timer">Timer</a>
+  </div>
+</div>
+
+<div class="dropdown">
+<button onclick="drop_down_func('myDropdown1')" class="dropbtn">System</button>
+  <div id="myDropdown1" class="dropdown-content">
+    <a href="/update_menu">Update</a>
+    <a href="/issue_log">View Log</a>
+    <a href="/issue_submit?clear=1">Clear Log</a>
+    <a href="/reset">Software Reset</a>
+  </div>
+</div>
+
+
+<div class="dropdown">
+<button onclick="drop_down_func('myDropdown5')" class="dropbtn">Advance</button>
+  <div id="myDropdown5" class="dropdown-content">
+    <a href="/html_update">Redownload HTML</a>
+    <a href="/cpconf">Copy Config</a>
+    <a href="/upload_config">Upload Config</a>
+    <a href="/forcentp">Force NTP Sync</a>
+    <a href="/config_raw">Raw Config</a>
+  </div>
+</div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<script>
+// toggle between hiding and showing the dropdown menu toggle
+function drop_down_func(i) {
+    document.getElementById(i).classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
+
+
+
+</center>
+

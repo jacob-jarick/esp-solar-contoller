@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name cd74)(type Legacy)(uri C:/Users/mem/Documents/KiCad/esp32/CD74HC4051M/CD74HC4051M.lib)(options "")(descr ""))
+  (lib (name ST-TF-003A)(type Legacy)(uri ${KIPRJMOD}/ST-TF-003A/ST-TF-003A.lib)(options "")(descr ""))
+)

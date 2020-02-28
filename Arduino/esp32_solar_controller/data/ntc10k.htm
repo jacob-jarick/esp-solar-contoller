@@ -1,0 +1,372 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<center> <h1 id=title_hostn></h1></center>
+<br>
+
+<center>
+<table border=1><form action='/result' method='POST'>
+
+<tr>
+	<td>Monitor Temp</td>
+	<td>
+		<input id=monitor_temp_1 type=radio name="monitor_temp" value=1> True
+		<input id=monitor_temp_0 type=radio name="monitor_temp" value=0> False
+	</td>
+</tr>
+
+
+<tr><td>Address</td>
+<td>
+	<select id=ads1115_temp_addr name='ads1115_temp_addr'>
+	<option value=0>NONE</option>
+	<option value=72>0x48</option>
+	<option value=73>0x49</option>
+	<option value=74>0x4A</option>
+	<option value=75>0x4B</option>
+	</select>
+</td>
+</tr>
+
+<tr><td>Number of Sensors</td>
+<td>
+	<select id=ntc10k_count name='ntc10k_count'>
+	<option value=0>NONE</option>
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	</select>
+</td>
+</tr>
+
+<tr><td colspan=2><b>Sensor 1</b></td></tr>
+
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc1>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod1>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max1>
+	</td>
+</tr>
+
+
+
+<tr><td colspan=2><b>Sensor 2</b></td></tr>
+
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc2>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod2>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max2>
+	</td>
+</tr>
+
+<tr><td colspan=2><b>Sensor 3</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc3>
+	</td>
+</tr>
+
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod3>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max3>
+	</td>
+</tr>
+
+<tr><td colspan=2><b>Sensor 4</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc4>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod4 >
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max4>
+	</td>
+</tr>
+
+<tr><td colspan=2><b>Sensor 5</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc5>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod5 >
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max5>
+	</td>
+</tr>
+
+<tr><td colspan=2><b>Sensor 6</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc6>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod6>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max6>
+	</td>
+</tr>
+
+<tr><td colspan=2><b>Sensor 7</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc7>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod7>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max7>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 8</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc8>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod8>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max8>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 9</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc9>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod9 >
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max9>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 10</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc10>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod10>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max10>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 11</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc11>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod11>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max11>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 12</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc12>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod12>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max12>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 13</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc13>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod13>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max13>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 14</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc14>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod14>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max14>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 15</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc15>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod15>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max15>
+	</td>
+</tr>
+
+
+<tr><td colspan=2><b>Sensor 16</b></td></tr>
+<tr>
+	<td>Description</td>
+	<td id=ntc_desc16>
+	</td>
+</tr>
+
+<tr>
+	<td>Modifier (Calibration)</td>
+	<td id=ntc_temp_mod16>
+	</td>
+</tr>
+
+<tr>
+	<td>Max Temp</td>
+	<td id=ntc_temp_max16>
+	</td>
+</tr>
+
+
+
+
+<tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr>
+
+</table>
+</center>
+</form>

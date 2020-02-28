@@ -1,0 +1,164 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<center>
+<h1 id=title_hostn>Hostname</h1>
+<h2>Port Config</h2>
+</center>
+<br>
+
+<center>
+<table border=1><form action='/port_cfg_submit' method='POST'>
+
+
+<tr>
+	<td>Notes</td>
+	<td>Set custom board in advange config to over ride pins. (WIP).
+	</td>
+</tr>
+
+<tr>
+	<td>LED</td>
+	<td>
+    <select id=lport name='lport'>
+      <option value=2>GPIO 2</option>
+      <option value=13>GPIO 13</option>
+      <option value=-2>Disabled</option>
+    </select>
+	</td>
+</tr>
+<tr>
+	<td>Blink LED</td>
+	<td>
+		<input id=blink_led_on type=radio name="blink_led" value=1> Enable
+		<input id=blink_led_off type=radio name="blink_led" value=0> Disable
+	</td>
+</tr>
+<tr>
+	<td>Led Status</td>
+	<td>
+		<input id=led_status_on type=radio name="led_status" value=1> On
+		<input id=led_status_off type=radio name="led_status" value=0> Off
+	</td>
+</tr>
+
+<tr>
+	<td>Day Device (Charger/AC Load)</td>
+	<td>
+    <select id=cport name='cport'>
+      <option value=0>GPIO 0</option>
+      <option value=2>GPIO 2</option>
+      <option value=12>GPIO 12</option>
+      <option value=13>GPIO 13</option>
+      <option value=14>GPIO 14</option>
+      <option value=15>GPIO 15</option>
+      <option value=-2>Disabled</option>
+    </select>
+	</td>
+</tr>
+<tr>
+	<td>Flip Charger Pin</td>
+	<td>
+		<input id=flip_cpin1 type=radio name="flip_cpin" value=1> On
+		<input id=flip_cpin0 type=radio name="flip_cpin" value=0> Off
+	</td>
+</tr>
+
+<tr>
+	<td>Night Device (Inverter/AC Export)</td>
+	<td>
+    <select id=dport name='dport'>
+      <option value=0>GPIO0</option>
+      <option value=2>GPIO2</option>
+      <option value=12>GPIO12</option>
+      <option value=13>GPIO13</option>
+      <option value=14>GPIO14</option>
+      <option value=15>GPIO15</option>
+      <option value=-2>Disabled</option>
+    </select>
+	</td>
+</tr>
+
+<tr>
+	<td>Flip Inverter Pin</td>
+	<td>
+		<input id=flip_ipin1 type=radio name="flip_ipin" value=1> On
+		<input id=flip_ipin0 type=radio name="flip_ipin" value=0> Off
+	</td>
+</tr>
+
+<tr>
+	<td>Flash/ User Button</td>
+	<td>
+    <select id=fuport name='fuport'>
+      <option value=0>GPIO0</option>
+      <option value=-2>Disabled</option>
+    </select>
+	</td>
+</tr>
+
+
+<tr>
+	<td>i2c SDA</td>
+	<td>
+    <select id=sdaport name='sdaport'>
+      <option value=-2>Disabled</option>
+      <option value=-1>Default</option>
+      <option value=1>GPIO1</option>
+      <option value=3>GPIO3</option>
+    </select>
+	</td>
+</tr>
+
+<tr>
+	<td>i2c SCL</td>
+	<td>
+    <select id=sclport name='sclport'>
+      <option value=-2>Disabled</option>
+      <option value=-1>Default</option>
+      <option value=1>GPIO1</option>
+      <option value=3>GPIO3</option>
+    </select>
+	</td>
+</tr>
+
+<tr><td>pcf857a Port Module</td>
+<td>
+	<select id=port_module_addr name='port_module_addr'>
+	<option value=0>NONE</option>
+	<option value=32>0x20</option>
+	<option value=33>0x21</option>
+	<option value=34>0x22</option>
+	<option value=35>0x23</option>
+	<option value=36>0x24</option>
+	<option value=37>0x25</option>
+	<option value=38>0x26</option>
+	<option value=39>0x27</option>
+
+
+	<option value=56>0x38</option>
+	<option value=57>0x39</option>
+	<option value=58>0x3A</option>
+	<option value=59>0x3B</option>
+	<option value=60>0x3C</option>
+	<option value=61>0x3D</option>
+	<option value=62>0x3E</option>
+	<option value=63>0x3F</option>
+	</select>
+</td>
+</tr>
+
+<tr>
+<td colspan=2>
+<input type=submit value=submit>
+</td>
+</tr>
+
+
+</table>
+</center>
+</form>

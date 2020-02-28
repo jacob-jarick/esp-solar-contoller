@@ -1,0 +1,69 @@
+<html>
+
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<center>
+  <h1 id=title_hostn>Hostname</h1>
+  <h2>Data Sources Config</h2>
+</center>
+<br>
+
+<center>
+<table border=1><form action='/result' method='POST'>
+
+<tr><td colspan=2><b>Fronius</b></td></tr>
+
+<tr><td>Inverter JSON URL:</td><td><input id=inverter_url type=text name='inverter_url' value='' size=100></td></tr>
+<tr><td>Push URL (fallback):</td><td><input id=inverter_push_url type=text name='inverter_push_url' value='' size=100></td></tr>
+
+<tr><td colspan=2><b>Update URLs</b></td></tr>
+<tr><td>Prod:</td><td><input id=pub_url type=text name='pub_url' value='' size=100></td></tr>
+
+<tr><td colspan=2><b>3 Phase Options</b></td></tr>
+<tr><td>3phase URL:</td>
+<td>
+	<input id=meter_url type=text name='meter_url' value="" size=100>
+</td>
+</tr>
+<tr>
+	<td>3 Phase Mode</td>
+	<td>
+		<input id=threephase1 type=radio name="threephase" value=1> Enable
+		<input id=threephase0 type=radio name="threephase" value=0> Disable
+	</td>
+</tr>
+
+<tr>
+	<td>Monitor Phase A</td>
+	<td>
+		<input id=monitor_phase_a1 type=radio name="monitor_phase_a" value=1> Enable
+		<input id=monitor_phase_a0 type=radio name="monitor_phase_a" value=0> Disable
+	</td>
+</tr>
+<tr>
+	<td>Monitor Phase B</td>
+	<td>
+		<input id=monitor_phase_b1 type=radio name="monitor_phase_b" value=1> Enable
+		<input id=monitor_phase_b0 type=radio name="monitor_phase_b" value=0> Disable
+	</td>
+</tr>
+<tr>
+	<td>Monitor Phase C</td>
+	<td>
+		<input id=monitor_phase_c1 type=radio name="monitor_phase_c" value=1> Enable
+		<input id=monitor_phase_c0 type=radio name="monitor_phase_c" value=0> Disable
+	</td>
+</tr>
+
+
+
+<tr><td colspan=2><b>Save</b></td></tr>
+<tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr>
+
+</table>
+</center>
+</form>

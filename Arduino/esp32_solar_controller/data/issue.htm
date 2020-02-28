@@ -1,0 +1,31 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+<center> <h1 id=title_hostn></h1></center>
+<br>
+
+<center>
+<form action='/issue_submit' method='POST'>
+
+<table border=1>
+  <tr>
+    <td>Message: </td>
+    <td>
+      <input id=issue type=text name='issue' value="" size=100>
+    </td>
+    <td>
+      <input type=submit value="Append to log">
+    </td>
+  </tr>
+</table>
+
+</form>
+</center>
+<hr>
+<pre id=log>
+</pre>
+<hr>
