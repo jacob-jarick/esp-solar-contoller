@@ -14,10 +14,12 @@ additionally the device can be configured as a timer or a button bassed timer.
 ## Features
 
 * Self hosted solution, no external servers needed everything runs on the microchip.
-* Support querying Fronius inverters directly
 * Complete Web Interface for confguration and monitoring.
+* JSON config file for easy manual editing.
 * OLED display
+* Support querying Fronius inverters directly
 * NTP time sync
+* Fallback WiFi network settings.
 
 ### Day (charger)
 
