@@ -1,3 +1,6 @@
+//Todo swap to ADS1115
+
+
 uint8_t cells_update_pos = 0;
 void cells_update()
 {

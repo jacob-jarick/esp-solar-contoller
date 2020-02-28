@@ -33,14 +33,6 @@ String html_create_input(const String html_id, const String input_id, const Stri
 
 String js_radio_helper(const String n1, const String n2, const bool v)
 {
-//   String tmp = "document.getElementById(\"";
-//   if (v)
-//     tmp += n1;
-//   else
-//     tmp += n2;
-//
-//   tmp +=  + "\").checked = true;\n";
-
   return "rsv('" + n1 + "', '" + n2 + "', '" + v + "');\n";
 }
 
