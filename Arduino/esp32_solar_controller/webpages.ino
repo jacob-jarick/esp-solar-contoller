@@ -11,14 +11,11 @@ String js_header()
 
 String js_helper_innerhtml(const String n, const String v)
 {
-  //document.getElementById("title").innerHTML = "s";
-//   String tmp = "document.getElementById(\"" + n + "\").innerHTML = `" + v + "`;\n";
   return "shtml(`" + n  + "`, `" + v + "`);\n";
 }
 
 String js_helper(const String n, const String v)
 {
-//   String tmp = "document.getElementById(\"" + n + "\").setAttribute('value','" + v + "');\n";
   return "sv('" + n + "', `" + v + "`);\n";
 }
 
@@ -26,9 +23,7 @@ String js_helper(const String n, const String v)
 // add_input("html_id", "input_id", "input_length", "input_value", "input_note");
 String html_create_input(const String html_id, const String input_id, const String input_length, const String input_value, const String input_note)
 {
-  //   String tmp = "document.getElementById(\"" + n + "\").setAttribute('value','" + v + "');\n";
   return "add_input('" + html_id + "', '" + input_id + "', '" + input_length + "', '" + input_value + "', '" + input_note + "');\n";
-//   return "sv('" + n + "', `" + v + "`);\n";
 }
 
 String js_radio_helper(const String n1, const String n2, const bool v)
