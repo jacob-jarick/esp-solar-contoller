@@ -1,5 +1,10 @@
 # esp-solar-contoller
- esp8266 and esp32 based solar controllers targetting fronius inverter users
+
+esp8266 and esp32 based solar controllers targetting fronius inverter users
+
+Inspired by the various DIY powerwalls
+
+https://www.facebook.com/groups/diypowerwalls/
 
 ## Use
 
