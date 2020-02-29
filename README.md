@@ -1,6 +1,6 @@
 # esp-solar-contoller
 
-esp8266 and esp32 based solar controllers targetting fronius inverter users
+esp8266 and esp32 based solar controllers targetting Houses with a fronius solar system (other inverters can be supported).
 
 Inspired by the various DIY powerwalls
 
@@ -8,13 +8,35 @@ https://www.facebook.com/groups/diypowerwalls/
 
 ## Use
 
-Houses with solar.
+Common Day devices:
 
-I use this device to monitor my Fronius Inverters. It queries the JSON API and finds out how much power the house is exporting or importing.
+* Pool Pump
+* powerwall / UPS / Battery Bank charger
+* roof exhuast fan
 
-Two loads are supported per controller, one for day and one for night.
+Common Night time Devices:
 
-additionally the device can be configured as a timer or a button bassed timer.
+* UPS mains disconnect
+* Grid tie inverter turn on
+
+## Example Applications
+
+**Simple**
+
+(day) Turn on day time device when PV export is greater than device size (eg pool pump)
+
+
+**DIY Powerwall**
+
+(Day) Turn on charger when PV export is greater than charger size.
+
+(night) Turn on inverter when power import is larger than inverter size.
+
+**UPS**
+
+(Day) Turn on charger when PV export is greater than charger size.
+
+(night) disconnect UPS mains if house is drawing power from the grid.
 
 ## Features
 
@@ -31,25 +53,6 @@ additionally the device can be configured as a timer or a button bassed timer.
 * High voltage disconect (day)
 * Low Cell Voltage disconnect (night)
 * High temp shutdown
-
-### Day (charger)
-
-If solar export is greater than configured charger size (watts) turn on charger.
-
-Common Day devices:
-
-* Pool Pump
-* powerwall / UPS / Battery Bank charger
-* roof exhuast fan
-
-### Night (Drain)
-
-When the house power import is greater than the night device size (watts) turn on the device.
-
-Common Night time Devices:
-
-* UPS mains disconnect
-* Grid tie inverter turn on
 
 ## esp8266
 
