@@ -21,6 +21,12 @@ additionally the device can be configured as a timer or a button bassed timer.
 * NTP time sync
 * Fallback WiFi network settings.
 
+### Battery Monitoring (esp32)
+
+* High voltage disconect (day)
+* Low Cell Voltage disconnect (night)
+* High temp shutdown
+
 ### Day (charger)
 
 If solar export is greater than configured charger size (watts) turn on charger.
