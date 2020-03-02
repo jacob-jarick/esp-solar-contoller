@@ -24,7 +24,7 @@ void cells_update()
 
 
 // ADC ports 0-35
-uint16_t adc_read(uint8_t p)
+int16_t adc_read(uint8_t p)
 {
   uint8_t channel = 0;
   uint8_t vp = p; // virtual port
@@ -90,27 +90,27 @@ uint16_t adc_read(uint8_t p)
     addr_c = 1;
   }
 
+  // set ads1115 mux channel
+  ads.readADC_SingleEnded(channel);
+
+  // set board mux channel
   digitalWrite(pin_asel1, addr_a);
   digitalWrite(pin_asel2, addr_b);
   digitalWrite(pin_asel3, addr_c);
   delay(5);
 
-  ads.readADC_SingleEnded(channel);
+  int16_t value = ads.readADC_SingleEnded(channel);
 
-//   uint8_t pin = 32;
-//   if(channel == 1)
-//     pin = 35;
+  if(value < 0) // we are not measuring negative voltages
+    return 0;
 
-
-//   return analogRead(pin); // esp32 does its own smoothing
+  return value;
 
 //   const uint8_t sample_size = 8;
 //   uint16_t tmp[sample_size];
 
 //   for(uint8_t i = 0; i< sample_size; i++)
-//   {
 //     tmp[i] = analogRead(pin);
-//   }
 
 //   bubbleSort(tmp, sample_size);
 //
@@ -123,7 +123,6 @@ double read_cell_volts(byte cell)
   double v = adc_read(cell);
 
   v *= double(0.125); // 1x gain   +/- 4.096V  1 bit = 2mV      0.125mV
-
   v += config.dcvoltage_offset; // only use 1 offset
   v *= config.battery_volt_mod[cell];
 
@@ -132,12 +131,12 @@ double read_cell_volts(byte cell)
   else
     cells_volts_real[cell] = dirty_average(cells_volts_real[cell], v, 3); // TODO user enabled / disabled
 
-    cells_volts[cell] = cells_volts_real[cell]; // copy AFTER avg
+  cells_volts[cell] = cells_volts_real[cell]; // copy AFTER avg
 
-    if(config.cells_in_series && cell > 0)
-      cells_volts[cell] -= cells_volts_real[cell-1];
+  if(config.cells_in_series && cell > 0)
+    cells_volts[cell] -= cells_volts_real[cell-1];
 
-    return cells_volts[cell];
+  return cells_volts[cell];
 }
 
 
