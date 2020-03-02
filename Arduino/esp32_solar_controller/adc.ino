@@ -23,6 +23,7 @@ void cells_update()
 }
 
 
+// ADC ports 0-35
 uint16_t adc_read(uint8_t p)
 {
   uint8_t channel = 0;
@@ -119,11 +120,9 @@ uint16_t adc_read(uint8_t p)
 
 double read_cell_volts(byte cell)
 {
-  double adc_result_range = 4095;
-
   double v = adc_read(cell);
 
-  v = v / adc_result_range;
+  v *= double(0.125); // 1x gain   +/- 4.096V  1 bit = 2mV      0.125mV
 
   v += config.dcvoltage_offset; // only use 1 offset
   v *= config.battery_volt_mod[cell];
