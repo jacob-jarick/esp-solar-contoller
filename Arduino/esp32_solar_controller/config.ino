@@ -400,11 +400,11 @@ void vars_sanity_check()
 
   config.cell_count = constrain(config.cell_count, 1, 16);
 
-  config.battery_volt_idl = max(config.battery_volt_idl, config.battery_volt_rec);
-  config.battery_volt_over = max(config.battery_volt_over, config.battery_volt_max);
+    config.battery_volt_idl = float_max(config.battery_volt_idl, config.battery_volt_rec);
+    config.battery_volt_over = float_max(config.battery_volt_over, config.battery_volt_max);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
-    config.battery_volt_min = config.pack_volt_min = max(config.battery_volt_min, config.pack_volt_min);
+    config.battery_volt_min = config.pack_volt_min = float_max(config.battery_volt_min, config.pack_volt_min);
 
   for(byte i = 0; i < count_cells; i++)
   {
@@ -464,7 +464,7 @@ void get_config_and_save(String target_ip)
   File f = SD.open(json_config_file, FILE_WRITE);
   if (f)
   {
-    http.begin(client, url);
+    http.begin(url);
     int httpCode = http.GET();
     if (httpCode > 0)
     {

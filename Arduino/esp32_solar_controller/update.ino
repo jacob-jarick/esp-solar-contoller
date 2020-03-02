@@ -47,7 +47,7 @@ void get_html_and_save(String filepath)
   oled_println(F("Updating\nHTML\ngetting:"));
   oled_println(filepath);
 
-  WiFiClient client;
+//   WiFiClient client;
   HTTPClient http;
   http.setTimeout(httpget_timeout);
 
@@ -56,7 +56,7 @@ void get_html_and_save(String filepath)
   File f = SD.open(filepath.c_str(), FILE_WRITE);
   if (f)
   {
-    http.begin(client, url);
+    http.begin(url);
     int httpCode = http.GET();
     if (httpCode > 0)
     {
@@ -96,13 +96,13 @@ String check_for_update()
     return String(F("Update Found (cached)"));
   }
 
-  WiFiClient client;
+//   WiFiClient client;
   HTTPClient http;
   http.setTimeout(httpget_timeout);
 
   String url_tmp = String(config.pub_url) + "/cv.txt";
 
-  http.begin(client, url_tmp);
+  http.begin(url_tmp);
 
   int httpCode = http.GET();
   if( httpCode == 200 )
@@ -156,9 +156,10 @@ void do_update()
   String fwbin = "/firmware.bin";
   String url = String(config.pub_url) + fwbin;
 
-  WiFiClient client;
+//   WiFiClient client;
 
-  t_httpUpdate_return ret = httpUpdate.update(client, url );
+  t_httpUpdate_return ret = ESPhttpUpdate.update(url);
+
 
   switch(ret)
   {
@@ -166,8 +167,8 @@ void do_update()
       oled_clear();
       both_println(F("ERROR"));
       config.download_html = 0;
-      log_error_msg(httpUpdate.getLastError() + httpUpdate.getLastErrorString().c_str());
-      Serial.printf("UPDATE Error (%d): %s",  httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
+      log_error_msg(ESPhttpUpdate.getLastError() + ESPhttpUpdate.getLastErrorString().c_str());
+      Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
       break;
 
     case HTTP_UPDATE_NO_UPDATES:

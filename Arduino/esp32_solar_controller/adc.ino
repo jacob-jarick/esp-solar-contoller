@@ -122,7 +122,7 @@ double read_cell_volts(byte cell)
 {
   double v = adc_read(cell);
 
-  v *= double(0.125); // 1x gain   +/- 4.096V  1 bit = 2mV      0.125mV
+  v *= ads_mv;
   v += config.dcvoltage_offset; // only use 1 offset
   v *= config.battery_volt_mod[cell];
 

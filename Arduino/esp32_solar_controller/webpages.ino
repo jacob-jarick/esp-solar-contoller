@@ -576,7 +576,7 @@ void web_config_submit()
       for(uint8_t x = 0; x < count_cells; x++)
       {
         if (server.argName(i) == String("battery_volt_mod") + String(x+1))
-          config.battery_volt_mod[x] = server.arg(i).toDouble();
+          config.battery_volt_mod[x] = server.arg(i).toFloat();
       }
 
 

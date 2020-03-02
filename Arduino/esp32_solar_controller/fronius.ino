@@ -11,12 +11,12 @@ String get_payload(const String url)
   String payload;
 //   bool v = 0;
 
-  WiFiClient client;
+//   WiFiClient client;
   HTTPClient http;
 
   http.setTimeout(httpget_timeout);
 
-  http.begin(client, url); //HTTP
+  http.begin(url); //HTTP
   int httpCode = http.GET();
 
   if (httpCode > 0)

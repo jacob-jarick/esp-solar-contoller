@@ -26,3 +26,12 @@ void bubbleSort(uint16_t a[], uint16_t size) {
     }
   }
 }
+
+
+float float_max(float a, float b)
+{
+  if(a > b)
+    return a;
+
+  return b;
+}
