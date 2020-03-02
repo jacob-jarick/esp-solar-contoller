@@ -46,6 +46,10 @@ WiFiMulti WiFiMulti;
 
 SSD1306AsciiWire oled;
 
+#include <Adafruit_ADS1015.h>
+
+Adafruit_ADS1115 ads;
+
 // -----------------------------------------------------------------------------------------
 
 #include <TimeLib.h>
@@ -416,6 +420,10 @@ void setup()
       pcf857a_setup(config.pcf857a_addr);
       oled_clear();
     }
+
+
+    ads.setGain(GAIN_ONE);
+//     ads.begin(); // not required I believe, may trigger i2c restart
   }
 
   // --------------------------------------------------------------------------------------

@@ -31,11 +31,14 @@ uint16_t adc_read(uint8_t p)
   bool addr_b = 0;
   bool addr_c = 0;
 
-  if(p>7)
-  {
-    channel = 1;
-    vp = p - 8;
-  }
+  channel = p / 8;
+  vp = p % 8;
+
+//   if(p>7)
+//   {
+//     channel = 1;
+//     vp = p - 8;
+//   }
 
   if(vp == 0)
   {
@@ -91,11 +94,14 @@ uint16_t adc_read(uint8_t p)
   digitalWrite(pin_asel3, addr_c);
   delay(5);
 
-  uint8_t pin = 32;
-  if(channel == 1)
-    pin = 35;
+  ads.readADC_SingleEnded(channel);
 
-  return analogRead(pin); // esp32 does its own smoothing
+//   uint8_t pin = 32;
+//   if(channel == 1)
+//     pin = 35;
+
+
+//   return analogRead(pin); // esp32 does its own smoothing
 
 //   const uint8_t sample_size = 8;
 //   uint16_t tmp[sample_size];

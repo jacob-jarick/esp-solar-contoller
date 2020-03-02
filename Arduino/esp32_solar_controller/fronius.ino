@@ -1,7 +1,4 @@
-// these 3 vars MUST remain global for stability :(
-
 #define jsonsize 2500
-// char json[jsonsize];
 
 String get_payload(const String url)
 {
