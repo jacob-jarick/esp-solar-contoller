@@ -74,10 +74,6 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packe
 WiFiUDP udp;
 
 //------------------------------------------------------------------------------
-
-// #include "EasyBuzzer.h"
-
-//------------------------------------------------------------------------------
 // timers
 
 unsigned long update_time = 0;
@@ -90,6 +86,18 @@ unsigned long hv_shutdown_time = 0;
 
 unsigned long charger_off_time = 0;
 unsigned long inverter_off_time = 0;
+
+unsigned long timer_pgrid = 0;
+unsigned long timer_voltage = 0;
+unsigned long timer_ntc10k = 0;
+
+unsigned long timer_read_button = 0;
+unsigned long timer_update_check = 0;
+unsigned long timer_ntp_sync = 0;
+unsigned long timer_oled = 0;
+unsigned long timer_serial = 0;
+
+unsigned long timer_led = 0;
 
 //------------------------------------------------------------------------------
 // FLAGS
@@ -713,16 +721,13 @@ bool wifi_connect(char s[ssmall], char p[ssmall])
 bool boot_success = 0;
 bool inverter_synced = 0;
 
-unsigned long systick = 0;
-
 String mode_reason = "";
 
-
+unsigned long systick = 0;
 
 void loop()
 {
   server.handleClient();
-//   EasyBuzzer.update();
 
   if(systick > millis())
     return;
@@ -740,13 +745,10 @@ void loop()
 
   // ----------------------------------------------------------------------
 
-  // finish loop unless its time to update
-
   // check if cell volt is low and force update
 
   if(config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_over)
   {
-//     mode_reason = frline(14);
     mode_reason = "cell over volt. force IDLE.";
     battery_log(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
@@ -760,7 +762,6 @@ void loop()
 
   if(config.monitor_battery && system_mode == 2 && cell_volt_low <= config.battery_volt_min)
   {
-//     mode_reason = frline(36);
     mode_reason = "Cell under volt, force IDLE";
     battery_log(mode_reason  + "\n");
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
@@ -771,6 +772,7 @@ void loop()
   }
 
 
+  // finish loop unless its time to update
   if (update_time > millis())
     return;
 
@@ -782,7 +784,6 @@ void loop()
 
   if(config.button_timer_mode) // if button reaches here. its on timer is up
   {
-//     mode_reason = frline(18);
     mode_reason = "Button - IDLE.";
     modeset(0);
     return;
@@ -790,14 +791,12 @@ void loop()
 
   if(!time_synced)
   {
-//     mode_reason = frline(37);
     mode_reason = "time unsynced";
     return;
   }
 
   bool finv = 0; // inverter on flag
   bool fchg = 0; // charger on flag
-//   bool fbms = 0; // bms on flag
 
   if(system_mode == 2 && config.i_enable && night_time)
     finv = 1;
@@ -805,24 +804,21 @@ void loop()
   if(system_mode == 1 && config.c_enable && day_time)
     fchg = 1;
 
-//   if(system_mode == 4 && config.c_enable && day_time)
-//     fbms = 1;
+  // -------------------------------------------------------------------------
+  // Night Device
 
   // discharger
-  // do first so day time device can over ride
   if (config.i_enable && night_time)
   {
     // cooldown check
     if(inverter_off_time > millis())
     {
-//       mode_reason += frline(38) + "\n";
       mode_reason += "Inverter Cooldown.\n";
       finv = 0;
     }
     // timer check
     else if (config.night_is_timer)
     {
-//       mode_reason += frline(13) + "\n"; // timer turn on
       mode_reason += "Night timer on\n";
       finv = 1;
     }
@@ -832,14 +828,12 @@ void loop()
     // DRAIN
     else if (phase_sum > config.night_watts)
     {
-//       mode_reason += frline(11) + "\n";
       mode_reason += "phase_sum > night_watts\n";
       finv = 1;
     }
     // IDLE
     else if (phase_sum < -20) // turn off inverter
     {
-//       mode_reason += frline(12) + "\n";
       mode_reason += "night: phase_sum < -20\n";
       finv = 0;
     }
@@ -848,11 +842,13 @@ void loop()
   // drain monitor battery check(s)
   if (config.i_enable && night_time && config.monitor_battery && low_voltage_shutdown)
   {
-//     mode_reason += frline(41) + "\n"; // Inverter - LV Shutdown
     mode_reason += "Inverter - LV Shutdown\n";
     finv = 0;
   }
 
+
+  // -------------------------------------------------------------------------
+  // Day Device
 
   // charger
   if (config.c_enable && day_time)
@@ -860,28 +856,24 @@ void loop()
     // cooldown
     if(charger_off_time > millis()) // charger cooldown
     {
-//       mode_reason += frline(39) + "\n";
       mode_reason += "charger cooldown\n";
       fchg = 0;
     }
     // timer
     else if (config.day_is_timer)
     {
-//       mode_reason += frline(22) + "\n";
       mode_reason += "Day Timer\n";
       fchg = 1;
     }
     // IDLE
     else if (phase_sum > 20)
     {
-//       mode_reason += frline(9)  + "\n";
       mode_reason += "chg, phase_sum > 20\n";
       fchg = 0;
     }
     // CHARGE
     else if (phase_sum < (config.day_watts * -1.0) )
     {
-//       mode_reason += frline(10)  + "\n";
       mode_reason += "CHARGE: day_watts > phase_sum\n";
       fchg = 1;
     }
@@ -894,25 +886,25 @@ void loop()
     // HV Shutdown
     if(charger_high_voltage_shutdown)
     {
-//       mode_reason += frline(20) + "\n";
       mode_reason += "charger_high_voltage_shutdown\n";
       fchg = 0;
     }
     // Shutdown
     else if(cell_volt_high > config.battery_volt_max)
     {
-//       mode_reason += frline(21)  + "\n";
       mode_reason += "chg battery_volt_max\n";
       fchg = 0;
     }
     // IDLE
     else if (phase_sum > 20)
     {
-//       mode_reason += frline(9)  + "\n";
       mode_reason += "CHG: phase_sum > 20\n";
       fchg = 0;
     }
   }
+
+  // -------------------------------------------------------------------------
+  // Select Mode
 
   uint8_t tmp_mode = 0;
   if(finv)
@@ -920,7 +912,9 @@ void loop()
   if(fchg)
     tmp_mode = 1;
 
-  // idle time
+  // -------------------------------------------------------------------------
+  // IDLE over rides
+
   if
   (
     (!day_time && !night_time) || // not day or night
@@ -1034,14 +1028,6 @@ bool check_system_triggers() // returns 1 if a event was triggered
 
 // ======================================================================================================================
 
-unsigned long timer_read_button = 0;
-unsigned long timer_update_check = 0;
-unsigned long timer_ntp_sync = 0;
-unsigned long timer_oled = 0;
-unsigned long timer_serial = 0;
-
-unsigned long timer_led = 0;
-
 bool check_system_timers()
 {
   bool result = 0;
@@ -1097,30 +1083,17 @@ bool check_system_timers()
     sync_time();
 
     if(time_synced)
-    {
-
       timer_ntp_sync = millis() + 21600000; // 6 hours
-    }
     else
-    {
       timer_ntp_sync = millis() + 20000; // 20 s
-    }
-    result = 1;
 
+    result = 1;
   }
 
   return result;
 }
 
-
 // ======================================================================================================================
-
-unsigned long timer_pgrid = 0;
-unsigned long timer_voltage = 0;
-unsigned long timer_ntc10k = 0;
-
-// unsigned long bms_timer = 0;
-
 
 bool check_data_sources()
 {
@@ -1194,7 +1167,6 @@ void check_voltage()
     if(cells_volts[i] >= config.battery_volt_over)
     {
       hv_trigger = 1;
-//       charger_high_voltage_shutdown = 1;
       hv_shutdown_time = ms + (config.hv_shutdown_delay * 3600000.0);
     }
 
@@ -1209,7 +1181,6 @@ void check_voltage()
     if(lv_trigger || cells_volts[i] < config.battery_volt_rec)
     {
       lv_recon_trigger = 0; // if cells below min voltage, keep shutdown (no night time drain)
-      //       break;
     }
 
     // cell voltages string
@@ -1336,8 +1307,6 @@ void set_led(char m)
     digitalWrite(config.pin_led, 1);
     return;
   }
-//   if(config.pin_led != -1)
-//     digitalWrite(config.pin_led, !config.led_status);
 }
 
 void both_print_ip()
@@ -1394,32 +1363,12 @@ void oled_print_info()
       oled_print(F("DRN "));
     else if (system_mode == 3)
       oled_print(F("CRS "));
-//     else if (system_mode == 4)
-//       oled_print(F("BMS "));
 
     oled_println(datetime_str(2, ' ', ' ', ':'));
 
     oled_print(F("KWh  "));
     oled_println(String(phase_sum / 1000, 2));
   }
-
-  // ----------------------------------------------------------------------
-  // oled print next update time
-
-  /*
-  bool volts_shown = 0;
-  if(system_mode == 4 && pcf857a_charging != -1) // TODO show if BMS is idling
-  {
-    oled_set1X();
-    oled_print(F("CHG Cell "));
-    oled_print(String(pcf857a_charging+1));
-    oled_print(F(": "));
-    oled_print(String(cells_volts[pcf857a_charging], 2) );
-    oled_println(F("v\n"));
-
-    volts_shown = 1;
-  }
-  */
 
   if(config.button_timer_mode)
   {
@@ -1553,9 +1502,6 @@ void modeset(byte m)
   {
     i_pinmode = 0;
     c_pinmode = 1;
-
-//     if(charger_high_voltage_shutdown) // safety check
-//       c_pinmode = 0;
   }
 
   else if (m == 2)  // drain (inverter)
