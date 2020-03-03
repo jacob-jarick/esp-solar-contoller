@@ -1,5 +1,7 @@
 void download_html_from_remote()
 {
+  if(!config.download_html)
+    return;
 
   const int asize = 20;
   String dl_array[asize] =
@@ -33,21 +35,25 @@ void download_html_from_remote()
     return;
   }
 
-  if(!config.download_html)
-    return;
+  bool ok = get_html_and_save(dl_array[download_index]);
 
-  get_html_and_save(dl_array[download_index]);
+  if(!ok)
+  {
+    config.download_html = 0;
+    save_config();
+    log_issue("Error fetching latest html files.");
+  }
+
   return;
 
 }
 
-void get_html_and_save(String filepath)
+bool get_html_and_save(String filepath)
 {
   oled_clear();
   oled_println(F("Updating\nHTML\ngetting:"));
   oled_println(filepath);
 
-//   WiFiClient client;
   HTTPClient http;
   http.setTimeout(httpget_timeout);
 
@@ -64,6 +70,7 @@ void get_html_and_save(String filepath)
       {
         http.writeToStream(&f);
         download_index++;
+        return 1;
       }
       else
       {
@@ -83,6 +90,8 @@ void get_html_and_save(String filepath)
   {
     Serial.println("get_html_and_save: cannot open '" + filepath + "' to update.");
   }
+
+  return 0;
 }
 
 int remote_version = 0;
