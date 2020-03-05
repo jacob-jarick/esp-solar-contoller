@@ -248,7 +248,7 @@ bool update_p_grid_3phase()
   return 1;
 }
 
-void set_power(float p)
+void set_power(const float p)
 {
   phase_sum = p;
   phase_avg = dirty_average(phase_avg, phase_sum, 3);

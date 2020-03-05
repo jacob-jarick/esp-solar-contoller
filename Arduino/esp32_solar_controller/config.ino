@@ -433,7 +433,7 @@ void vars_sanity_check()
     config.c_enable = 0;
 }
 
-void copy_config(String target_ip)
+void copy_config(const String target_ip)
 {
   char h[32];
   strlcpy(h, config.hostn, sizeof(config.hostn));
@@ -448,7 +448,7 @@ void copy_config(String target_ip)
   save_config();
 }
 
-void get_config_and_save(String target_ip)
+void get_config_and_save(const String target_ip)
 {
   oled_clear();
   oled_println(F("Copying HTML"));

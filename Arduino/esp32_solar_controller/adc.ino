@@ -24,7 +24,7 @@ void cells_update()
 
 
 // ADC ports 0-35
-int16_t adc_read(uint8_t p)
+int16_t adc_read(const uint8_t p)
 {
   uint8_t channel = 0;
   uint8_t vp = p; // virtual port
@@ -118,7 +118,7 @@ int16_t adc_read(uint8_t p)
 //   return sample;
 }
 
-double read_cell_volts(byte cell)
+double read_cell_volts(const byte cell)
 {
   double v = adc_read(cell);
 
@@ -140,7 +140,7 @@ double read_cell_volts(byte cell)
 }
 
 
-float ntc10k_read_temp(byte sensor)
+float ntc10k_read_temp(const byte sensor)
 {
   float average = adc_read(sensor);
 

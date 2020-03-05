@@ -2,7 +2,7 @@
 // File Functions
 // =============================================================================================================================================
 
-String get_file(String fn)
+String get_file(const String fn)
 {
   String contents = "";
 
@@ -41,7 +41,7 @@ void null_file(const String fname)
   f.close();
 }
 
-void file_limit_size(const String fname, int bsize)
+void file_limit_size(const String fname, const int bsize)
 {
 
   File f = SD.open(fname.c_str());

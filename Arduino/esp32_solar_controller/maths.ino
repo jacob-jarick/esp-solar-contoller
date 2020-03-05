@@ -1,4 +1,4 @@
-double dirty_average(double oldv, double newv, byte count)
+double dirty_average(const double oldv, const double newv, const byte count)
 {
   if(oldv == DAVG_MAGIC_NUM) // if uninitalized (ie set to DAVG_MAGIC_NUM then dont avg).
     return newv;

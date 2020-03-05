@@ -51,7 +51,7 @@ void oled_clear()
   oled.clear();
 }
 
-bool i2c_ping(char address)
+bool i2c_ping(const char address)
 {
   Wire.beginTransmission(address);
   byte error = Wire.endTransmission();
@@ -62,7 +62,7 @@ bool i2c_ping(char address)
   return 0;
 }
 
-char i2c_detect(byte type)
+char i2c_detect(const byte type)
 {
   for (char address = 1; address < 127; address++ )
   {

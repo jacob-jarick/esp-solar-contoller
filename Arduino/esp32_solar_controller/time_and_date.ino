@@ -4,11 +4,11 @@
 
 bool sync_time()
 {
-  const String ntp_prefix = F("NTP: ");
+  const String ntp_prefix = "NTP: ";
 
   oled_clear();
   oled_set2X();
-  both_println(ntp_prefix + F("Sync"));
+  both_println(ntp_prefix + "Sync");
   oled_set1X();
 
   IPAddress timeServerIP;
@@ -26,7 +26,7 @@ bool sync_time()
   int size = udp.parsePacket();
   if (size < NTP_PACKET_SIZE)
   {
-    const String tmp = F("undersized packet");
+    const String tmp = "undersized packet";
     log_error_msg(ntp_prefix + tmp);
     both_println(tmp);
     return 0;
@@ -36,7 +36,7 @@ bool sync_time()
 
   if(packetBuffer[40] == 0 && packetBuffer[41] == 0 && packetBuffer[42] == 0 && packetBuffer[43] == 0)
   {
-    const String tmp = F("null packets");
+    const String tmp = "null packets";
     both_println(tmp);
     log_error_msg(ntp_prefix + tmp);
     return 0;
@@ -52,7 +52,7 @@ bool sync_time()
   secsSince1900 = now(); // reuse var
   if(epoch < secsSince1900 || epoch < 1567099782)
   {
-    const String tmp = F("bad epoch");
+    const String tmp = "bad epoch";
     both_println(tmp);
     log_error_msg(ntp_prefix + tmp);
     return 0;
@@ -60,7 +60,7 @@ bool sync_time()
 
   setTime(epoch);
 
-  const String tmp = F("Success");
+  const String tmp = "Success";
   both_println(tmp);
   log_error_msg(ntp_prefix + tmp);
 
@@ -117,7 +117,7 @@ String next_update_string(const byte len) // ; len = length
   }
   else
   {
-    nu_string = F("NOW");
+    nu_string = "NOW";
   }
 
   return nu_string;

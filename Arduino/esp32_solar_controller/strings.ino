@@ -15,7 +15,6 @@ void log_error_msg(const String msg)
   error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
 }
 
-
 String frline(const int l)
 {
   if (!SD.exists(txt_system_messages.c_str() ) )
