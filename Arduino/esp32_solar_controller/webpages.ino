@@ -183,11 +183,6 @@ void ntc10k_config()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k config");
 
-//   for(int i = 0; i < count_ntc; i++)
-//   {
-//     webpage += js_helper(String("ntc_temp_mod") + String(i), String(config.ntc_temp_mods[i], 4));
-//
-//   }
   for(int i = 0; i < count_ntc; i++)
   {
     String input_name = "ntc_temp_mod";
@@ -381,7 +376,7 @@ void web_config_submit()
   {
     for ( uint8_t i = 0; i < server.args(); i++ )
     {
-      Serial.println(server.argName(i) + " = '" + server.arg(i) + "'");
+//       Serial.println(server.argName(i) + " = '" + server.arg(i) + "'");
 
       if (server.argName(i) == F("board_rev"))
         config.board_rev = server.arg(i).toInt();
@@ -549,7 +544,7 @@ void web_config_submit()
 
       for(int x = 0; x < count_ntc; x++)
       {
-        if (server.argName(i) == String("ntc_temp_mod") + String(x) )
+        if (server.argName(i) == String("ntc_temp_mod") + String(x+1) )
           config.ntc_temp_mods[x] = server.arg(i).toFloat();
       }
 

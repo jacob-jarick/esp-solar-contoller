@@ -38,17 +38,13 @@ void save_config()
 
   for(uint8_t i = 0; i < count_ntc; i++)
   {
-    doc["temp_mods" + String(i)] = config.ntc_temp_mods[i];
+    doc["temp_mod" + String(i+1)] = config.ntc_temp_mods[i];
+    doc["temp_max" + String(i+1)] = config.ntc_temp_max[i];
   }
 
   for(uint8_t i = 0; i < count_cells; i++)
   {
     doc["volt_mod" + String(i+1)] = config.battery_volt_mod[i];
-  }
-
-  for(uint8_t i = 0; i < count_ntc; i++)
-  {
-    doc["temp_max" + String(i)] = config.ntc_temp_max[i];
   }
 
   // PINS
@@ -226,10 +222,10 @@ bool load_config()
   config.ntc10k_count = doc["ntc10k_count"];
 
   for(uint8_t i = 0; i < count_ntc; i++)
-    config.ntc_temp_mods[i] = doc["temp_mods" + String(i)];
-
-  for(int i = 0; i < count_ntc; i++)
-    config.ntc_temp_max[i] = doc["temp_max" + String(i)];
+  {
+    config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)];
+    config.ntc_temp_max[i] = doc["temp_max" + String(i+1)];
+  }
 
   for(int i = 0; i < count_cells; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];

@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 31
+#define FW_VERSION 37
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -1115,17 +1115,19 @@ bool check_data_sources()
 
   if(config.monitor_temp && millis() > timer_ntc10k)
   {
+    ntc_update();
     bool trigger_shutdown = 0;
     for(int i = 0; i < config.ntc10k_count; i++)
     {
-      ntc10k_sensors[i] = ntc10k_read_temp(i);
-
       if(ntc10k_sensors[i] > config.ntc_temp_max[i])
+      {
         trigger_shutdown = 1;
+        break;
+      }
     }
 
     high_temp_shutdown = trigger_shutdown;
-    timer_ntc10k = millis() + 1200;
+    timer_ntc10k = millis() + 200;
     result = 1;
   }
 

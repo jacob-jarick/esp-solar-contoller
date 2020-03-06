@@ -23,6 +23,18 @@ void cells_update()
 }
 
 
+
+uint8_t ntc_update_pos = 0;
+void ntc_update()
+{
+  ntc10k_sensors[ntc_update_pos] = ntc10k_read_temp(ntc_update_pos);
+
+  ntc_update_pos++;
+  if(ntc_update_pos >= config.ntc10k_count)
+    ntc_update_pos = 0;
+}
+
+
 // ADC ports 0-35
 int16_t adc_read(const uint8_t p)
 {
@@ -97,7 +109,7 @@ int16_t adc_read(const uint8_t p)
   digitalWrite(pin_asel1, addr_a);
   digitalWrite(pin_asel2, addr_b);
   digitalWrite(pin_asel3, addr_c);
-  delay(5);
+  delay(1);
 
   int16_t value = ads.readADC_SingleEnded(channel);
 
@@ -142,47 +154,43 @@ double read_cell_volts(const byte cell)
 
 float ntc10k_read_temp(const byte sensor)
 {
-  float average = adc_read(sensor);
+  int virtual_pin = sensor + 16;
 
-  const float THERMISTORNOMINAL = 10000;
-  // temp. for nominal resistance (almost always 25 C)
-  const float TEMPERATURENOMINAL = 25;
-  // how many samples to take and average, more takes longer
-  // but is more 'smooth'
-  const float BCOEFFICIENT = 3950;
-  // the value of the 'other' resistor
-  const float SERIESRESISTOR = 10000;
+  int16_t adc0 = adc_read(virtual_pin);
 
-  // convert the value to resistance
-  //   average = 32767.0 / average - 1;
-  //   https://forums.adafruit.com/viewtopic.php?f=25&t=135742
-  //   float range  = 65535.0;
-  //   float range = 32767.0; // 5v
-  //   float range = 17599.46; // 3.3v
+  // get resistance --------------------------------------------//
+  float R0 = resistance(adc0);
 
-  if(average <= 0)    // shouldnt happen but just incase (ie absolute zero)
-    average = 1;
+  // get temperature --------------------------------------------//
+  float temperature0 = steinhart(R0);
 
-  if(average > 4095) // again shouldnt happen
-    average =  4095;
+  temperature0 *= config.ntc_temp_mods[sensor];
 
+  temperature0 = dirty_average(temperature0, ntc10k_sensors[sensor], 3);
 
+  return temperature0;
+}
 
-  average = average / 4095;
+// borrowed this code from: https://github.com/OSBSS/Thermistor_v2/blob/master/Thermistor_v2.ino
 
-  average = SERIESRESISTOR / average;
+// Get resistance -------------------------------------------//
+float resistance(int16_t adc)
+{
+  float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case
+  float R = 10000/(65535/ADCvalue-1);  // 65535 refers to 16-bit number
+  return R;
+}
 
-  float steinhart;
-  steinhart = average / THERMISTORNOMINAL;     // (R/Ro)
-  steinhart = log(steinhart);                  // ln(R/Ro)
-  steinhart /= BCOEFFICIENT;                   // 1/B * ln(R/Ro)
-  steinhart += 1.0 / (TEMPERATURENOMINAL + 273.15); // + (1/To)
-  steinhart = 1.0 / steinhart;                 // Invert
-  steinhart -= 273.15;                         // convert to C
+// Get temperature from Steinhart equation -------------------------------------------//
+float steinhart(float R)
+{
+  float Rref = 10000.0;
+  float A = 0.003354016;
+  float B = 0.0002569850;
+  float C = 0.000002620131;
+  float D = 0.00000006383091;
+  float E = log(R/Rref);
 
-  //   Serial.print("Temperature ");
-  //   Serial.print(steinhart);
-  //   Serial.println(" *C");
-
-  return steinhart * config.ntc_temp_mods[sensor];
+  float T = 1/(A + (B*E) + (C*(E*E)) + (D*(E*E*E)));
+  return T-273.15;
 }
