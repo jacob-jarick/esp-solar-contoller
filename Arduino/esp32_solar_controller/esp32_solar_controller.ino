@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 28
+#define FW_VERSION 29
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -428,7 +428,10 @@ void setup()
 
   if(i2c_on)
   {
-    Wire.setClock(3400000L);
+
+    Wire.setClock(400000L); // fast mode
+//     Wire.setClock(1000000L); // fast mode plus
+    //     Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
     oled_setup();
     oled_set1X();
     oled_print("FW: ");
@@ -1313,7 +1316,7 @@ void both_print_ip()
 {
   oled_set1X();
   oled_print(F("IP:    "));
-  oled_print(WiFi.localIP().toString());
+  oled_println(WiFi.localIP().toString());
 
   Serial.println("IP: " + WiFi.localIP().toString());
 }

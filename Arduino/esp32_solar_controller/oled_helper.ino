@@ -85,7 +85,10 @@ void oled_setup()
   config.oled_addr = i2c_detect(0);
 
   if (!oled_enabled())
+  {
+    Serial.print(F("not found"));
     return;
+  }
 
   oled.begin(&Adafruit128x64, config.oled_addr);
   oled.setFont(Adafruit5x7);

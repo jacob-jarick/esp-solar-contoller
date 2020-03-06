@@ -1,10 +1,11 @@
 #!/bin/bash
 
 HTMLDIR=/var/www/html/esp32
-PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp32
+PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp32_solar_controller
 FWDIR=/home/mem/git/esp-solar-contoller/firmwares
 
 mkdir -p $HTMLDIR/data
+mkdir -p $FWDIR
 
 cp -rv $PROJDIR/data/* $HTMLDIR/data
 
