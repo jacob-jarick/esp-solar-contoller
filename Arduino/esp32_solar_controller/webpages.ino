@@ -194,7 +194,7 @@ void ntc10k_config()
     String id_name = "ntc_temp_mod" + String(i+1);
     input_name += String(i + 1);
 
-    webpage += html_create_input(id_name, input_name, "20", String(config.battery_volt_mod[i], 16), ".");
+    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_mods[i], 16), ".");
   }
 
   for(int i = 0; i < count_ntc; i++)
@@ -206,14 +206,6 @@ void ntc10k_config()
     webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_max[i], 16), ".");
   }
 
-  for(int i = 0; i < count_ntc; i++)
-  {
-    String input_name = "ntc_desc";
-    String id_name = "ntc_desc" + String(i+1);
-    input_name += String(i + 1);
-
-    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_desc[i]), ".");
-  }
   webpage += js_radio_helper(F("monitor_temp_1"), F("monitor_temp_0"), config.monitor_temp);
 
   // address
@@ -234,7 +226,7 @@ void ntc10k_info()
 
   for(uint8_t i = 0; i < config.ntc10k_count; i++)
   {
-    webpage += js_table_add_row("temp_table", String(i+1), String(config.ntc_desc[i]), ntc10k_sensors[i] + String("c") );
+    webpage += js_table_add_row("temp_table", String(i+1), "", ntc10k_sensors[i] + String("c") );
   }
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k Info");
@@ -565,12 +557,6 @@ void web_config_submit()
       {
         if (server.argName(i) == String("ntc_temp_max") + String(x) )
           config.ntc_temp_max[x] = server.arg(i).toFloat();
-      }
-
-      for(int x = 0; x < count_ntc; x++)
-      {
-        if (server.argName(i) == String("ntc_desc") + String(x) )
-          strlcpy(config.ntc_desc[x], server.arg(i).c_str(), smedium);
       }
 
       for(uint8_t x = 0; x < count_cells; x++)

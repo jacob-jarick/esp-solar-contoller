@@ -51,11 +51,6 @@ void save_config()
     doc["temp_max" + String(i)] = config.ntc_temp_max[i];
   }
 
-  for(uint8_t i = 0; i < count_ntc; i++)
-  {
-    doc["ntc_desc" + String(i)] = config.ntc_desc[i];
-  }
-
   // PINS
 
   doc["pin_led"] = config.pin_led;
@@ -235,9 +230,6 @@ bool load_config()
 
   for(int i = 0; i < count_ntc; i++)
     config.ntc_temp_max[i] = doc["temp_max" + String(i)];
-
-  for(int x = 0; x < count_ntc; x++)
-    strlcpy(config.ntc_desc[x], doc["ntc_desc" + String(x)], smedium);
 
   for(int i = 0; i < count_cells; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];

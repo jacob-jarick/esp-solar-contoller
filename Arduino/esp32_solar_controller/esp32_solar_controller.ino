@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 29
+#define FW_VERSION 31
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -238,8 +238,6 @@ struct Sconfig
   double battery_volt_mod[count_cells];
 
   float ntc_temp_max[count_ntc];
-
-  char ntc_desc[count_ntc][smedium];
 
   char hostn[stiny];
 
