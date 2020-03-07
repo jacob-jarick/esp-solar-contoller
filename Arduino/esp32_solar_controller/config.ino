@@ -2,7 +2,7 @@
 // Config Files
 // =============================================================================================================================================
 
-#define config_json_size 4096
+#define config_json_size 8192
 
 void save_config()
 {
@@ -324,7 +324,6 @@ bool load_config()
   config.led_status = doc["led_status"];
   config.blink_led = doc["blink_led"];
   config.blink_led_default = doc["blink_led_default"];
-
 
   vars_sanity_check();
 

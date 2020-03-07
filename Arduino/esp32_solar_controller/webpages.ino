@@ -376,6 +376,7 @@ void web_config_submit()
   {
     for ( uint8_t i = 0; i < server.args(); i++ )
     {
+      bool skip2next = 0;
 //       Serial.println(server.argName(i) + " = '" + server.arg(i) + "'");
 
       if (server.argName(i) == F("board_rev"))
@@ -542,26 +543,45 @@ void web_config_submit()
         config.battery_volt_idl = server.arg(i).toFloat();
 
 
-      for(int x = 0; x < count_ntc; x++)
+
+
+      else if(server.argName(i).startsWith("ntc_temp"))
       {
-        if (server.argName(i) == String("ntc_temp_mod") + String(x+1) )
-          config.ntc_temp_mods[x] = server.arg(i).toFloat();
+        for(int x = 0; x < count_ntc; x++)
+        {
+          if (server.argName(i) == String("ntc_temp_mod") + String(x+1) )
+          {
+            config.ntc_temp_mods[x] = server.arg(i).toFloat();
+            skip2next = 1;
+            break;
+          }
+          else if (server.argName(i) == String("ntc_temp_max") + String(x+1) )
+          {
+            config.ntc_temp_max[x] = server.arg(i).toFloat();
+            skip2next = 1;
+            break;
+          }
+        }
+        if(skip2next)
+          continue;
       }
 
-      for(int x = 0; x < count_ntc; x++)
+      else if(server.argName(i).startsWith("battery_volt_mod"))
       {
-        if (server.argName(i) == String("ntc_temp_max") + String(x) )
-          config.ntc_temp_max[x] = server.arg(i).toFloat();
+        for(uint8_t x = 0; x < count_cells; x++)
+        {
+          if (server.argName(i) == String("battery_volt_mod") + String(x+1))
+          {
+            config.battery_volt_mod[x] = server.arg(i).toFloat();
+            skip2next = 1;
+            break;
+          }
+        }
+        if(skip2next)
+          continue;
       }
 
-      for(uint8_t x = 0; x < count_cells; x++)
-      {
-        if (server.argName(i) == String("battery_volt_mod") + String(x+1))
-          config.battery_volt_mod[x] = server.arg(i).toFloat();
-      }
-
-
-      if (server.argName(i) == F("lv_shutdown_delay"))
+      else if (server.argName(i) == F("lv_shutdown_delay"))
         config.lv_shutdown_delay = server.arg(i).toFloat();
 
       else if (server.argName(i) == F("hv_shutdown_delay"))

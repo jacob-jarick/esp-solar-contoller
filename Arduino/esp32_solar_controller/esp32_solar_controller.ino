@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 37
+#define FW_VERSION 41
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -122,7 +122,7 @@ float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
 
-float ntc10k_sensors[4];
+float ntc10k_sensors[16]  = {DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM};
 
 //------------------------------------------------------------------------------
 
@@ -628,6 +628,10 @@ bool wifi_start()
     return 1;
 
   WiFi.persistent( false ); // dont save wifi settings
+  WiFi.mode(WIFI_STA);
+//   WiFi.setSleepMode(WIFI_NONE_SLEEP);
+
+
 //   if(config.wifi_highpower_on)
 //   {
 //     WiFi.setSleepMode(WIFI_NONE_SLEEP); // enable if wifi is buggy
@@ -733,7 +737,7 @@ void loop()
   if(systick > millis())
     return;
 
-  systick = millis() + 50;
+  systick = millis() + 100;
 
   if(check_system_triggers())
     return;
@@ -1109,7 +1113,7 @@ bool check_data_sources()
   if(millis() > timer_voltage)
   {
     check_voltage();
-    timer_voltage = millis() + 50;
+    timer_voltage = millis() + 100;
     result = 1;
   }
 
@@ -1127,7 +1131,7 @@ bool check_data_sources()
     }
 
     high_temp_shutdown = trigger_shutdown;
-    timer_ntc10k = millis() + 200;
+    timer_ntc10k = millis() + 300;
     result = 1;
   }
 

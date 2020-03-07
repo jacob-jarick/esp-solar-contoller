@@ -109,7 +109,7 @@ int16_t adc_read(const uint8_t p)
   digitalWrite(pin_asel1, addr_a);
   digitalWrite(pin_asel2, addr_b);
   digitalWrite(pin_asel3, addr_c);
-  delay(1);
+  delay(5);
 
   int16_t value = ads.readADC_SingleEnded(channel);
 
@@ -117,17 +117,6 @@ int16_t adc_read(const uint8_t p)
     return 0;
 
   return value;
-
-//   const uint8_t sample_size = 8;
-//   uint16_t tmp[sample_size];
-
-//   for(uint8_t i = 0; i< sample_size; i++)
-//     tmp[i] = analogRead(pin);
-
-//   bubbleSort(tmp, sample_size);
-//
-//   uint16_t sample = tmp[sample_size/2];
-//   return sample;
 }
 
 double read_cell_volts(const byte cell)
