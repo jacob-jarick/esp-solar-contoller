@@ -11,12 +11,6 @@ void cells_update()
   if(pos_plus_8 < config.cell_count)
     read_cell_volts(pos_plus_8);
 
-  // update total voltage when we hit last cell
-  if(config.cells_in_series && cells_update_pos == config.cell_count-1)
-  {
-    battery_voltage = cells_volts_real[config.cell_count];
-  }
-
   cells_update_pos++;
   if(cells_update_pos >= 8 || cells_update_pos >= config.cell_count)
     cells_update_pos = 0;

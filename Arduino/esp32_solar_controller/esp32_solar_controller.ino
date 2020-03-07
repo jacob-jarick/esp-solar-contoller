@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 42
+#define FW_VERSION 43
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -175,9 +175,6 @@ float phase_sum = 0;
 float phase_sum_old = 0;
 
 float phase_avg = DAVG_MAGIC_NUM;
-
-float battery_voltage = 0;
-
 
 String passwd = "";
 
@@ -1156,7 +1153,7 @@ void check_voltage()
   if(ms < update_time)
     ms = update_time;
 
-  if((config.cells_in_series || config.cell_count == 1) && battery_voltage < config.pack_volt_min)
+  if((config.cells_in_series || config.cell_count == 1) && cells_volts_real[config.cell_count-1] < config.pack_volt_min)
     lv_trigger = 1;
 
   String tmp_msg = "\n"; // cell voltages string

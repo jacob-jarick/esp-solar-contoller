@@ -815,13 +815,13 @@ void stats()
       if(config.cells_in_series)
       {
         cell_string += "Diff: " + String(cell_volt_diff, 4) + "v</pre>\n";
-        cell_string += "Pack Total: " + String(battery_voltage) + "v\n";
+        cell_string += "Pack Total: " + String(cells_volts_real[config.cell_count-1]) + "v\n";
       }
     }
     // single cell
     else
     {
-      cell_string = String(battery_voltage) + "v";
+      cell_string = String(cells_volts_real[config.cell_count-1]) + "v";
     }
 
     webpage += js_helper_innerhtml(F("battery_voltage"), cell_string );
