@@ -659,7 +659,7 @@ void web_config_submit()
 
   server.send(200, mime_html, webpage);
 
-  save_config();
+  Fsave_config = 1;
 }
 
 void css_raw()

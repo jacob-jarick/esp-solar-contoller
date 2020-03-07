@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 46
+#define FW_VERSION 48
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -66,6 +66,8 @@ const float ads_mv = 0.125;
 // ads.setGain(GAIN_EIGHT);      // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
 // ads.setGain(GAIN_SIXTEEN);    // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
 
+bool volt_synced = 0;
+
 // -----------------------------------------------------------------------------------------
 
 #include <TimeLib.h>
@@ -115,6 +117,7 @@ bool charger_high_voltage_shutdown = 0;
 bool high_temp_shutdown = 0;
 bool found_update = 0;
 
+bool Fsave_config = 0;
 
 //------------------------------------------------------------------------------
 
@@ -673,7 +676,7 @@ bool wifi_connect(char s[ssmall], char p[ssmall])
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    if (recon > 400)
+    if (recon > 150)
     {
       both_println(F("Wifi Fail"));
       return 0;
@@ -749,6 +752,12 @@ void loop()
   check_data_sources();
 
   // ----------------------------------------------------------------------
+
+  if(!volt_synced && config.monitor_battery)
+  {
+    // waiting on voltages to be read
+    return;
+  }
 
   // check if cell volt is low and force update
 
@@ -951,6 +960,13 @@ bool check_system_triggers() // returns 1 if a event was triggered
     return 1;
   }
 
+  if(Fsave_config)
+  {
+    save_config();
+    Fsave_config = 0;
+    return 1;
+  }
+
   if(restart_trigger)
   {
     oled_clear();
@@ -1117,9 +1133,13 @@ bool check_data_sources()
     result = 1;
   }
 
-  if(cds_pos == 1 && millis() > timer_voltage)
+  if(cds_pos == 1 && config.monitor_battery && millis() > timer_voltage)
   {
-    check_voltage();
+    cells_update();
+
+    if(volt_synced)
+      check_cells();
+
     timer_voltage = millis() + 100;
     result = 1;
   }
@@ -1145,13 +1165,8 @@ bool check_data_sources()
   return result;
 }
 
-void check_voltage()
+void check_cells()
 {
-  if(! config.monitor_battery)
-    return;
-
-  cells_update();
-
   cell_volt_low = 10000;
   cell_volt_high = 0;
 

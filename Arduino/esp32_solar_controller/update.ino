@@ -31,7 +31,7 @@ void download_html_from_remote()
   if(download_index > asize-1)
   {
     config.download_html = 0;
-    save_config();
+    Fsave_config = 1;
     return;
   }
 
@@ -40,7 +40,7 @@ void download_html_from_remote()
   if(!ok)
   {
     config.download_html = 0;
-    save_config();
+    Fsave_config = 1;
     log_issue("Error fetching latest html files.");
   }
 
@@ -136,6 +136,7 @@ String check_for_update()
   return message;
 }
 
+uint8_t update_trys = 0;
 void do_update()
 {
   check_for_update();
@@ -148,6 +149,8 @@ void do_update()
     return;
   }
 
+  update_trys++;
+
   const String tmp_str = "Upgrade to " + String(remote_version);
   log_issue(tmp_str);
 
@@ -156,12 +159,13 @@ void do_update()
 
   oled_clear();
 
-  both_println(F("Update\nFirmware"));
+  both_println("Update\nFirmware\n" + String(update_trys));
 
   String url = String(config.pub_url) + String("/firmware.bin");
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(url);
 
+  config.download_html = 1;
 
   switch(ret)
   {
@@ -171,6 +175,13 @@ void do_update()
       config.download_html = 0;
       log_error_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
       Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+      config.download_html = 0;
+
+      if(update_trys < 20)
+        self_update = 1;  // retry
+      else
+        self_update = 0;
+
       break;
 
     case HTTP_UPDATE_NO_UPDATES:
@@ -183,7 +194,7 @@ void do_update()
       break;
   }
 
-  config.download_html = 1;
+
   save_config();
 
 }

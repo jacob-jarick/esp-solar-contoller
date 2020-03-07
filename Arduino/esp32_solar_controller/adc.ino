@@ -6,14 +6,12 @@ void cells_update()
 {
   read_cell_volts(cells_update_pos);
 
-  uint8_t pos_plus_8 = cells_update_pos + 8;
-
-  if(pos_plus_8 < config.cell_count)
-    read_cell_volts(pos_plus_8);
-
   cells_update_pos++;
-  if(cells_update_pos >= 8 || cells_update_pos >= config.cell_count)
+  if(cells_update_pos >= config.cell_count)
+  {
+    volt_synced = 1;
     cells_update_pos = 0;
+  }
 }
 
 
