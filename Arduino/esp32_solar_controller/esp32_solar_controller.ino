@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 43
+#define FW_VERSION 46
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -28,7 +28,9 @@ ESP32
 #include <ESPmDNS.h>
 
 #include <HTTPClient.h>
+
 #include <ESP32httpUpdate.h>
+// <ESP32httpUpdate.cpp line 172, modify timeout, http.setTimeout(60000);
 
 #include <ArduinoJson.h>
 
@@ -286,7 +288,7 @@ struct Sconfig
   bool flip_ipin;
   bool flip_cpin;
   bool auto_update;
-  bool wifi_highpower_on;
+//   bool wifi_highpower_on;
   bool i_enable;
   bool c_enable;
   bool day_is_timer;
@@ -729,7 +731,8 @@ unsigned long systick = 0;
 
 void loop()
 {
-  server.handleClient();
+  for(uint8_t i = 0; i < 3; i++)
+    server.handleClient();
 
   if(systick > millis())
     return;
@@ -1097,24 +1100,31 @@ bool check_system_timers()
 
 // ======================================================================================================================
 
+uint8_t cds_pos = 0;
 bool check_data_sources()
 {
+  cds_pos++;
+  if(cds_pos >= 3)
+    cds_pos = 0;
+
+
   bool result = 0;
-  if(millis() > timer_pgrid)
+
+  if(cds_pos == 0 && millis() > timer_pgrid)
   {
     check_grid();
     timer_pgrid = millis() + 1555;
     result = 1;
   }
 
-  if(millis() > timer_voltage)
+  if(cds_pos == 1 && millis() > timer_voltage)
   {
     check_voltage();
     timer_voltage = millis() + 100;
     result = 1;
   }
 
-  if(config.monitor_temp && millis() > timer_ntc10k)
+  if(cds_pos == 2 && config.monitor_temp && millis() > timer_ntc10k)
   {
     ntc_update();
     bool trigger_shutdown = 0;
@@ -1128,7 +1138,7 @@ bool check_data_sources()
     }
 
     high_temp_shutdown = trigger_shutdown;
-    timer_ntc10k = millis() + 300;
+    timer_ntc10k = millis() + 400;
     result = 1;
   }
 

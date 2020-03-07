@@ -156,16 +156,9 @@ void do_update()
 
   oled_clear();
 
-  config.download_html = 1;
-  save_config();
-
-  oled_clear();
   both_println(F("Update\nFirmware"));
 
-  String fwbin = "/firmware.bin";
-  String url = String(config.pub_url) + fwbin;
-
-//   WiFiClient client;
+  String url = String(config.pub_url) + String("/firmware.bin");
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(url);
 
@@ -176,12 +169,12 @@ void do_update()
       oled_clear();
       both_println(F("ERROR"));
       config.download_html = 0;
-      log_error_msg(ESPhttpUpdate.getLastError() + ESPhttpUpdate.getLastErrorString().c_str());
+      log_error_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
       Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
       break;
 
     case HTTP_UPDATE_NO_UPDATES:
-      Serial.println(F("NO_UPDATES"));
+      both_println(F("NO_UPDATES"));
       break;
 
     case HTTP_UPDATE_OK:
@@ -189,5 +182,9 @@ void do_update()
       both_println(F("OK"));
       break;
   }
+
+  config.download_html = 1;
+  save_config();
+
 }
 

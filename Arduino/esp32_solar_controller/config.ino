@@ -97,7 +97,7 @@ void save_config()
   doc["flip_ipin"] = (int)config.flip_ipin;
   doc["flip_cpin"] = (int)config.flip_cpin;
   doc["auto_update"] = (int)config.auto_update;
-  doc["wifi_highpower_on"] = (int)config.wifi_highpower_on;
+//   doc["wifi_highpower_on"] = (int)config.wifi_highpower_on;
   doc["i_enable"] = (int)config.i_enable;
   doc["c_enable"] = (int)config.c_enable;
   doc["day_is_timer"] = (int)config.day_is_timer;
@@ -281,7 +281,7 @@ bool load_config()
   config.flip_ipin = doc["flip_ipin"];
   config.flip_cpin = doc["flip_cpin"];
   config.auto_update = doc["auto_update"];
-  config.wifi_highpower_on = doc["wifi_highpower_on"];
+//   config.wifi_highpower_on = doc["wifi_highpower_on"];
   config.i_enable = doc["i_enable"];
   config.c_enable = doc["c_enable"];
   config.day_is_timer = doc["day_is_timer"];

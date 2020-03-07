@@ -151,15 +151,13 @@ void net_config()
   webpage += js_header();
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
-  webpage += js_radio_helper(F("wifi_highpower_on"), F("wifi_highpower_off"), config.wifi_highpower_on);
+//   webpage += js_radio_helper(F("wifi_highpower_on"), F("wifi_highpower_off"), config.wifi_highpower_on);
 
   webpage += js_helper(F("description"), String(config.description));
 
-  webpage += js_helper(F("wifi_ssid"), config.wifi_ssid1);
-  webpage += js_helper(F("wifi_pass"), config.wifi_pass1);
+  webpage += js_helper(F("wifi_ssid1"), config.wifi_ssid1);
+  webpage += js_helper(F("wifi_pass1"), config.wifi_pass1);
   webpage += js_helper(F("hostn"), String(config.hostn));
-
-  webpage += js_helper(F("inverter_url"), String(config.inverter_url));
 
   webpage += js_helper(F("wifi_ssid2"), config.wifi_ssid2);
   webpage += js_helper(F("wifi_pass2"), config.wifi_pass2);
@@ -391,8 +389,8 @@ void web_config_submit()
       else if (server.argName(i) == F("timer_enable"))
         config.day_is_timer = server.arg(i).toInt();
 
-      else if (server.argName(i) == F("wifi_highpower_on"))
-        config.wifi_highpower_on = server.arg(i).toInt();
+//       else if (server.argName(i) == F("wifi_highpower_on"))
+//         config.wifi_highpower_on = server.arg(i).toInt();
 
       else if (server.argName(i) == F("ntimer_enable"))
         config.night_is_timer = server.arg(i).toInt();
@@ -884,10 +882,10 @@ void sys_info()
   webpage += js_helper_innerhtml(F("fsfree"), fsfree());
 
 
-  if(config.wifi_highpower_on)
-    webpage += js_helper_innerhtml(F("wifi_mode"), F("High Power") );
-  else
-    webpage += js_helper_innerhtml(F("wifi_mode"), F("Low Power") );
+//   if(config.wifi_highpower_on)
+//     webpage += js_helper_innerhtml(F("wifi_mode"), F("High Power") );
+//   else
+//     webpage += js_helper_innerhtml(F("wifi_mode"), F("Low Power") );
 
   webpage += js_helper_innerhtml(F("wifi_sigs"), String(WiFi.RSSI()) + " dBm" );
 
