@@ -27,7 +27,7 @@ void cells_update()
 uint8_t ntc_update_pos = 0;
 void ntc_update()
 {
-  ntc10k_sensors[ntc_update_pos] = ntc10k_read_temp(ntc_update_pos);
+  ntc10k_read_temp(ntc_update_pos);
 
   ntc_update_pos++;
   if(ntc_update_pos >= config.ntc10k_count)
@@ -155,9 +155,9 @@ float ntc10k_read_temp(const byte sensor)
 
   temperature0 *= config.ntc_temp_mods[sensor];
 
-  temperature0 = dirty_average(temperature0, ntc10k_sensors[sensor], 3);
+  ntc10k_sensors[sensor] = dirty_average(ntc10k_sensors[sensor], temperature0, 3);
 
-  return temperature0;
+  return ntc10k_sensors[sensor];
 }
 
 // borrowed this code from: https://github.com/OSBSS/Thermistor_v2/blob/master/Thermistor_v2.ino

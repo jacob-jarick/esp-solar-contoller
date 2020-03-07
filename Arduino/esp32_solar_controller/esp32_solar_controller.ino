@@ -5,7 +5,7 @@ ESP32
 
 */
 
-#define FW_VERSION 41
+#define FW_VERSION 42
 
 #define DAVG_MAGIC_NUM -12345678
 
