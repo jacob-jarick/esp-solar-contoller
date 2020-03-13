@@ -1,7 +1,14 @@
 /*
-Arduino ide settings :
 
-ESP32
+Note I use esp32 doit dev kit v1.
+but the arduino IDE settings for this board seem to cause issues.
+
+so I configure the IDE to use:
+
+* WEMOS LOLIN32
+* Patition Scheme: Minimal SPIFFS, large app with OTA
+
+this seems to resolve OTA issues.
 
 */
 
@@ -55,7 +62,7 @@ SSD1306AsciiWire oled;
 Adafruit_ADS1115 ads;
 
 const adsGain_t ads_gain = GAIN_ONE;
-const float ads_mv = 0.125;
+const float ads_mv = 0.125 / 1000; // mv to volts
 
 //                                                                ADS1015  ADS1115
 //                                                                -------  -------
@@ -142,6 +149,7 @@ const String dottxt        = ".txt";
 
 const String html_config          = "/config" + dothtml;
 const String html_battery         = "/batconf" + dothtml;
+const String html_calibrate       = "/batcal" + dothtml;
 const String html_timer           = "/timer" + dothtml;
 const String html_cpconfig        = "/cpconfig" + dothtml;
 const String html_stats           = "/stats" + dothtml;
@@ -558,6 +566,8 @@ void setup()
   server.on("/battery_info", battery_info);
 
   server.on("/bms_raw_info", bms_raw_info);
+
+  server.on("/batcal", battery_calibrate);
 
   server.begin();
 

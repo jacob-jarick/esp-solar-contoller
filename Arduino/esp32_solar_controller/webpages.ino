@@ -270,6 +270,28 @@ void battery_info()
 }
 
 
+void battery_calibrate()
+{
+  String webpage =  get_file(html_calibrate);
+
+  webpage += js_header();
+
+  //   float vsum = 0;
+
+  for(uint8_t i = 0; i < config.cell_count; i++)
+  {
+    String tmp = "";
+//     function batcal_add_row(cell, voltage, modifier)
+    webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 4) + ", " + String(config.battery_volt_mod[i], 7) + ");\n";
+  }
+
+  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " Battery Info");
+
+  webpage += web_footer();
+
+  server.send(200, mime_html, webpage); // Send response
+}
+
 // advance config page
 void advance_config()
 {
@@ -324,7 +346,7 @@ void battery_config()
     String id_name = "bvm" + String(i+1);
     input_name += String(i + 1);
 
-    webpage += html_create_input(id_name, input_name, "20", String(config.battery_volt_mod[i], 16), ".");
+    webpage += html_create_input(id_name, input_name, "20", String(config.battery_volt_mod[i], 7), ".");
   }
 
   webpage += js_select_helper(F("cells_in_series"), String(config.cells_in_series) );
@@ -1369,13 +1391,13 @@ void port_info()
 
     webpage += "Cell Series Volts:\n";
     for(byte i = 0; i< config.cell_count; i++)
-      webpage += String(i+1) + " - " + String(cells_volts_real[i], 6) + "v\n";
+      webpage += String(i+1) + ") " + String(cells_volts_real[i], 6) + "v\n";
 
     webpage += "\n\n";
 
     webpage += "Cell Volts:\n\n";
     for(byte i = 0; i< config.cell_count; i++)
-      webpage += String(i+1) + " - " + String(cells_volts[i], 6) + "v\n";
+      webpage += String(i+1) + ") " + String(cells_volts[i], 6) + "v\n";
 
     webpage += "\n\n";
 

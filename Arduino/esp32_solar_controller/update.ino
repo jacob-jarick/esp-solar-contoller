@@ -3,7 +3,7 @@ void download_html_from_remote()
   if(!config.download_html)
     return;
 
-  const int asize = 20;
+  const int asize = 21;
   String dl_array[asize] =
   {
     html_config,
@@ -25,7 +25,8 @@ void download_html_from_remote()
     html_sys_info,
     html_upload_config,
     html_battery_info,
-    html_timer
+    html_timer,
+    html_calibrate
   };
 
   if(download_index > asize-1)
