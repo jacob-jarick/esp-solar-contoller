@@ -46,7 +46,6 @@ void download_html_from_remote()
   }
 
   return;
-
 }
 
 bool get_html_and_save(String filepath)

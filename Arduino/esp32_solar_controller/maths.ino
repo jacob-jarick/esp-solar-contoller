@@ -28,7 +28,26 @@ void bubbleSort(uint16_t a[], uint16_t size) {
 }
 
 
-float float_max(float a, float b)
+// max
+
+// if I understand my C++ right, you can define function names multiple times and it will send to the function matching the arguments...
+double m_max(double a, double b)
+{
+  if(a > b)
+    return a;
+
+  return b;
+}
+
+float m_max(float a, float b)
+{
+  if(a > b)
+    return a;
+
+  return b;
+}
+
+uint8_t m_max(uint8_t a, uint8_t b)
 {
   if(a > b)
     return a;

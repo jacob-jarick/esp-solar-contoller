@@ -39,12 +39,6 @@ int16_t adc_read(const uint8_t p)
   channel = p / 8;
   vp = p % 8;
 
-//   if(p>7)
-//   {
-//     channel = 1;
-//     vp = p - 8;
-//   }
-
   if(vp == 0)
   {
     addr_a = 0;

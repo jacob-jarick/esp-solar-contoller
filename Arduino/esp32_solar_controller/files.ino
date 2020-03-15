@@ -101,22 +101,10 @@ void setup_fs()
 {
   both_println(F("FS setup"));
 
-  if (!SD.exists(json_config_file.c_str() ) )
-  {
-    File f = SD.open(json_config_file.c_str());
-
-    Serial.print(F("FS TEST: "));
-    if (!f)
+  if(!ping_fs())
       Serial.println(F("FAIL"));
-    else
-      Serial.println(F("OK"));
-
-    f.close();
-  }
   else
-  {
     Serial.println(F("OK"));
-  }
 
   listDir();
 }
