@@ -187,7 +187,7 @@ void ntc10k_config()
     String id_name = "ntc_temp_mod" + String(i+1);
     input_name += String(i + 1);
 
-    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_mods[i], 16), ".");
+    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_mods[i], 7), ".");
   }
 
   for(int i = 0; i < count_ntc; i++)
@@ -196,7 +196,7 @@ void ntc10k_config()
     String id_name = "ntc_temp_max" + String(i+1);
     input_name += String(i + 1);
 
-    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_max[i], 16), ".");
+    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_max[i]), ".");
   }
 
   webpage += js_radio_helper(F("monitor_temp_1"), F("monitor_temp_0"), config.monitor_temp);
@@ -282,7 +282,7 @@ void battery_calibrate()
   {
     String tmp = "";
 //     function batcal_add_row(cell, voltage, modifier)
-    webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 4) + ", " + String(config.battery_volt_mod[i], 7) + ");\n";
+    webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 7) + ", " + String(config.battery_volt_mod[i], 7) + ");\n";
   }
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " Battery Info");
@@ -577,7 +577,7 @@ void web_config_submit()
           }
           else if (server.argName(i) == String("ntc_temp_max") + String(x+1) )
           {
-            config.ntc_temp_max[x] = server.arg(i).toFloat();
+            config.ntc_temp_max[x] = server.arg(i).toInt();
             skip2next = 1;
             break;
           }

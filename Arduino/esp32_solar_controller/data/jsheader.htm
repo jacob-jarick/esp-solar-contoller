@@ -48,11 +48,34 @@ function rsv(id1, id2, v)
 }
 
 
+function table_add_row(id, c1html, c2html, c3html)
+{
+  console.log("table_add_row('" +  id + "', '" + c1html + "', '" + c2html + "', '"+ c3html + "')");
+
+  var table = document.getElementById(id);
+  var row = table.insertRow(-1);
+  var cell1 = row.insertCell(0);
+
+  cell1.innerHTML = c1html
+
+  if (typeof c2html !== 'undefined')
+  {
+    var cell = row.insertCell(1);
+    cell.innerHTML = c2html;
+  }
+  if (typeof c3html !== 'undefined')
+  {
+    var cell = row.insertCell(2);
+    cell.innerHTML = c3html;
+  }
+}
+
+
 function batcal_add_row(cell, voltage, modifier)
 {
   console.log("batcal_add_row('" +  cell + "', '" + voltage + "', '" + modifier + "')");
 
-  var table = document.getElementById(id);
+  var table = document.getElementById('battery_table');
   var row = table.insertRow(-1);
 
   var cell1 = row.insertCell(0);
@@ -69,7 +92,7 @@ function batcal_add_row(cell, voltage, modifier)
 
   // volt new
   var cell4 = row.insertCell(3);
-  cell4.innerHTML = "<input id='bv" + cell + "' type=text name='bv" + cell + "' value='" + voltage + "'  onchange=\"battery_calc(cell)\" >";
+  cell4.innerHTML = "<input id='bv" + cell + "' type=text name='bv" + cell + "' value='" + voltage + "'  onchange=\"battery_calc("+ cell +")\" >";
 
   // mod new
   var cell5 = row.insertCell(4);

@@ -1,20 +1,20 @@
-     HEAD~0	5b6af3d update logic, adc, ports, save config optimization
-     HEAD~1	f2d9caa networking  fixes.
-     HEAD~2	4934ae5 adc battery fix
-     HEAD~3	e106133 ntc fix
-     HEAD~4	b71ed1b ntc fix
-     HEAD~5	b00a0b8 ntc work
-     HEAD~6	9d9d7c6 ntc stuff
-     HEAD~7	717445a i2c is buggy on latest board. slowed down bus speed
-     HEAD~8	81e38d0 consts
-     HEAD~9	87318ca update.ino - fix html loop if unable to fetch file
-    HEAD~10	649bf7f cleanup
-    HEAD~11	4741f13 fixes to support latest esp32 arduino release.
-    HEAD~12	eecb65c adc
-    HEAD~13	3300927 adc code, html examples
-    HEAD~14	d88c615 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-    HEAD~15	d92ead1 update code for ads1115.
-    HEAD~16	7bea4cb Update README.md
-    HEAD~17	efc784e Create esp32 board.png
-    HEAD~18	7625abe Update README.md
-    HEAD~19	413fbb0 Update README.md
+     HEAD~0	b549ee4 Update batcal.htm
+     HEAD~1	25c57e8 Update batcal.htm
+     HEAD~2	4b8a04e battery calibration
+     HEAD~3	5b6af3d update logic, adc, ports, save config optimization
+     HEAD~4	f2d9caa networking  fixes.
+     HEAD~5	4934ae5 adc battery fix
+     HEAD~6	e106133 ntc fix
+     HEAD~7	b71ed1b ntc fix
+     HEAD~8	b00a0b8 ntc work
+     HEAD~9	9d9d7c6 ntc stuff
+    HEAD~10	717445a i2c is buggy on latest board. slowed down bus speed
+    HEAD~11	81e38d0 consts
+    HEAD~12	87318ca update.ino - fix html loop if unable to fetch file
+    HEAD~13	649bf7f cleanup
+    HEAD~14	4741f13 fixes to support latest esp32 arduino release.
+    HEAD~15	eecb65c adc
+    HEAD~16	3300927 adc code, html examples
+    HEAD~17	d88c615 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~18	d92ead1 update code for ads1115.
+    HEAD~19	7bea4cb Update README.md

@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 48
+#define FW_VERSION 50
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -247,7 +247,7 @@ struct Sconfig
 
   double battery_volt_mod[count_cells];
 
-  float ntc_temp_max[count_ntc];
+  uint8_t ntc_temp_max[count_ntc];
 
   char hostn[stiny];
 
@@ -963,7 +963,8 @@ unsigned long boot_time = millis();
 
 bool check_system_triggers() // returns 1 if a event was triggered
 {
-  if(SDERROR || !ping_fs())
+//   if(SDERROR || !ping_fs())
+  if(SDERROR)
   {
     sd_setup(120);
     log_issue("SD Reconnected.");
