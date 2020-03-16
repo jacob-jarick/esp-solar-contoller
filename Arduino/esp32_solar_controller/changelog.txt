@@ -1,20 +1,20 @@
-     HEAD~0	a64a9f8 update html fix
-     HEAD~1	fbab117 24/7 mode added
-     HEAD~2	1739872 maths max, ping sd, night time logic
-     HEAD~3	df71c48 battery + temp
-     HEAD~4	b549ee4 Update batcal.htm
-     HEAD~5	25c57e8 Update batcal.htm
-     HEAD~6	4b8a04e battery calibration
-     HEAD~7	5b6af3d update logic, adc, ports, save config optimization
-     HEAD~8	f2d9caa networking  fixes.
-     HEAD~9	4934ae5 adc battery fix
-    HEAD~10	e106133 ntc fix
-    HEAD~11	b71ed1b ntc fix
-    HEAD~12	b00a0b8 ntc work
-    HEAD~13	9d9d7c6 ntc stuff
-    HEAD~14	717445a i2c is buggy on latest board. slowed down bus speed
-    HEAD~15	81e38d0 consts
-    HEAD~16	87318ca update.ino - fix html loop if unable to fetch file
-    HEAD~17	649bf7f cleanup
-    HEAD~18	4741f13 fixes to support latest esp32 arduino release.
-    HEAD~19	eecb65c adc
+     HEAD~0	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~1	a100849 Update esp32_solar_controller.ino
+     HEAD~2	115c792 images
+     HEAD~3	f98e2d7 updated ESP32 board
+     HEAD~4	7db6797 battery calibrate JS moved to battery page
+     HEAD~5	a64a9f8 update html fix
+     HEAD~6	fbab117 24/7 mode added
+     HEAD~7	1739872 maths max, ping sd, night time logic
+     HEAD~8	df71c48 battery + temp
+     HEAD~9	b549ee4 Update batcal.htm
+    HEAD~10	25c57e8 Update batcal.htm
+    HEAD~11	4b8a04e battery calibration
+    HEAD~12	5b6af3d update logic, adc, ports, save config optimization
+    HEAD~13	f2d9caa networking  fixes.
+    HEAD~14	4934ae5 adc battery fix
+    HEAD~15	e106133 ntc fix
+    HEAD~16	b71ed1b ntc fix
+    HEAD~17	b00a0b8 ntc work
+    HEAD~18	9d9d7c6 ntc stuff
+    HEAD~19	717445a i2c is buggy on latest board. slowed down bus speed
