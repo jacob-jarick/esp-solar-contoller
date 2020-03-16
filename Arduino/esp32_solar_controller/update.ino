@@ -3,6 +3,9 @@ void download_html_from_remote()
   if(!config.download_html)
     return;
 
+  if(self_update) // shouldnt happen BUUUT - avoid downloading new HTML while trying to do firmware updates (should happen after reboot)
+    return;
+
   const int asize = 21;
   String dl_array[asize] =
   {
@@ -166,36 +169,40 @@ void do_update()
   t_httpUpdate_return ret = ESPhttpUpdate.update(url);
 
   config.download_html = 1;
-
-  switch(ret)
-  {
-    case HTTP_UPDATE_FAILED:
-      oled_clear();
-      both_println(F("ERROR"));
-      config.download_html = 0;
-      log_error_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
-      Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-      config.download_html = 0;
-
-      if(update_trys < 20)
-        self_update = 1;  // retry
-      else
-        self_update = 0;
-
-      break;
-
-    case HTTP_UPDATE_NO_UPDATES:
-      both_println(F("NO_UPDATES"));
-      break;
-
-    case HTTP_UPDATE_OK:
-      oled_clear();
-      both_println(F("OK"));
-      break;
-  }
-
-
   save_config();
 
+  if(ret == HTTP_UPDATE_FAILED)
+  {
+    oled_clear();
+    both_println(F("ERROR"));
+    config.download_html = 0;
+    log_error_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
+    Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+    config.download_html = 0;
+
+    if(update_trys < 20)
+    {
+      self_update = 1;  // retry
+    }
+    else
+    {
+      config.download_html = 0;
+      save_config();
+      self_update = 0;
+    }
+  }
+  else if(ret == HTTP_UPDATE_NO_UPDATES)
+  {
+    config.download_html = 0;
+    save_config();
+    self_update = 0;
+
+    both_println(F("NO_UPDATES"));
+  }
+  else if (ret == HTTP_UPDATE_OK)
+  {
+    oled_clear();
+    both_println(F("OK"));
+  }
 }
 
