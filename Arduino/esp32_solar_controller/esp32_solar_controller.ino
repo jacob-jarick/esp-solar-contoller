@@ -1243,7 +1243,7 @@ void check_cells()
     battery_message = string_append_limit_size
     (
       battery_message,
-      battery_message = datetime_str(0, '/', ' ', ':') + frline(25) + tmp_msg,
+      battery_message = datetime_str(0, '/', ' ', ':') + "HV reconnect" + tmp_msg,
       size_battery_message
     );
   }
@@ -1255,7 +1255,7 @@ void check_cells()
     battery_message = string_append_limit_size
     (
       battery_message,
-     battery_message = now_str + frline(26) + tmp_msg,
+     battery_message = now_str + "HV disconnect" + tmp_msg,
       size_battery_message
     );
   }
@@ -1270,7 +1270,7 @@ void check_cells()
     battery_message = string_append_limit_size
     (
       battery_message,
-     now_str + frline(27)  + tmp_msg,
+     now_str + "LV reconnect"  + tmp_msg,
       size_battery_message
     );
   }
@@ -1283,7 +1283,7 @@ void check_cells()
     battery_message = string_append_limit_size
     (
       battery_message,
-     now_str + frline(28)  + tmp_msg,
+     now_str + "LV Shutdown"  + tmp_msg,
       size_battery_message
     );
   }
@@ -1571,7 +1571,7 @@ void modeset(byte m)
     while (1)
     {
       oled_clear();
-      both_println(frline(23));
+      both_println("BAD MODE");
       delay(1000);
     }
   }

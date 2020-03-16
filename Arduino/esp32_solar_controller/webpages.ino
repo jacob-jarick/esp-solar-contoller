@@ -939,7 +939,7 @@ void led_on()
   webpage += js_header();
 
   if(config.webc_mode)
-    webpage += js_helper_innerhtml(title_str, frline(7));
+    webpage += js_helper_innerhtml(title_str, "LED ON");
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
@@ -958,7 +958,7 @@ void led_off()
   webpage += js_header();
 
   if(config.webc_mode)
-    webpage += js_helper_innerhtml(title_str, frline(6) );
+    webpage += js_helper_innerhtml(title_str, "LED OFF" );
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
@@ -977,7 +977,7 @@ void led_toggle()
   webpage += js_header();
 
   if(config.webc_mode)
-    webpage += js_helper_innerhtml(title_str, frline(5) );
+    webpage += js_helper_innerhtml(title_str, "LED TOGGLE" );
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
@@ -996,7 +996,7 @@ void led_blink()
   webpage += js_header();
 
   if(config.webc_mode)
-    webpage += js_helper_innerhtml(title_str, frline(4) );
+    webpage += js_helper_innerhtml(title_str, "LED BLINK" );
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
@@ -1016,7 +1016,7 @@ void inverter_on()
 
   if(config.webc_mode)
   {
-    mode_reason = frline(1);
+    mode_reason = "inverter_on";
     webpage += js_helper_innerhtml(title_str, mode_reason);
 
   }
@@ -1029,7 +1029,6 @@ void inverter_on()
 
   if(config.webc_mode)
   {
-//     mode_reason = frline(1);
     low_voltage_shutdown = 0;
     inverter_off_time = 0;
     modeset(2);
@@ -1056,7 +1055,7 @@ void idle_on()
 
   if(config.webc_mode)
   {
-    mode_reason = frline(2);
+    mode_reason = "Idling";
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else
@@ -1081,7 +1080,7 @@ void charger_on()
 
   if(config.webc_mode)
   {
-    mode_reason = frline(3);
+    mode_reason = "Charger ON";
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else
