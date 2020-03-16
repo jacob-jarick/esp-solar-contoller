@@ -23,15 +23,6 @@
 
 
 <tr><td colspan=2><b>System Flags</b></td></tr>
-<tr><td colspan=2>note: changes take effect on reboot</td></tr>
-
-<tr>
-	<td>Rotate OLED 180</td>
-	<td>
-		<input id=rotate_oled1 type=radio name="rotate_oled" value=1> True
-		<input id=rotate_oled0 type=radio name="rotate_oled" value=0> False
-	</td>
-</tr>
 
 <tr>
 	<td>Average Phase Watts</td>
@@ -49,29 +40,20 @@
 	</td>
 </tr>
 
-<!--<tr>
-	<td>Dev Firmware</td>
-	<td>
-		<input id=dev_firmware1 type=radio name="dev_firmware" value=1> On
-		<input id=dev_firmware0 type=radio name="dev_firmware" value=0> Off
-	</td>
-</tr>-->
-
-<!-- CPU speed apparently needs to be set in code. -->
-
-<!--<tr>
-	<td>CPU Speed</td>
-	<td>
-		<input id=cpu_80 type=radio name="cpu_low_speed" value=1> 80Mhz
-		<input id=cpu_160 type=radio name="cpu_low_speed" value=0> 160Mhz
-	</td>
-</tr>-->
-
 <tr>
 	<td>Manual Mode Changes</td>
 	<td>
 		<input id=webc_mode_1 type=radio name="web_mode" value=1> Enable
 		<input id=webc_mode_0 type=radio name="web_mode" value=0> Disable
+	</td>
+</tr>
+
+<tr><td colspan=2>note: blow flags changes take effect on reboot</td></tr>
+<tr>
+	<td>Rotate OLED 180</td>
+	<td>
+		<input id=rotate_oled1 type=radio name="rotate_oled" value=1> True
+		<input id=rotate_oled0 type=radio name="rotate_oled" value=0> False
 	</td>
 </tr>
 
