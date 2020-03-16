@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 54
+#define FW_VERSION 55
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -839,13 +839,13 @@ void loop()
     // cooldown check
     if(inverter_off_time > millis())
     {
-      mode_reason += "Inverter Cooldown.\n";
+      mode_reason += "Night: Idle, Inverter Cooldown.\n";
       finv = 0;
     }
     // timer check
     else if (config.night_is_timer)
     {
-      mode_reason += "Night timer on\n";
+      mode_reason += "Night: timer\n";
       finv = 1;
     }
 
@@ -854,13 +854,13 @@ void loop()
     // DRAIN
     else if (phase_sum > config.night_watts)
     {
-      mode_reason += "phase_sum > night_watts\n";
+      mode_reason += "Night: Drain\n";
       finv = 1;
     }
     // IDLE
     else if (phase_sum < config.night_watts * -1 ) // turn off inverter
     {
-      mode_reason += "night: phase_sum < night_watts * -1\n";
+      mode_reason += "Night: IDLE\n";
       finv = 0;
     }
   }
@@ -868,7 +868,7 @@ void loop()
   // drain monitor battery check(s)
   if (config.i_enable && night_time && config.monitor_battery && low_voltage_shutdown)
   {
-    mode_reason += "Inverter - LV Shutdown\n";
+    mode_reason += "night: IDLE, LV Shutdown\n";
     finv = 0;
   }
 
@@ -882,25 +882,25 @@ void loop()
     // cooldown
     if(charger_off_time > millis()) // charger cooldown
     {
-      mode_reason += "charger cooldown\n";
+      mode_reason += "Day: charger cooldown\n";
       fchg = 0;
     }
     // timer
     else if (config.day_is_timer)
     {
-      mode_reason += "Day Timer\n";
+      mode_reason += "Day: Timer\n";
       fchg = 1;
     }
     // IDLE
     else if (phase_sum > 20)
     {
-      mode_reason += "chg, phase_sum > 20\n";
+      mode_reason += "Day: idle\n";
       fchg = 0;
     }
     // CHARGE
     else if (phase_sum < (config.day_watts * -1.0) )
     {
-      mode_reason += "CHARGE: day_watts > phase_sum\n";
+      mode_reason += "Day: Charge\n";
       fchg = 1;
     }
   }
@@ -912,19 +912,19 @@ void loop()
     // HV Shutdown
     if(charger_high_voltage_shutdown)
     {
-      mode_reason += "charger_high_voltage_shutdown\n";
+      mode_reason += "Day: Idle, HV\n";
       fchg = 0;
     }
     // Shutdown
     else if(cell_volt_high > config.battery_volt_max)
     {
-      mode_reason += "chg battery_volt_max\n";
+      mode_reason += "Day: Idle, battery full\n";
       fchg = 0;
     }
     // IDLE
     else if (phase_sum > 20)
     {
-      mode_reason += "CHG: phase_sum > 20\n";
+      mode_reason += "Day: Idle\n";
       fchg = 0;
     }
   }
@@ -950,7 +950,7 @@ void loop()
     (config.monitor_temp && high_temp_shutdown)
   )
   {
-    mode_reason += F("idle\n");
+    mode_reason += F("Idle\n");
     tmp_mode = 0;
   }
 
@@ -1532,6 +1532,15 @@ void modeset(byte m)
     }
   }
 
+  // if day and night time and swapping direct from one device to another, force a n Second idle in between
+  bool idle_forced = 0;
+  if(day_time && night_time && ((system_mode == 1 && m == 2) || (system_mode == 2 && m == 1)) )
+  {
+    idle_forced = 1;
+    m = 0;
+  }
+
+
   bool c_pinmode = 0;
   bool i_pinmode = 0;
 
@@ -1567,7 +1576,9 @@ void modeset(byte m)
     }
   }
 
-  if(system_mode == m)
+  if(idle_forced)
+    update_time = millis() + 20000;
+  else if(system_mode == m)
     update_time = millis() + 1000;
   else
   {
