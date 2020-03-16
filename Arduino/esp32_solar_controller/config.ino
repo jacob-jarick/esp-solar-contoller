@@ -134,6 +134,9 @@ void save_config()
   doc["webc_mode"] = (int)config.webc_mode;
   doc["led_status"] = (int)config.led_status;
 
+  doc["m247"] = (int)config.m247;
+//   m247
+
 
 
 
@@ -319,6 +322,8 @@ bool load_config()
 
   config.download_html = doc["download_html"];
   config.webc_mode = doc["webc_mode"];
+
+  config.m247 = doc["m247"];
 
   // LED
   config.led_status = doc["led_status"];

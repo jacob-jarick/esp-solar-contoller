@@ -89,6 +89,8 @@ void web_config()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
 
+  webpage += js_radio_helper(F("m247-1"), F("m247-0"), config.m247);
+
   webpage += js_helper(F("day_watts"), String(config.day_watts));
   webpage += js_select_helper(F("c_start_h"), String(config.c_start_h));
   webpage += js_select_helper(F("c_finish_h"), String(config.c_finish_h));
@@ -401,6 +403,10 @@ void web_config_submit()
 
       if (server.argName(i) == F("board_rev"))
         config.board_rev = server.arg(i).toInt();
+
+
+      else if (server.argName(i) == F("m247"))
+        config.m247 = server.arg(i).toInt();
 
       else if (server.argName(i) == F("c_enable"))
         config.c_enable = server.arg(i).toInt();

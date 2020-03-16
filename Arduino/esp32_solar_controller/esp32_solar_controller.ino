@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 51
+#define FW_VERSION 53
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -306,6 +306,8 @@ struct Sconfig
   bool night_is_timer;
   bool cells_in_series;
   bool monitor_battery;
+
+  bool m247;
 
   //
   int day_watts;

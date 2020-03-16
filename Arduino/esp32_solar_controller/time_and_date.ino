@@ -214,6 +214,13 @@ void set_daynight()
   night_time = 0;
   day_time = 0;
 
+  if(config.m247)
+  {
+    night_time = 1;
+    day_time = 1;
+    return;
+  }
+
   time_t timetmp = now();
   byte myhour = hour(timetmp);
 
