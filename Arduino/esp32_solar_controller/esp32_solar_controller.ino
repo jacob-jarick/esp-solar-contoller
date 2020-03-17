@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 56
+#define FW_VERSION 57
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -831,26 +831,39 @@ void loop()
     fchg = 1;
 
   // -------------------------------------------------------------------------
+  // IDLE checks
+
+  if
+    (
+      (!day_time && !night_time) || // not day or night
+      (!config.i_enable && !config.c_enable) ||   // both devices disabled
+      (!config.i_enable && night_time && !day_time) ||  // night time only and night time dev disabled
+      (!config.c_enable && day_time && !night_time) ||   // day time only and day time dev disabled
+      (config.monitor_temp && high_temp_shutdown)
+    )
+    {
+      mode_reason += F("Idle\n");
+      modeset(0);
+      return;
+    }
+  // -------------------------------------------------------------------------
   // Night Device
 
   // discharger
   if (config.i_enable && night_time)
   {
+    // LV check
+    if (config.monitor_battery && low_voltage_shutdown)
+    {
+      mode_reason += "night: IDLE, LV Shutdown\n";
+      finv = 0;
+    }
     // cooldown check
-    if(inverter_off_time > millis())
+    else if(inverter_off_time > millis())
     {
       mode_reason += "Night: Idle, Inverter Cooldown.\n";
       finv = 0;
     }
-    // timer check
-    else if (config.night_is_timer)
-    {
-      mode_reason += "Night: timer\n";
-      finv = 1;
-    }
-
-    // Regular night time logic
-
     // DRAIN
     else if (phase_sum > config.night_watts)
     {
@@ -863,13 +876,12 @@ void loop()
       mode_reason += "Night: IDLE\n";
       finv = 0;
     }
-  }
-
-  // drain monitor battery check(s)
-  if (config.i_enable && night_time && config.monitor_battery && low_voltage_shutdown)
-  {
-    mode_reason += "night: IDLE, LV Shutdown\n";
-    finv = 0;
+    // timer check
+    else if (config.night_is_timer)
+    {
+      mode_reason += "Night: timer\n";
+      finv = 1;
+    }
   }
 
 
@@ -941,18 +953,7 @@ void loop()
   // -------------------------------------------------------------------------
   // IDLE over rides
 
-  if
-  (
-    (!day_time && !night_time) || // not day or night
-    (!config.i_enable && !config.c_enable) ||   // both devices disabled
-    (!config.i_enable && night_time && !day_time) ||  // night time only and night time dev disabled
-    (!config.c_enable && day_time && !night_time) ||   // day time only and day time dev disabled
-    (config.monitor_temp && high_temp_shutdown)
-  )
-  {
-    mode_reason += F("Idle\n");
-    tmp_mode = 0;
-  }
+
 
 
   // SET MODE
@@ -1532,14 +1533,13 @@ void modeset(byte m)
     }
   }
 
-  // if day and night time and swapping direct from one device to another, force a n Second idle in between
+  // if swapping direct from one device to another, force a n Second idle in between
   bool idle_forced = 0;
-  if(day_time && night_time && ((system_mode == 1 && m == 2) || (system_mode == 2 && m == 1)) )
+  if( (system_mode == 1 && m == 2) || (system_mode == 2 && m == 1) )
   {
     idle_forced = 1;
     m = 0;
   }
-
 
   bool c_pinmode = 0;
   bool i_pinmode = 0;
@@ -1581,10 +1581,9 @@ void modeset(byte m)
   else if(system_mode == m)
     update_time = millis() + 1000;
   else
-  {
-    system_mode = m;
     calc_next_update();
-  }
+
+  system_mode = m;
 
   if(config.flip_cpin)
     c_pinmode = !c_pinmode;

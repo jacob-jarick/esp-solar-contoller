@@ -1,20 +1,20 @@
-     HEAD~0	4d68d5d remove all traces of frline
-     HEAD~1	d3f396c removing msg.txt
-     HEAD~2	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-     HEAD~3	a100849 Update esp32_solar_controller.ino
-     HEAD~4	115c792 images
-     HEAD~5	f98e2d7 updated ESP32 board
-     HEAD~6	7db6797 battery calibrate JS moved to battery page
-     HEAD~7	a64a9f8 update html fix
-     HEAD~8	fbab117 24/7 mode added
-     HEAD~9	1739872 maths max, ping sd, night time logic
-    HEAD~10	df71c48 battery + temp
-    HEAD~11	b549ee4 Update batcal.htm
-    HEAD~12	25c57e8 Update batcal.htm
-    HEAD~13	4b8a04e battery calibration
-    HEAD~14	5b6af3d update logic, adc, ports, save config optimization
-    HEAD~15	f2d9caa networking  fixes.
-    HEAD~16	4934ae5 adc battery fix
-    HEAD~17	e106133 ntc fix
-    HEAD~18	b71ed1b ntc fix
-    HEAD~19	b00a0b8 ntc work
+     HEAD~0	bc17be1 Update advance.htm
+     HEAD~1	1999f51 latest firmware
+     HEAD~2	4d68d5d remove all traces of frline
+     HEAD~3	d3f396c removing msg.txt
+     HEAD~4	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~5	a100849 Update esp32_solar_controller.ino
+     HEAD~6	115c792 images
+     HEAD~7	f98e2d7 updated ESP32 board
+     HEAD~8	7db6797 battery calibrate JS moved to battery page
+     HEAD~9	a64a9f8 update html fix
+    HEAD~10	fbab117 24/7 mode added
+    HEAD~11	1739872 maths max, ping sd, night time logic
+    HEAD~12	df71c48 battery + temp
+    HEAD~13	b549ee4 Update batcal.htm
+    HEAD~14	25c57e8 Update batcal.htm
+    HEAD~15	4b8a04e battery calibration
+    HEAD~16	5b6af3d update logic, adc, ports, save config optimization
+    HEAD~17	f2d9caa networking  fixes.
+    HEAD~18	4934ae5 adc battery fix
+    HEAD~19	e106133 ntc fix
