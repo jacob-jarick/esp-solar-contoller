@@ -788,12 +788,16 @@ void stats()
 
   if (!day_time && !night_time)
     mymode += F("ZZZ");
-  if (day_time && night_time)
+  else if (config.m247)
+    mymode += F("24/7");
+  else if (day_time && night_time)
     mymode += F("DAY + NIGHT");
-  if (!day_time && night_time)
+  else if (!day_time && night_time)
     mymode += F("NIGHT");
-  if (day_time && !night_time)
+  else if (day_time && !night_time)
     mymode += F("DAY");
+  else
+    mymode += "???";
 
   mymode += F("\n");
 
@@ -909,12 +913,6 @@ void sys_info()
   webpage += js_helper_innerhtml(F("flash_size"), fssize());
   webpage += js_helper_innerhtml(F("fsfree"), fsfree());
 
-
-//   if(config.wifi_highpower_on)
-//     webpage += js_helper_innerhtml(F("wifi_mode"), F("High Power") );
-//   else
-//     webpage += js_helper_innerhtml(F("wifi_mode"), F("Low Power") );
-
   webpage += js_helper_innerhtml(F("wifi_sigs"), String(WiFi.RSSI()) + " dBm" );
 
   tmps = WiFi.SSID(); tmps.trim();
@@ -1016,7 +1014,7 @@ void inverter_on()
 
   if(config.webc_mode)
   {
-    mode_reason = "inverter_on";
+    mode_reason = "Manual Inverter On";
     webpage += js_helper_innerhtml(title_str, mode_reason);
 
   }
@@ -1041,8 +1039,7 @@ String web_footer()
 
   webpage += get_file(html_footer);
 
-  webpage += F("</body>");
-  webpage += F("</html>");
+  webpage += F("</body>\n</html>");
 
   return webpage;
 }
@@ -1055,7 +1052,7 @@ void idle_on()
 
   if(config.webc_mode)
   {
-    mode_reason = "Idling";
+    mode_reason = "Manual Idle";
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else
@@ -1080,7 +1077,7 @@ void charger_on()
 
   if(config.webc_mode)
   {
-    mode_reason = "Charger ON";
+    mode_reason = "Manual Charger ON";
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else

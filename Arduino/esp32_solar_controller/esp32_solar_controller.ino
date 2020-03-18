@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 57
+#define FW_VERSION 59
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -196,9 +196,9 @@ byte system_mode = 0;
 
 // =================================================================================================
 
-uint8_t pin_asel1 = 27;
-uint8_t pin_asel2 = 14;
-uint8_t pin_asel3 = 26;
+const uint8_t pin_asel1 = 27;
+const uint8_t pin_asel2 = 14;
+const uint8_t pin_asel3 = 26;
 
 
 //------------------------------------------------------------------------------
@@ -330,7 +330,7 @@ Sconfig config;
 
 uint8_t pin_sd_reset = 15;
 
-void beep_helper(int freq, int tdelay)
+void beep_helper(const int freq, const int tdelay)
 {
   ledcWriteTone(0, freq);
   delay(tdelay);
@@ -668,7 +668,7 @@ bool wifi_start()
 
 }
 
-bool wifi_connect(char s[ssmall], char p[ssmall])
+bool wifi_connect(const char s[ssmall], const char p[ssmall])
 {
   if(!strlen(s) || !strlen(p))
   {
@@ -904,7 +904,7 @@ void loop()
       fchg = 1;
     }
     // IDLE
-    else if (phase_sum > 20)
+    else if (phase_sum > 50.0)
     {
       mode_reason += "Day: idle\n";
       fchg = 0;
@@ -915,29 +915,29 @@ void loop()
       mode_reason += "Day: Charge\n";
       fchg = 1;
     }
-  }
 
-  // monitoring voltage charger logic
-  // all these checks disable charger if conds met
-  if(config.c_enable && day_time && config.monitor_battery)
-  {
-    // HV Shutdown
-    if(charger_high_voltage_shutdown)
+    // monitoring voltage charger logic
+    // all these checks disable charger if conds met
+    if(config.monitor_battery)
     {
-      mode_reason += "Day: Idle, HV\n";
-      fchg = 0;
-    }
-    // Shutdown
-    else if(cell_volt_high > config.battery_volt_max)
-    {
-      mode_reason += "Day: Idle, battery full\n";
-      fchg = 0;
-    }
-    // IDLE
-    else if (phase_sum > 20)
-    {
-      mode_reason += "Day: Idle\n";
-      fchg = 0;
+      // HV Shutdown
+      if(charger_high_voltage_shutdown)
+      {
+        mode_reason += "Day: Idle, HV\n";
+        fchg = 0;
+      }
+      // Shutdown
+      else if(cell_volt_high > config.battery_volt_max)
+      {
+        mode_reason += "Day: Idle, battery full\n";
+        fchg = 0;
+      }
+      // IDLE
+      else if (phase_sum > 20)
+      {
+        mode_reason += "Day: Idle\n";
+        fchg = 0;
+      }
     }
   }
 
@@ -949,12 +949,6 @@ void loop()
     tmp_mode = 2;
   if(fchg)
     tmp_mode = 1;
-
-  // -------------------------------------------------------------------------
-  // IDLE over rides
-
-
-
 
   // SET MODE
   modeset(tmp_mode);
@@ -1195,8 +1189,6 @@ void check_cells()
   if((config.cells_in_series || config.cell_count == 1) && cells_volts_real[config.cell_count-1] < config.pack_volt_min)
     lv_trigger = 1;
 
-  String tmp_msg = "\n"; // cell voltages string
-
   // cell checks
   for(byte i = 0; i < config.cell_count; i++)
   {
@@ -1225,10 +1217,6 @@ void check_cells()
     {
       lv_recon_trigger = 0; // if cells below min voltage, keep shutdown (no night time drain)
     }
-
-    // cell voltages string
-    tmp_msg += "\t" + String(i+1) + ": " + cells_volts[i] + "v\n";
-
   }
   cell_volt_diff = cell_volt_high - cell_volt_low;
 
@@ -1241,24 +1229,14 @@ void check_cells()
   if(!hv_trigger && charger_high_voltage_shutdown && millis() > hv_shutdown_time)
   {
     charger_high_voltage_shutdown = 0;
-    battery_message = string_append_limit_size
-    (
-      battery_message,
-      battery_message = datetime_str(0, '/', ' ', ':') + "HV reconnect" + tmp_msg,
-      size_battery_message
-    );
+    log_issue("HV recon");
   }
 
   // HV disconnect check
   if(hv_trigger && !charger_high_voltage_shutdown)
   {
     charger_high_voltage_shutdown = 1;
-    battery_message = string_append_limit_size
-    (
-      battery_message,
-     battery_message = now_str + "HV disconnect" + tmp_msg,
-      size_battery_message
-    );
+    log_issue("HV shutdown");
   }
 
   // ----------------------------------------------------------------------
@@ -1268,12 +1246,7 @@ void check_cells()
   if(lv_recon_trigger && low_voltage_shutdown && millis() > lv_shutdown_time)
   {
     low_voltage_shutdown = 0;
-    battery_message = string_append_limit_size
-    (
-      battery_message,
-     now_str + "LV reconnect"  + tmp_msg,
-      size_battery_message
-    );
+    log_issue("LV reconnect");
   }
 
   // low_voltage_shutdown check
@@ -1281,12 +1254,7 @@ void check_cells()
   {
     low_voltage_shutdown = 1;
 
-    battery_message = string_append_limit_size
-    (
-      battery_message,
-     now_str + "LV Shutdown"  + tmp_msg,
-      size_battery_message
-    );
+    log_issue("LV Shutdown");
   }
 }
 
@@ -1315,7 +1283,7 @@ bool check_grid()
 // ======================================================================================================================
 
 char led_cur = 255;
-void set_led(char m)
+void set_led(const char m)
 {
   if(config.pin_led == OPT_DISABLE)
     return;
@@ -1576,14 +1544,19 @@ void modeset(byte m)
     }
   }
 
+  bool same_mode = 0;
+
+  if(system_mode == m)
+    same_mode = 1;
+
+  system_mode = m;
+
   if(idle_forced)
-    update_time = millis() + 20000;
-  else if(system_mode == m)
+    update_time = millis() + (random(5, 15) * 1000);
+  else if(same_mode)
     update_time = millis() + 1000;
   else
     calc_next_update();
-
-  system_mode = m;
 
   if(config.flip_cpin)
     c_pinmode = !c_pinmode;

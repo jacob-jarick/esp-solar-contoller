@@ -149,7 +149,7 @@ float ntc10k_read_temp(const byte sensor)
 // borrowed this code from: https://github.com/OSBSS/Thermistor_v2/blob/master/Thermistor_v2.ino
 
 // Get resistance -------------------------------------------//
-float resistance(int16_t adc)
+float resistance(const int16_t adc)
 {
   float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case
   float R = 10000/(65535/ADCvalue-1);  // 65535 refers to 16-bit number
@@ -157,7 +157,7 @@ float resistance(int16_t adc)
 }
 
 // Get temperature from Steinhart equation -------------------------------------------//
-float steinhart(float R)
+float steinhart(const float R)
 {
   float Rref = 10000.0;
   float A = 0.003354016;

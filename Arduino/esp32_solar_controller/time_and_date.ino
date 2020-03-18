@@ -132,7 +132,7 @@ String next_update_string(const byte len) // ; len = length
 // ds = date seperator char: / -
 // dts = date time seperator " "
 // ts = time seperator :
-String datetime_str(byte type, char ds, char dts, char ts)
+String datetime_str(const byte type, const char ds, const char dts, const char ts)
 {
   String res = "";
 

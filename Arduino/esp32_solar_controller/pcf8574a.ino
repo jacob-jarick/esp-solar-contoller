@@ -27,7 +27,7 @@ PCF8574 pcf8574_15(0x26);
 PCF8574 pcf8574_16(0x27);
 
 
-void pcf857a_setup(char p_addr)
+void pcf857a_setup(const char p_addr)
 {
   for (byte i = 0; i < 8; i++)
   {
@@ -76,7 +76,7 @@ void ports_off()
 }
 
 
-void pcf857a_write_state(char addr, byte pin, bool state)
+void pcf857a_write_state(const char addr, const byte pin, const bool state)
 {
   if(!addr)
     return;
@@ -116,12 +116,12 @@ void pcf857a_write_state(char addr, byte pin, bool state)
     pcf8574_16.digitalWrite(pin, state);
 }
 
-void port_on(byte p)
+void port_on(const byte p)
 {
   pcf857a_write_state(config.pcf857a_addr, p, 0);
 }
 
-void battery_log(String msg)
+void battery_log(const String msg)
 {
   battery_message = string_append_limit_size
   (

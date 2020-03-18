@@ -15,7 +15,7 @@ double dirty_average(const double oldv, const double newv, const byte count)
   return result;
 }
 
-void bubbleSort(uint16_t a[], uint16_t size) {
+void bubbleSort(uint16_t a[], const uint16_t size) {
   for(uint16_t i=0; i<(size-1); i++) {
     for(uint16_t o=0; o<(size-(i+1)); o++) {
       if(a[o] > a[o+1]) {
@@ -31,7 +31,7 @@ void bubbleSort(uint16_t a[], uint16_t size) {
 // max
 
 // if I understand my C++ right, you can define function names multiple times and it will send to the function matching the arguments...
-double m_max(double a, double b)
+double m_max(const double a, const double b)
 {
   if(a > b)
     return a;
@@ -39,7 +39,7 @@ double m_max(double a, double b)
   return b;
 }
 
-float m_max(float a, float b)
+float m_max(const float a, const float b)
 {
   if(a > b)
     return a;
@@ -47,7 +47,7 @@ float m_max(float a, float b)
   return b;
 }
 
-uint8_t m_max(uint8_t a, uint8_t b)
+uint8_t m_max(const uint8_t a, const uint8_t b)
 {
   if(a > b)
     return a;
