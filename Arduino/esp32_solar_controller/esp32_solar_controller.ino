@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 59
+#define FW_VERSION 60
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -1554,7 +1554,7 @@ void modeset(byte m)
   if(idle_forced)
     update_time = millis() + (random(5, 15) * 1000);
   else if(same_mode)
-    update_time = millis() + 1000;
+    update_time = millis() + (1000 * random(1, 10));
   else
     calc_next_update();
 

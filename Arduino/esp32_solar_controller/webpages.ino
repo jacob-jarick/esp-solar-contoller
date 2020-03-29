@@ -748,25 +748,6 @@ String fssize()
   return tmp;
 }
 
-String fsfree()
-{
-  return String("ESP32 TODO");
-  /*
-  FSInfo fs_info;
-  SPIFFS.info(fs_info);
-
-  uint32_t fspace = fs_info.totalBytes - fs_info.usedBytes;
-
-  String result = "Size: ";
-
-  result += String(fs_info.totalBytes/1024) + "Kb";
-
-  result += ", Free: " + String(fspace/1024) + " Kb";
-
-  return result;
-  */
-}
-
 void stats()
 {
   String tmps;
@@ -911,7 +892,6 @@ void sys_info()
   webpage += js_helper_innerhtml(F("uptime"), myuptime);
 
   webpage += js_helper_innerhtml(F("flash_size"), fssize());
-  webpage += js_helper_innerhtml(F("fsfree"), fsfree());
 
   webpage += js_helper_innerhtml(F("wifi_sigs"), String(WiFi.RSSI()) + " dBm" );
 
