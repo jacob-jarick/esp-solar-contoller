@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 60
+#define FW_VERSION 61
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -282,7 +282,6 @@ struct Sconfig
   // device addresses
 
   char oled_addr;
-  char pcf857a_addr;
 
   // bools
 
@@ -448,14 +447,6 @@ void setup()
     oled_println(String(FW_VERSION));
 
     oled_clear();
-
-    if(config.pcf857a_addr)
-    {
-      both_print("port setup 0x" + String(config.pcf857a_addr, HEX));
-      pcf857a_setup(config.pcf857a_addr);
-      oled_clear();
-    }
-
 
     ads.setGain(ads_gain);
 //     ads.begin(); // not required I believe, may trigger i2c restart
@@ -776,7 +767,7 @@ void loop()
   if(config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_over)
   {
     mode_reason = "cell over volt. force IDLE.";
-    battery_log(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
+    log_error_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 
     modeset(0);
@@ -789,7 +780,7 @@ void loop()
   if(config.monitor_battery && system_mode == 2 && cell_volt_low <= config.battery_volt_min)
   {
     mode_reason = "Cell under volt, force IDLE";
-    battery_log(mode_reason  + "\n");
+    log_error_msg(mode_reason  + "\n");
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 
     modeset(0);
@@ -1552,9 +1543,9 @@ void modeset(byte m)
   system_mode = m;
 
   if(idle_forced)
-    update_time = millis() + (random(5, 15) * 1000);
+    update_time = millis() + random(5000, 15000); // 5 - 15 secs
   else if(same_mode)
-    update_time = millis() + (1000 * random(1, 10));
+    update_time = millis() + random(500, 7000); // 0.5 to x secs
   else
     calc_next_update();
 
@@ -1563,18 +1554,12 @@ void modeset(byte m)
   if(config.flip_ipin)
     i_pinmode = !i_pinmode;
 
-  if(config.pcf857a_addr != 0)
-  {
-    pcf857a_write_state(config.pcf857a_addr, 0, !c_pinmode);
-    pcf857a_write_state(config.pcf857a_addr, 1, !i_pinmode);
-  }
-  else
-  {
-    if(config.pin_charger != OPT_DISABLE)
-      digitalWrite(config.pin_charger, c_pinmode);
 
-    if(config.pin_inverter != OPT_DISABLE)
-      digitalWrite(config.pin_inverter, i_pinmode);
-  }
+  // set pin modes and return
+  if(config.pin_charger != OPT_DISABLE)
+    digitalWrite(config.pin_charger, c_pinmode);
+
+  if(config.pin_inverter != OPT_DISABLE)
+    digitalWrite(config.pin_inverter, i_pinmode);
 }
 

@@ -158,7 +158,6 @@ void do_update()
   log_issue(tmp_str);
 
   modeset(0);
-  ports_off();
 
   oled_clear();
 

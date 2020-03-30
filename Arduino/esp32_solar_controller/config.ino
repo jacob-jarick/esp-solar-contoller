@@ -80,7 +80,6 @@ void save_config()
   // i2c dev char addresses
 
   doc["oled_addr"] = config.oled_addr;
-  doc["pcf857a_addr"] = config.pcf857a_addr;
 
   // bools
 
@@ -262,7 +261,6 @@ bool load_config()
   // i2c dev addresses
 
   config.oled_addr = doc["oled_addr"];
-  config.pcf857a_addr = doc["pcf857a_addr"];
 
   // Fronius
 

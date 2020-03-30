@@ -618,9 +618,6 @@ void web_config_submit()
       else if (server.argName(i) == F("ntc10k_count"))
         config.ntc10k_count = server.arg(i).toInt();
 
-      else if (server.argName(i) == F("pcf857a_addr"))
-        config.pcf857a_addr = server.arg(i).toInt();
-
       // latest
 
       // System Passwords
@@ -1167,9 +1164,6 @@ void port_config()
   webpage += js_radio_helper(F("blink_led_on"), F("blink_led_off"), config.blink_led_default);
   webpage += js_radio_helper(F("led_status_on"), F("led_status_off"), config.led_status);
 
-  // port module
-  webpage += js_select_helper(F("port_module_addr"), String(config.pcf857a_addr, DEC));
-
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1207,13 +1201,6 @@ void port_cfg_submit()
         config.led_status = server.arg(i).toInt();
       else if (server.argName(i) == F("blink_led"))
         config.blink_led_default = server.arg(i).toInt();
-      else if (server.argName(i) == F("port_module_addr"))
-        config.pcf857a_addr = server.arg(i).toInt();
-//       else
-//       {
-//         if(serial_on)
-//           Serial.println(F("Unknown arg"));
-//       }
     }
 
     save_config();
