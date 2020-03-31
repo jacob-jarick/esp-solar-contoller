@@ -12,7 +12,7 @@ String get_file(const String fn)
     oled_clear();
     oled_println("get_file" + fn + "\nfailed.");
     Serial.println("get_file '" + fn + "' does not exist/ open failed.");
-    SDERROR = 1;
+    flags.sdcard_read_error = 1;
     return contents;
   }
 
@@ -32,7 +32,7 @@ void null_file(const String fname)
   {
     oled_println(F("fopen failed"));
     Serial.println("null_file '" + fname + "'fopen failed");
-    SDERROR = 1;
+    flags.sdcard_read_error = 1;
     return;
   }
 
@@ -49,7 +49,7 @@ void file_limit_size(const String fname, const int bsize)
   {
     oled_println(F("fopen failed"));
     Serial.println("file_limit_size '" + fname + "'fopen failed");
-//     SDERROR = 1;
+//     flags.sdcard_read_error = 1;
     return;
   }
 
@@ -70,7 +70,7 @@ void log_issue(const String txt)
   {
     oled_println(F("fopen failed"));
     Serial.println("log_issue '" + txt_log_system + "'fopen failed");
-    SDERROR = 1;
+    flags.sdcard_read_error = 1;
     return;
   }
 
@@ -93,7 +93,7 @@ bool ping_fs()
     return 1;
   }
 
-  SDERROR = 1;
+  flags.sdcard_read_error = 1;
   return 0;
 }
 
@@ -141,4 +141,63 @@ void listDir()
     }
     file = root.openNextFile();
   }
+}
+
+
+void sd_setup(int tone)
+{
+  int toneinc = 45;
+
+  Serial.println("Mounting SD Card");
+
+  pinMode(23,INPUT_PULLUP); // SDCard pin (required)
+
+  SD.end();
+
+  while(1)
+  {
+    beep_helper(tone, 250);
+    if(SD.begin())
+    {
+      flags.sdcard_read_error = 0;
+      Serial.println("Card Mounted");
+      tone += toneinc; beep_helper(tone, 250);
+      delay(250);
+      tone += toneinc; beep_helper(tone, 250);
+      break;
+    }
+
+    Serial.println("Card Mount Failed");
+
+    delay(3000);
+  }
+
+  uint8_t cardType = SD.cardType();
+
+  if(cardType == CARD_NONE)
+  {
+    Serial.println("No SD card attached");
+    //     return;
+  }
+
+  Serial.print("SD Card Type: ");
+  if(cardType == CARD_MMC){
+    Serial.println("MMC");
+  } else if(cardType == CARD_SD){
+    Serial.println("SDSC");
+  } else if(cardType == CARD_SDHC){
+    Serial.println("SDHC");
+  } else {
+    Serial.println("UNKNOWN");
+  }
+
+  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
+  Serial.printf("SD Card Size: %lluMB\n", cardSize);
+
+
+  if(!SD.exists(txt_log_system.c_str() ) )
+    log_issue("New Log.");
+
+  tone += toneinc; beep_helper(tone, 250);
+  //   setup_fs();
 }

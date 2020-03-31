@@ -59,7 +59,7 @@ void force_ntp_sync()
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
-  timer_ntp_sync = 0;
+  timers.ntp_sync = 0;
 }
 
 
@@ -1001,7 +1001,7 @@ void inverter_on()
   if(config.webc_mode)
   {
     flags.shutdown_lvolt = 0;
-    inverter_off_time = 0;
+    timers.inverter_off = 0;
     modeset(2);
   }
 }
@@ -1063,7 +1063,7 @@ void charger_on()
   if(config.webc_mode)
   {
     flags.shutdown_hvolt = 0;
-    charger_off_time = 0;
+    timers.charger_off = 0;
     modeset(1);
   }
 }
@@ -1085,9 +1085,9 @@ void force_refresh()
 
   if(config.webc_mode)
   {
-    update_time = 0;
-    timer_pgrid = 0;
-    timer_voltage = 0;
+    timers.update_time = 0;
+    timers.pgrid = 0;
+    timers.voltage = 0;
     sync_time();
   }
 }
@@ -1367,13 +1367,13 @@ void port_info()
     webpage += "\n\n";
 
     webpage += "LV Shutdown: ";
-    if(millis() > lv_shutdown_time)
+    if(millis() > timers.lv_shutdown)
       webpage += "False";
     else
       webpage += "True";
 
     webpage += "\nHV Shutdown: ";
-    if(millis() > hv_shutdown_time)
+    if(millis() > timers.hv_shutdown)
       webpage += "False";
     else
       webpage += "True";

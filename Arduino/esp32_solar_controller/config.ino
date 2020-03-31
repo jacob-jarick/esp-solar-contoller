@@ -188,7 +188,7 @@ bool load_config()
 
     Serial.println("load_config '" + json_config_file + "'fopen failed");
 
-    SDERROR = 1;
+    flags.sdcard_read_error = 1;
     return 0;
   }
 

@@ -23,7 +23,7 @@ String get_payload(const String url)
   {
     if (httpCode == HTTP_CODE_OK)
     {
-      time_since_check = millis();
+      timers.pgrid_last_update = millis();
       payload = http.getString();
 
 //       Serial.print("get OK: ");
@@ -74,7 +74,7 @@ bool update_p_grid()
   }
 
   // main url - inverter_url
-  if(use_fallback < millis())
+  if(timers.use_fallback < millis())
   {
     payload = get_payload(String(config.inverter_url));
 
@@ -94,7 +94,7 @@ bool update_p_grid()
   }
 
   if(!check)
-    use_fallback = millis() + (10 * 1000);
+    timers.use_fallback = millis() + (10 * 1000);
 
   // push url (fallback)
   if(!check && strlen(config.inverter_push_url))
@@ -129,7 +129,7 @@ bool update_p_grid()
     String tmp_str = datetime_str(0, '/', ' ', ':') +  String(F(" - JSON: ")) + error2.c_str() + String("\n");
     error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
 
-    use_fallback = millis() + (5 * 1000);
+    timers.use_fallback = millis() + (5 * 1000);
     error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - JSON Decode Error\n"), size_error_msgs);
 
     return 0;

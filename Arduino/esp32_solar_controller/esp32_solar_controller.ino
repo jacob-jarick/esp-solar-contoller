@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 62
+#define FW_VERSION 63
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -87,32 +87,34 @@ WiFiUDP udp;
 //------------------------------------------------------------------------------
 // timers
 
-unsigned long update_time = 0;
-unsigned long time_since_check = 0;
-unsigned long last_update = 0;
-unsigned long use_fallback = 0;
+struct SysTimers
+{
+  unsigned long update_time = 0;
+  unsigned long pgrid_last_update = 0;
+  unsigned long use_fallback = 0;
 
-unsigned long lv_shutdown_time = 0;
-unsigned long hv_shutdown_time = 0;
+  unsigned long lv_shutdown = 0;
+  unsigned long hv_shutdown = 0;
 
-unsigned long charger_off_time = 0;
-unsigned long inverter_off_time = 0;
+  unsigned long charger_off = 0;
+  unsigned long inverter_off = 0;
 
-unsigned long timer_pgrid = 0;
-unsigned long timer_voltage = 0;
-unsigned long timer_ntc10k = 0;
+  unsigned long pgrid = 0;
+  unsigned long voltage = 0;
+  unsigned long ntc10k = 0;
 
-unsigned long timer_read_button = 0;
-unsigned long timer_update_check = 0;
-unsigned long timer_ntp_sync = 0;
-unsigned long timer_oled = 0;
-unsigned long timer_serial = 0;
+  unsigned long read_button = 0;
+  unsigned long update_check = 0;
+  unsigned long ntp_sync = 0;
+  unsigned long oled = 0;
 
-unsigned long timer_led = 0;
+  unsigned long led = 0;
+};
 
-
+SysTimers timers;
 
 //------------------------------------------------------------------------------
+// cell voltages & ntc
 
 double cells_volts[16] = {DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM};
 double cells_volts_real[16] = {DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM};
@@ -315,128 +317,32 @@ Sconfig config;
 //------------------------------------------------------------------------------
 // FLAGS
 
-/*
-
-bool restart_trigger = 0;
-bool ap_mode = 0;
-bool self_update = 0;
-bool time_synced = 0;
-bool night_time = 0;
-bool day_time = 0;
-bool low_voltage_shutdown = 0;
-bool charger_high_voltage_shutdown = 0;
-bool high_temp_shutdown = 0;
-bool found_update = 0;
-
-bool Fsave_config = 0;
-
-*/
-
 // group system flags into 1 structure for easy naming.
 struct SysFlags
 {
 
-  bool restart;
-  bool access_point;
-  bool update_self;
-  bool time_synced;
-  bool night;
-  bool day;
-  bool shutdown_lvolt;
-  bool shutdown_hvolt;
-  bool shutdown_htemp;
-  bool update_found;
+  bool restart = 0;
+  bool access_point = 0;
+  bool update_self = 0;
+  bool time_synced = 0;
+  bool night = 0;
+  bool day = 0;
+  bool shutdown_lvolt = 0;
+  bool shutdown_hvolt = 0;
+  bool shutdown_htemp = 0;
+  bool update_found = 0;
 
-  bool save_config;
+  bool save_config = 0;
+
+  bool sdcard_read_error = 0;
 };
 
 SysFlags flags;
 
 // =================================================================================================
 
-uint8_t pin_sd_reset = 15;
-
-void beep_helper(const int freq, const int tdelay)
-{
-  ledcWriteTone(0, freq);
-  delay(tdelay);
-  ledcWriteTone(0, 0);
-}
-
-bool SDERROR = 0;
-void sd_setup(int tone)
-{
-  int toneinc = 45;
-
-  Serial.println("Mounting SD Card");
-
-  pinMode(23,INPUT_PULLUP); // SDCard pin (required)
-
-  SD.end();
-
-  while(1)
-  {
-    beep_helper(tone, 250);
-    if(SD.begin())
-    {
-      SDERROR = 0;
-      Serial.println("Card Mounted");
-      tone += toneinc; beep_helper(tone, 250);
-      delay(250);
-      tone += toneinc; beep_helper(tone, 250);
-      break;
-    }
-
-    Serial.println("Card Mount Failed");
-
-    delay(3000);
-  }
-
-  uint8_t cardType = SD.cardType();
-
-  if(cardType == CARD_NONE)
-  {
-    Serial.println("No SD card attached");
-    //     return;
-  }
-
-  Serial.print("SD Card Type: ");
-  if(cardType == CARD_MMC){
-    Serial.println("MMC");
-  } else if(cardType == CARD_SD){
-    Serial.println("SDSC");
-  } else if(cardType == CARD_SDHC){
-    Serial.println("SDHC");
-  } else {
-    Serial.println("UNKNOWN");
-  }
-
-  uint64_t cardSize = SD.cardSize() / (1024 * 1024);
-  Serial.printf("SD Card Size: %lluMB\n", cardSize);
-
-
-  if(!SD.exists(txt_log_system.c_str() ) )
-    log_issue("New Log.");
-
-  tone += toneinc; beep_helper(tone, 250);
-//   setup_fs();
-}
-
 void setup()
 {
-  flags.restart = 0;
-  flags.access_point = 0;
-  flags.update_self = 0;
-  flags.time_synced = 0;
-  flags.day = 0;
-  flags.shutdown_lvolt = 0;
-  flags.shutdown_hvolt = 0;
-  flags.shutdown_htemp = 0;
-  flags.update_found = 0;
-  flags.save_config = 0;
-
-  //
-
   int toneinc = 45;
   int tone = 90;
   ledcSetup(0, 1000, 8);
@@ -647,124 +553,6 @@ void set_pins()
 }
 
 // =================================================================================================================
-// Wifi Functions
-// =================================================================================================================
-
-bool ap_start()
-{
-  /* You can remove the password parameter if you want the AP to be open. */
-//   WiFi.setSleepMode(WIFI_NONE_SLEEP); // always put AP in high power mode
-
-  WiFi.softAP("SolarAP");
-
-  flags.access_point = 1;
-  return 1;
-}
-
-bool wifi_start()
-{
-  if (flags.access_point)
-  {
-    Serial.println("wifi_start: AP Mode");
-    return 0;
-  }
-
-  if (WiFi.status() == WL_CONNECTED)
-    return 1;
-
-  WiFi.persistent( false ); // dont save wifi settings
-  WiFi.mode(WIFI_STA);
-//   WiFi.setSleepMode(WIFI_NONE_SLEEP);
-
-
-//   if(config.wifi_highpower_on)
-//   {
-//     WiFi.setSleepMode(WIFI_NONE_SLEEP); // enable if wifi is buggy
-//   }
-
-  Serial.println("wifi_start:, " + String(config.wifi_ssid1) );
-  if(wifi_connect(config.wifi_ssid1, config.wifi_pass1) )
-    return 1;
-
-  // fallback
-  if(wifi_connect(config.wifi_ssid2, config.wifi_pass2))
-    return 1;
-
-  // hard coded fallback
-  Serial.println("wifi_start: using hardcoded wifi");
-  if(wifi_connect((char*)"wififallback", (char*)"password") )
-    return 1;
-
-  return 0;
-
-}
-
-bool wifi_connect(const char s[ssmall], const char p[ssmall])
-{
-  if(!strlen(s) || !strlen(p))
-  {
-    Serial.println("wifi_connect blank ssid/ pass");
-    return 0;
-  }
-
-  Serial.println("wifi_connect SSID: " + String(s) + ", Pass: " + String(p) );
-
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(s, p);
-  //   WiFi.hostname(config.hostn);
-
-  int recon = 0;
-
-  Serial.print("Wifi Connect: " + String(s));
-
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    if (recon > 150)
-    {
-      both_println(F("Wifi Fail"));
-      return 0;
-    }
-
-    recon++;
-
-    if(config.pin_led != OPT_DISABLE)
-      set_led(3);
-
-    Serial.print(F("."));
-
-    if(oled_enabled())
-    {
-      oled_clear();
-      oled_set2X();
-      oled_println(F("Wifi\nConnect"));
-      oled_set1X();
-      both_println(String(s) + " " + String(recon) );
-      oled_set2X();
-
-      // spinner
-      if (recon % 4 == 0)
-        oled_println(F("\\"));
-      else if (recon % 4 == 1)
-        oled_println(F("|"));
-      else if (recon % 4 == 2)
-        oled_println(F("/"));
-      else if (recon % 4 == 3)
-        oled_println(F("-"));
-    }
-    delay(50);
-  }
-  oled_clear();
-  both_println(F("WiFi OK"));
-  both_print_ip();
-
-  set_led(config.led_status);
-
-  //   WiFi.hostname(config.hostn);
-
-  return 1;
-}
-
-// =================================================================================================================
 // Main Loop
 // =================================================================================================================
 
@@ -830,10 +618,9 @@ void loop()
 
 
   // finish loop unless its time to update
-  if (update_time > millis())
+  if (timers.update_time > millis())
     return;
 
-  last_update = millis();
   mode_reason = datetime_str(0, '/', ' ', ':') + " ";
 
   // ----------------------------------------------------------------------
@@ -890,7 +677,7 @@ void loop()
       finv = 0;
     }
     // cooldown check
-    else if(inverter_off_time > millis())
+    else if(timers.inverter_off > millis())
     {
       mode_reason += "Night: Idle, Inverter Cooldown.\n";
       finv = 0;
@@ -923,7 +710,7 @@ void loop()
   if (config.c_enable && flags.day)
   {
     // cooldown
-    if(charger_off_time > millis()) // charger cooldown
+    if(timers.charger_off > millis()) // charger cooldown
     {
       mode_reason += "Day: charger cooldown\n";
       fchg = 0;
@@ -991,8 +778,8 @@ unsigned long boot_time = millis();
 
 bool check_system_triggers() // returns 1 if a event was triggered
 {
-//   if(SDERROR || !ping_fs())
-  if(SDERROR)
+//   if(flags.sdcard_read_error || !ping_fs())
+  if(flags.sdcard_read_error)
   {
     sd_setup(120);
     log_issue("SD Reconnected.");
@@ -1062,7 +849,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
   (
     !flags.access_point &&
     !config.button_timer_mode &&
-    millis() - time_since_check > check_timeout
+    millis() - timers.pgrid_last_update > check_timeout
   )
   {
     oled_clear();
@@ -1092,60 +879,60 @@ bool check_system_timers()
 {
   bool result = 0;
 
-  if((config.blink_led || config.blink_led_default) && timer_led < millis())
+  if((config.blink_led || config.blink_led_default) && timers.led < millis())
   {
-    timer_led = millis() + 500;
+    timers.led = millis() + 500;
     set_led(3);
   }
 
   // OLED timer
-  if(millis() > timer_oled)
+  if(millis() > timers.oled)
   {
-    if(timer_oled > 0)
+    if(timers.oled > 0)
       oled_print_info();
 
     result = 1;
-    timer_oled = millis() + 1750;
+    timers.oled = millis() + 1750;
   }
 
   // read button timer
-  if(config.button_timer_mode && millis() > timer_read_button)
+  if(config.button_timer_mode && millis() > timers.read_button)
   {
-    if(timer_read_button > 0 && digitalRead(config.pin_flash) == LOW)
+    if(timers.read_button > 0 && digitalRead(config.pin_flash) == LOW)
     {
       modeset(1);
       result = 1;
     }
 
-    timer_read_button = millis() + 333; // every 0.3 sec
+    timers.read_button = millis() + 333; // every 0.3 sec
   }
 
   // auto update timer
-  if(config.auto_update && millis() > timer_update_check)
+  if(config.auto_update && millis() > timers.update_check)
   {
-    if(timer_update_check > 0) // dont trigger on fist boot
+    if(timers.update_check > 0) // dont trigger on fist boot
     {
       oled_clear();
       oled_set2X();
       both_println("Auto\nUpdate");
-      Serial.println(timer_update_check);
+      Serial.println(timers.update_check);
 
       do_update();
     }
 
-    timer_update_check = millis() + 86400000; // every 24h
+    timers.update_check = millis() + 86400000; // every 24h
     result = 1;
   }
 
   // NTP sync timer
-  if(!flags.access_point && millis() > timer_ntp_sync)
+  if(!flags.access_point && millis() > timers.ntp_sync)
   {
     sync_time();
 
     if(flags.time_synced)
-      timer_ntp_sync = millis() + 21600000; // 6 hours
+      timers.ntp_sync = millis() + 21600000; // 6 hours
     else
-      timer_ntp_sync = millis() + 20000; // 20 s
+      timers.ntp_sync = millis() + 20000; // 20 s
 
     result = 1;
   }
@@ -1165,25 +952,25 @@ bool check_data_sources()
 
   bool result = 0;
 
-  if(cds_pos == 0 && millis() > timer_pgrid)
+  if(cds_pos == 0 && millis() > timers.pgrid)
   {
     check_grid();
-    timer_pgrid = millis() + 1555;
+    timers.pgrid = millis() + 1555;
     result = 1;
   }
 
-  if(cds_pos == 1 && config.monitor_battery && millis() > timer_voltage)
+  if(cds_pos == 1 && config.monitor_battery && millis() > timers.voltage)
   {
     cells_update();
 
     if(volt_synced)
       check_cells();
 
-    timer_voltage = millis() + 100;
+    timers.voltage = millis() + 100;
     result = 1;
   }
 
-  if(cds_pos == 2 && config.monitor_temp && millis() > timer_ntc10k)
+  if(cds_pos == 2 && config.monitor_temp && millis() > timers.ntc10k)
   {
     ntc_update();
     bool trigger_shutdown = 0;
@@ -1197,7 +984,7 @@ bool check_data_sources()
     }
 
     flags.shutdown_htemp = trigger_shutdown;
-    timer_ntc10k = millis() + 400;
+    timers.ntc10k = millis() + 400;
     result = 1;
   }
 
@@ -1213,9 +1000,9 @@ void check_cells()
   bool lv_trigger = 0;
   bool hv_trigger = 0;
 
-  unsigned long ms = millis(); // do not use millis, use update_time as disconnects take effect during mode update
-  if(ms < update_time)
-    ms = update_time;
+  unsigned long ms = millis(); // do not use millis, use timers.update_time as disconnects take effect during mode update
+  if(ms < timers.update_time)
+    ms = timers.update_time;
 
   if((config.cells_in_series || config.cell_count == 1) && cells_volts_real[config.cell_count-1] < config.pack_volt_min)
     lv_trigger = 1;
@@ -1233,14 +1020,14 @@ void check_cells()
     if(cells_volts[i] >= config.battery_volt_over)
     {
       hv_trigger = 1;
-      hv_shutdown_time = ms + (config.hv_shutdown_delay * 3600000.0);
+      timers.hv_shutdown = ms + (config.hv_shutdown_delay * 3600000.0);
     }
 
     // LV Check
     if(cells_volts[i] <= config.battery_volt_min)
     {
       lv_trigger = 1;
-      lv_shutdown_time = ms + (config.lv_shutdown_delay * 3600000.0);
+      timers.lv_shutdown = ms + (config.lv_shutdown_delay * 3600000.0);
     }
 
     // LV recon
@@ -1257,7 +1044,7 @@ void check_cells()
   // flags.shutdown_hvolt check
 
   // HV recon check
-  if(!hv_trigger && flags.shutdown_hvolt && millis() > hv_shutdown_time)
+  if(!hv_trigger && flags.shutdown_hvolt && millis() > timers.hv_shutdown)
   {
     flags.shutdown_hvolt = 0;
     log_issue("HV recon");
@@ -1274,7 +1061,7 @@ void check_cells()
   // flags.shutdown_lvolt
 
   // reconnect check
-  if(lv_recon_trigger && flags.shutdown_lvolt && millis() > lv_shutdown_time)
+  if(lv_recon_trigger && flags.shutdown_lvolt && millis() > timers.lv_shutdown)
   {
     flags.shutdown_lvolt = 0;
     log_issue("LV reconnect");
@@ -1478,17 +1265,17 @@ void calc_next_update()
 
   if(config.button_timer_mode)
   {
-    if(update_time < millis())
-      update_time = millis();
+    if(timers.update_time < millis())
+      timers.update_time = millis();
 
     if(system_mode != 0)  // when charge is enabled, use button_timer_secs. when idling use 1 sec
     {
-      if(update_time - millis() < (config.button_timer_max * 60 * 1000) )
-        update_time += (config.button_timer_secs * 1000);
+      if(timers.update_time - millis() < (config.button_timer_max * 60 * 1000) )
+        timers.update_time += (config.button_timer_secs * 1000);
     }
     else
     {
-      update_time = millis() + 1000;
+      timers.update_time = millis() + 1000;
     }
 
     return;
@@ -1513,7 +1300,7 @@ void calc_next_update()
 
   }
 
-  update_time = millis() + (rest_s * 1000);
+  timers.update_time = millis() + (rest_s * 1000);
 }
 
 
@@ -1524,11 +1311,11 @@ void modeset(byte m)
   {
     if(system_mode == 1) // charger turning off
     {
-      charger_off_time = millis() + (config.charger_oot_min * 60 * 1000) + (config.charger_oot_sec * 1000);
+      timers.charger_off = millis() + (config.charger_oot_min * 60 * 1000) + (config.charger_oot_sec * 1000);
     }
     else if(system_mode == 2) // inverter turning off
     {
-      inverter_off_time = millis() + (config.inverter_oot_min * 60 * 1000) + (config.inverter_oot_sec * 1000);
+      timers.inverter_off = millis() + (config.inverter_oot_min * 60 * 1000) + (config.inverter_oot_sec * 1000);
     }
   }
 
@@ -1583,9 +1370,9 @@ void modeset(byte m)
   system_mode = m;
 
   if(idle_forced)
-    update_time = millis() + random(5000, 15000); // 5 - 15 secs
+    timers.update_time = millis() + random(5000, 15000); // 5 - 15 secs
   else if(same_mode)
-    update_time = millis() + random(500, 7000); // 0.5 to x secs
+    timers.update_time = millis() + random(500, 7000); // 0.5 to x secs
   else
     calc_next_update();
 
