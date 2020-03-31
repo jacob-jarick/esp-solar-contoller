@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 65
+#define FW_VERSION 66
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -163,7 +163,7 @@ const String json_config_file     = "/config.jsn";
 
 //------------------------------------------------------------------------------
 
-const byte size_system_msgs = 255;
+const byte size_system_msgs = 1024;
 String system_msgs = "";
 
 
