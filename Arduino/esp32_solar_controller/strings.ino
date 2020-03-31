@@ -1,5 +1,5 @@
 
-String string_append_limit_size(const String str, const String str_append, const uint limit)
+String string_append_limit_size(const String str, const String str_append, const uint16_t limit)
 {
   String result = str + str_append;
   if(result.length() > limit)

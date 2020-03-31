@@ -163,7 +163,7 @@ const String json_config_file     = "/config.jsn";
 
 //------------------------------------------------------------------------------
 
-const byte size_system_msgs = 1024;
+const uint16_t size_system_msgs = 1024;
 String system_msgs = "";
 
 
