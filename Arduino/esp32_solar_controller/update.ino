@@ -163,7 +163,7 @@ void do_update()
 
   both_println("Update\nFirmware\n" + String(update_trys));
 
-  String url = String(config.pub_url) + String("/firmware.bin");
+  const String url = String(config.pub_url) + String("/firmware.bin");
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(url);
 
@@ -176,7 +176,7 @@ void do_update()
     both_println(F("ERROR"));
     config.download_html = 0;
     log_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
-    Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
+//     Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
     config.download_html = 0;
 
     if(update_trys < 20)
@@ -185,9 +185,9 @@ void do_update()
     }
     else
     {
+      flags.update_self = 0;
       config.download_html = 0;
       save_config();
-      flags.update_self = 0;
     }
   }
   else if(ret == HTTP_UPDATE_NO_UPDATES)

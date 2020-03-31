@@ -96,7 +96,6 @@ void save_config()
   doc["flip_ipin"] = (int)config.flip_ipin;
   doc["flip_cpin"] = (int)config.flip_cpin;
   doc["auto_update"] = (int)config.auto_update;
-//   doc["wifi_highpower_on"] = (int)config.wifi_highpower_on;
   doc["i_enable"] = (int)config.i_enable;
   doc["c_enable"] = (int)config.c_enable;
   doc["day_is_timer"] = (int)config.day_is_timer;
