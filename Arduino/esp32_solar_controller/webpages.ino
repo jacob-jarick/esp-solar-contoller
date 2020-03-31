@@ -831,7 +831,7 @@ void stats()
     webpage += js_helper_innerhtml(F("battery_voltage"), cell_string );
   }
 
-  webpage += js_helper_innerhtml(F("error_msgs"), "<pre>" + error_msgs + "</pre>");
+  webpage += js_helper_innerhtml(F("system_msgs"), "<pre>" + system_msgs + "</pre>");
 
   webpage += js_helper_innerhtml(F("next_update"), nu_string);
 

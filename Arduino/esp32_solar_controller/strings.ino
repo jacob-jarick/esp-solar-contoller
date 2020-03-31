@@ -9,8 +9,8 @@ String string_append_limit_size(const String str, const String str_append, const
 }
 
 
-void log_error_msg(const String msg)
+void log_msg(const String msg)
 {
   String tmp_str = datetime_str(0, '/', ' ', ':') + " - " + msg + "\n";
-  error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
+  system_msgs = string_append_limit_size(system_msgs, tmp_str, size_system_msgs);
 }

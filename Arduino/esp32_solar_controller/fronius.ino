@@ -33,9 +33,7 @@ String get_payload(const String url)
     {
       Serial.print("\nHTTP ERROR: '" + url + "'" + String(httpCode));
 
-      String tmp_str = datetime_str(0, '/', ' ', ':') + " - " + String(httpCode) + F(": ") + url;
-      error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
-
+      log_msg(String(httpCode) + F(": ") + url);
       payload = "";
     }
   }
@@ -47,9 +45,7 @@ String get_payload(const String url)
 
     payload = "";
 
-    String tmp_str = datetime_str(0, '/', ' ', ':') + " - " + http.errorToString(httpCode).c_str() + String(": ") + url + String("\n");
-
-    error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
+    log_msg(http.errorToString(httpCode).c_str() + String(": ") + url);
 
   }
   http.end();
@@ -81,7 +77,7 @@ bool update_p_grid()
     if(payload.equals(""))
     {
 //       Serial.println("update_p_grid fetch: '" + String(config.inverter_url) + "' failed" );
-      error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - update_p_grid fetch failed\n"), size_error_msgs);
+      log_msg("update_p_grid fetch failed");
     }
     else
     {
@@ -105,7 +101,7 @@ bool update_p_grid()
     if(payload.equals(""))
     {
       Serial.println("update_p_grid fetch fallback: '" + String(config.inverter_url) + "' failed" );
-      error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - Fallback failed\n"), size_error_msgs);
+      log_msg(F("Fronius Fallback failed"));
     }
     else
     {
@@ -126,11 +122,9 @@ bool update_p_grid()
     Serial.println(String("JSON Decode ERROR") + error2.c_str());
     Serial.println(payload);
 
-    String tmp_str = datetime_str(0, '/', ' ', ':') +  String(F(" - JSON: ")) + error2.c_str() + String("\n");
-    error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
-
     timers.use_fallback = millis() + (5 * 1000);
-    error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - JSON Decode Error\n"), size_error_msgs);
+
+    log_msg(String("update_p_grid JSON Decode ERROR") + error2.c_str());
 
     return 0;
   }
@@ -173,7 +167,7 @@ bool update_p_grid_3phase()
   if(!check)
   {
     oled_clear();
-    error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - 3p fetch Error\n"), size_error_msgs);
+    log_msg("Fronius 3phase URL fetch Error");
     both_println(F("1 HTTP Fetch\nERROR"));
     oled_set2X();
     both_println(WiFi.localIP().toString());
@@ -192,8 +186,7 @@ bool update_p_grid_3phase()
     Serial.println(String("JSON Decode ERROR") + error2.c_str());
     Serial.println(payload);
 
-    String tmp_str = datetime_str(0, '/', ' ', ':') +  String(F(" - JSON: ")) + error2.c_str() + String("\n");
-    error_msgs = string_append_limit_size(error_msgs, tmp_str, size_error_msgs);
+    log_msg(String("Fronius JSON Decode Error: ") + error2.c_str() );
 
 //     payload = "";
 //     check = 0;
@@ -230,7 +223,7 @@ bool update_p_grid_3phase()
   // must be same hour
   if (hour(timetmp) != tmp.substring(11, 13).toInt())
   {
-    error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - 3p: hour does not match\n"), size_error_msgs);
+    log_msg("3p: hour does not match");
     return 0;
   }
 
@@ -238,7 +231,7 @@ bool update_p_grid_3phase()
   int8_t m = tmp.substring(14, 16).toInt();
   if (minute(timetmp) < m-1 || minute(timetmp) > m+1)
   {
-    error_msgs = string_append_limit_size(error_msgs, datetime_str(0, '/', ' ', ':') + F(" - 3p: min does not match\n"), size_error_msgs);
+    log_msg("3p: minute does not match");
     return 0;
   }
 

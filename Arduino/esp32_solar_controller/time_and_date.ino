@@ -27,7 +27,7 @@ bool sync_time()
   if (size < NTP_PACKET_SIZE)
   {
     const String tmp = "undersized packet";
-    log_error_msg(ntp_prefix + tmp);
+    log_msg(ntp_prefix + tmp);
     both_println(tmp);
     return 0;
   }
@@ -38,7 +38,7 @@ bool sync_time()
   {
     const String tmp = "null packets";
     both_println(tmp);
-    log_error_msg(ntp_prefix + tmp);
+    log_msg(ntp_prefix + tmp);
     return 0;
   }
 
@@ -54,7 +54,7 @@ bool sync_time()
   {
     const String tmp = "bad epoch";
     both_println(tmp);
-    log_error_msg(ntp_prefix + tmp);
+    log_msg(ntp_prefix + tmp);
     return 0;
   }
 
@@ -62,7 +62,7 @@ bool sync_time()
 
   const String tmp = "Success";
   both_println(tmp);
-  log_error_msg(ntp_prefix + tmp);
+  log_msg(ntp_prefix + tmp);
 
   flags.time_synced = 1;
   return 1;

@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 63
+#define FW_VERSION 65
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -163,8 +163,8 @@ const String json_config_file     = "/config.jsn";
 
 //------------------------------------------------------------------------------
 
-const byte size_error_msgs = 255;
-String error_msgs = "";
+const byte size_system_msgs = 255;
+String system_msgs = "";
 
 
 float phase_a_watts = 0;
@@ -595,7 +595,7 @@ void loop()
   if(config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_over)
   {
     mode_reason = "cell over volt. force IDLE.";
-    log_error_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
+    log_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 
     modeset(0);
@@ -608,7 +608,7 @@ void loop()
   if(config.monitor_battery && system_mode == 2 && cell_volt_low <= config.battery_volt_min)
   {
     mode_reason = "Cell under volt, force IDLE";
-    log_error_msg(mode_reason  + "\n");
+    log_msg(mode_reason  + "\n");
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 
     modeset(0);
@@ -736,7 +736,7 @@ void loop()
 
     // monitoring voltage charger logic
     // all these checks disable charger if conds met
-    if(config.monitor_battery)
+    if(config.monitor_battery && fchg)
     {
       // HV Shutdown
       if(flags.shutdown_hvolt)
