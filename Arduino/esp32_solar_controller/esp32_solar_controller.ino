@@ -89,7 +89,7 @@ WiFiUDP udp;
 
 struct SysTimers
 {
-  unsigned long update_time = 0;
+  unsigned long mode_check = 0;
   unsigned long pgrid_last_update = 0;
   unsigned long use_fallback = 0;
 
@@ -395,7 +395,7 @@ void setup()
     oled_clear();
 
     ads.setGain(ads_gain);
-//     ads.begin(); // not required I believe, may trigger i2c restart
+//     ads.begin(); // not required, may trigger i2c restart
   }
 
   // --------------------------------------------------------------------------------------
@@ -618,7 +618,7 @@ void loop()
 
 
   // finish loop unless its time to update
-  if (timers.update_time > millis())
+  if (timers.mode_check > millis())
     return;
 
   mode_reason = datetime_str(0, '/', ' ', ':') + " ";
@@ -1000,9 +1000,7 @@ void check_cells()
   bool lv_trigger = 0;
   bool hv_trigger = 0;
 
-  unsigned long ms = millis(); // do not use millis, use timers.update_time as disconnects take effect during mode update
-  if(ms < timers.update_time)
-    ms = timers.update_time;
+  unsigned long ms = millis();
 
   if((config.cells_in_series || config.cell_count == 1) && cells_volts_real[config.cell_count-1] < config.pack_volt_min)
     lv_trigger = 1;
@@ -1265,17 +1263,17 @@ void calc_next_update()
 
   if(config.button_timer_mode)
   {
-    if(timers.update_time < millis())
-      timers.update_time = millis();
+    if(timers.mode_check < millis())
+      timers.mode_check = millis();
 
     if(system_mode != 0)  // when charge is enabled, use button_timer_secs. when idling use 1 sec
     {
-      if(timers.update_time - millis() < (config.button_timer_max * 60 * 1000) )
-        timers.update_time += (config.button_timer_secs * 1000);
+      if(timers.mode_check - millis() < (config.button_timer_max * 60 * 1000) )
+        timers.mode_check += (config.button_timer_secs * 1000);
     }
     else
     {
-      timers.update_time = millis() + 1000;
+      timers.mode_check = millis() + 1000;
     }
 
     return;
@@ -1300,7 +1298,7 @@ void calc_next_update()
 
   }
 
-  timers.update_time = millis() + (rest_s * 1000);
+  timers.mode_check = millis() + (rest_s * 1000);
 }
 
 
@@ -1370,9 +1368,9 @@ void modeset(byte m)
   system_mode = m;
 
   if(idle_forced)
-    timers.update_time = millis() + random(5000, 15000); // 5 - 15 secs
+    timers.mode_check = millis() + random(5000, 15000); // 5 - 15 secs
   else if(same_mode)
-    timers.update_time = millis() + random(500, 7000); // 0.5 to x secs
+    timers.mode_check = millis() + random(500, 7000); // 0.5 to x secs
   else
     calc_next_update();
 

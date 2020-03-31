@@ -1085,7 +1085,7 @@ void force_refresh()
 
   if(config.webc_mode)
   {
-    timers.update_time = 0;
+    timers.mode_check = 0;
     timers.pgrid = 0;
     timers.voltage = 0;
     sync_time();

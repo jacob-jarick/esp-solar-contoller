@@ -1,20 +1,20 @@
-     HEAD~0	07806c7 battery_msg removed.
-     HEAD~1	015d5eb removed pcf support. small tidy up
-     HEAD~2	50a533c fsfree removed, random delays added for same mode
-     HEAD~3	a630bd1 consts, mode message
-     HEAD~4	39e96c1 modeset fix
-     HEAD~5	bc17be1 Update advance.htm
-     HEAD~6	1999f51 latest firmware
-     HEAD~7	4d68d5d remove all traces of frline
-     HEAD~8	d3f396c removing msg.txt
-     HEAD~9	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-    HEAD~10	a100849 Update esp32_solar_controller.ino
-    HEAD~11	115c792 images
-    HEAD~12	f98e2d7 updated ESP32 board
-    HEAD~13	7db6797 battery calibrate JS moved to battery page
-    HEAD~14	a64a9f8 update html fix
-    HEAD~15	fbab117 24/7 mode added
-    HEAD~16	1739872 maths max, ping sd, night time logic
-    HEAD~17	df71c48 battery + temp
-    HEAD~18	b549ee4 Update batcal.htm
-    HEAD~19	25c57e8 Update batcal.htm
+     HEAD~0	24f3e35 tidy
+     HEAD~1	07806c7 battery_msg removed.
+     HEAD~2	015d5eb removed pcf support. small tidy up
+     HEAD~3	50a533c fsfree removed, random delays added for same mode
+     HEAD~4	a630bd1 consts, mode message
+     HEAD~5	39e96c1 modeset fix
+     HEAD~6	bc17be1 Update advance.htm
+     HEAD~7	1999f51 latest firmware
+     HEAD~8	4d68d5d remove all traces of frline
+     HEAD~9	d3f396c removing msg.txt
+    HEAD~10	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~11	a100849 Update esp32_solar_controller.ino
+    HEAD~12	115c792 images
+    HEAD~13	f98e2d7 updated ESP32 board
+    HEAD~14	7db6797 battery calibrate JS moved to battery page
+    HEAD~15	a64a9f8 update html fix
+    HEAD~16	fbab117 24/7 mode added
+    HEAD~17	1739872 maths max, ping sd, night time logic
+    HEAD~18	df71c48 battery + temp
+    HEAD~19	b549ee4 Update batcal.htm

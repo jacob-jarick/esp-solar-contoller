@@ -101,7 +101,7 @@ float int_to_gmt(const int v)
 String next_update_string(const byte len) // ; len = length
 {
   String nu_string = "";
-  long next_update = timers.update_time - millis();
+  long next_update = timers.mode_check - millis();
   if (next_update > 1000)
   {
     int nu_hours = (next_update / (1000 * 60 * 60)) % 24;
