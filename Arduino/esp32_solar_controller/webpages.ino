@@ -237,8 +237,6 @@ void battery_info()
 
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("battery_message"), "<pre>" + battery_message + "</pre>");
-
 //   float vsum = 0;
 
   for(uint8_t i = 0; i < config.cell_count; i++)
@@ -684,7 +682,7 @@ void web_config_submit()
 
   server.send(200, mime_html, webpage);
 
-  Fsave_config = 1;
+  flags.save_config = 1;
 }
 
 void css_raw()
@@ -764,15 +762,15 @@ void stats()
 
   mymode += F(" - ");
 
-  if (!day_time && !night_time)
+  if (!flags.day && !flags.night)
     mymode += F("ZZZ");
   else if (config.m247)
     mymode += F("24/7");
-  else if (day_time && night_time)
+  else if (flags.day && flags.night)
     mymode += F("DAY + NIGHT");
-  else if (!day_time && night_time)
+  else if (!flags.day && flags.night)
     mymode += F("NIGHT");
-  else if (day_time && !night_time)
+  else if (flags.day && !flags.night)
     mymode += F("DAY");
   else
     mymode += "???";
@@ -805,8 +803,6 @@ void stats()
 
   if(config.monitor_battery)
   {
-    webpage += js_helper_innerhtml(F("battery_message"), "<pre>" + battery_message + "</pre>");
-
     String cell_string = "";
 
     // multi cells
@@ -1004,7 +1000,7 @@ void inverter_on()
 
   if(config.webc_mode)
   {
-    low_voltage_shutdown = 0;
+    flags.shutdown_lvolt = 0;
     inverter_off_time = 0;
     modeset(2);
   }
@@ -1066,7 +1062,7 @@ void charger_on()
 
   if(config.webc_mode)
   {
-    charger_high_voltage_shutdown = 0;
+    flags.shutdown_hvolt = 0;
     charger_off_time = 0;
     modeset(1);
   }
@@ -1103,7 +1099,7 @@ void software_reset()
 
   // avoid restarts being triggered after boot.
   time_t timetmp = now();
-  if (!time_synced ||  (hour(timetmp) < 1 && minute(timetmp) < 2))
+  if (!flags.time_synced ||  (hour(timetmp) < 1 && minute(timetmp) < 2))
   {
     webpage += js_helper_innerhtml(title_str, F("System Just Booted"));
     server.send(200, mime_html, webpage);
@@ -1123,7 +1119,7 @@ void software_reset()
   oled_clear();
   oled_println(F("Software\nRESTART"));
 
-  restart_trigger = 1;
+  flags.restart = 1;
 }
 
 
@@ -1204,7 +1200,7 @@ void port_cfg_submit()
     }
 
     save_config();
-    restart_trigger = 1;
+    flags.restart = 1;
   }
 
 
@@ -1272,7 +1268,7 @@ void do_update_web()
 {
   String pre = check_for_update();
 
-  if(found_update)
+  if(flags.update_found)
   {
     pre += String("\\n\\nSTARTING UPDATE.\\nDEVICE WILL RESTART SOON.");
   }
@@ -1288,7 +1284,7 @@ void do_update_web()
 
   server.send(200, mime_html, webpage);
 
-  self_update = 1;
+  flags.update_self = 1;
 
   return;
 }
@@ -1332,7 +1328,7 @@ void upload_config_submit()
       }
     }
   }
-  restart_trigger = 1;
+  flags.restart = 1;
 }
 
 void bms_raw_info()
@@ -1355,8 +1351,8 @@ void port_info()
     webpage += "cell_volt_low - " + String(cell_volt_low, 4) + "v\n";
     webpage += "cell_volt_diff - " + String(cell_volt_diff, 4) + "v\n";
 
-//     webpage += "\nlow volt shutdown: " + String(low_voltage_shutdown ) + "\n";
-//     webpage += "high volt shutdown: " + String(charger_high_voltage_shutdown ) + "\n\n";
+//     webpage += "\nlow volt shutdown: " + String(flags.shutdown_lvolt ) + "\n";
+//     webpage += "high volt shutdown: " + String(flags.shutdown_hvolt ) + "\n\n";
 
     webpage += "Cell Series Volts:\n";
     for(byte i = 0; i< config.cell_count; i++)

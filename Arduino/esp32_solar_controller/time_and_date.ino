@@ -64,7 +64,7 @@ bool sync_time()
   both_println(tmp);
   log_error_msg(ntp_prefix + tmp);
 
-  time_synced = 1;
+  flags.time_synced = 1;
   return 1;
 }
 
@@ -211,13 +211,13 @@ String datetime_str(const byte type, const char ds, const char dts, const char t
 
 void set_daynight()
 {
-  night_time = 0;
-  day_time = 0;
+  flags.night = 0;
+  flags.day = 0;
 
   if(config.m247)
   {
-    night_time = 1;
-    day_time = 1;
+    flags.night = 1;
+    flags.day = 1;
     return;
   }
 
@@ -225,10 +225,10 @@ void set_daynight()
   byte myhour = hour(timetmp);
 
   if (in_time_range(myhour, config.c_start_h, config.c_finish_h) ) // day
-    day_time = 1;
+    flags.day = 1;
 
   if (in_time_range(myhour, config.i_start_h, config.i_finish_h) ) // night
-    night_time = 1;
+    flags.night = 1;
 }
 
 bool in_time_range(const int h, const int t_start, const int t_end)

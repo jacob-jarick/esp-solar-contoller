@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 61
+#define FW_VERSION 62
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -110,21 +110,7 @@ unsigned long timer_serial = 0;
 
 unsigned long timer_led = 0;
 
-//------------------------------------------------------------------------------
-// FLAGS
 
-bool restart_trigger = 0;
-bool ap_mode = 0;
-bool self_update = 0;
-bool time_synced = 0;
-bool night_time = 0;
-bool day_time = 0;
-bool low_voltage_shutdown = 0;
-bool charger_high_voltage_shutdown = 0;
-bool high_temp_shutdown = 0;
-bool found_update = 0;
-
-bool Fsave_config = 0;
 
 //------------------------------------------------------------------------------
 
@@ -177,8 +163,7 @@ const String json_config_file     = "/config.jsn";
 
 const byte size_error_msgs = 255;
 String error_msgs = "";
-const byte size_battery_message = 255;
-String battery_message = "";
+
 
 float phase_a_watts = 0;
 float phase_b_watts = 0;
@@ -325,6 +310,48 @@ struct Sconfig
 
 Sconfig config;
 
+
+
+//------------------------------------------------------------------------------
+// FLAGS
+
+/*
+
+bool restart_trigger = 0;
+bool ap_mode = 0;
+bool self_update = 0;
+bool time_synced = 0;
+bool night_time = 0;
+bool day_time = 0;
+bool low_voltage_shutdown = 0;
+bool charger_high_voltage_shutdown = 0;
+bool high_temp_shutdown = 0;
+bool found_update = 0;
+
+bool Fsave_config = 0;
+
+*/
+
+// group system flags into 1 structure for easy naming.
+struct SysFlags
+{
+
+  bool restart;
+  bool access_point;
+  bool update_self;
+  bool time_synced;
+  bool night;
+  bool day;
+  bool shutdown_lvolt;
+  bool shutdown_hvolt;
+  bool shutdown_htemp;
+  bool update_found;
+
+  bool save_config;
+};
+
+SysFlags flags;
+
 // =================================================================================================
 
 uint8_t pin_sd_reset = 15;
@@ -397,6 +424,19 @@ void sd_setup(int tone)
 
 void setup()
 {
+  flags.restart = 0;
+  flags.access_point = 0;
+  flags.update_self = 0;
+  flags.time_synced = 0;
+  flags.day = 0;
+  flags.shutdown_lvolt = 0;
+  flags.shutdown_hvolt = 0;
+  flags.shutdown_htemp = 0;
+  flags.update_found = 0;
+  flags.save_config = 0;
+
+  //
+
   int toneinc = 45;
   int tone = 90;
   ledcSetup(0, 1000, 8);
@@ -617,13 +657,13 @@ bool ap_start()
 
   WiFi.softAP("SolarAP");
 
-  ap_mode = 1;
+  flags.access_point = 1;
   return 1;
 }
 
 bool wifi_start()
 {
-  if (ap_mode)
+  if (flags.access_point)
   {
     Serial.println("wifi_start: AP Mode");
     return 0;
@@ -806,7 +846,7 @@ void loop()
     return;
   }
 
-  if(!time_synced)
+  if(!flags.time_synced)
   {
     mode_reason = "time unsynced";
     return;
@@ -815,10 +855,10 @@ void loop()
   bool finv = 0; // inverter on flag
   bool fchg = 0; // charger on flag
 
-  if(system_mode == 2 && config.i_enable && night_time)
+  if(system_mode == 2 && config.i_enable && flags.night)
     finv = 1;
 
-  if(system_mode == 1 && config.c_enable && day_time)
+  if(system_mode == 1 && config.c_enable && flags.day)
     fchg = 1;
 
   // -------------------------------------------------------------------------
@@ -826,11 +866,11 @@ void loop()
 
   if
     (
-      (!day_time && !night_time) || // not day or night
+      (!flags.day && !flags.night) || // not day or night
       (!config.i_enable && !config.c_enable) ||   // both devices disabled
-      (!config.i_enable && night_time && !day_time) ||  // night time only and night time dev disabled
-      (!config.c_enable && day_time && !night_time) ||   // day time only and day time dev disabled
-      (config.monitor_temp && high_temp_shutdown)
+      (!config.i_enable && flags.night && !flags.day) ||  // night time only and night time dev disabled
+      (!config.c_enable && flags.day && !flags.night) ||   // day time only and day time dev disabled
+      (config.monitor_temp && flags.shutdown_htemp)
     )
     {
       mode_reason += F("Idle\n");
@@ -841,10 +881,10 @@ void loop()
   // Night Device
 
   // discharger
-  if (config.i_enable && night_time)
+  if (config.i_enable && flags.night)
   {
     // LV check
-    if (config.monitor_battery && low_voltage_shutdown)
+    if (config.monitor_battery && flags.shutdown_lvolt)
     {
       mode_reason += "night: IDLE, LV Shutdown\n";
       finv = 0;
@@ -880,7 +920,7 @@ void loop()
   // Day Device
 
   // charger
-  if (config.c_enable && day_time)
+  if (config.c_enable && flags.day)
   {
     // cooldown
     if(charger_off_time > millis()) // charger cooldown
@@ -912,7 +952,7 @@ void loop()
     if(config.monitor_battery)
     {
       // HV Shutdown
-      if(charger_high_voltage_shutdown)
+      if(flags.shutdown_hvolt)
       {
         mode_reason += "Day: Idle, HV\n";
         fchg = 0;
@@ -959,14 +999,14 @@ bool check_system_triggers() // returns 1 if a event was triggered
     return 1;
   }
 
-  if(Fsave_config)
+  if(flags.save_config)
   {
     save_config();
-    Fsave_config = 0;
+    flags.save_config = 0;
     return 1;
   }
 
-  if(restart_trigger)
+  if(flags.restart)
   {
     oled_clear();
     oled_set2X();
@@ -977,12 +1017,12 @@ bool check_system_triggers() // returns 1 if a event was triggered
   }
 
   // WiFi disconnected trigger
-  if (!ap_mode && WiFi.status() != WL_CONNECTED)
+  if (!flags.access_point && WiFi.status() != WL_CONNECTED)
   {
     oled_clear();
     both_println(F("WiFi ERROR"));
     modeset(0);
-    restart_trigger = !wifi_start(); // seems to need a restart if wifi is out here.
+    flags.restart = !wifi_start(); // seems to need a restart if wifi is out here.
     return 1;
   }
 
@@ -1000,7 +1040,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
   }
 
   // update trigger
-  if(self_update) // ideally we would do this via timer to allow webpage to respond....
+  if(flags.update_self) // ideally we would do this via timer to allow webpage to respond....
   {
     oled_clear();
     oled_set2X();
@@ -1011,7 +1051,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
   }
 
   // download html trigger
-  if(!ap_mode && config.download_html)
+  if(!flags.access_point && config.download_html)
   {
     download_html_from_remote();
     return 1;
@@ -1020,7 +1060,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
   // data source timeout trigger (time based)
   if
   (
-    !ap_mode &&
+    !flags.access_point &&
     !config.button_timer_mode &&
     millis() - time_since_check > check_timeout
   )
@@ -1029,16 +1069,16 @@ bool check_system_triggers() // returns 1 if a event was triggered
     both_print(F("CHECK\nTIMEOUT"));
     delay(5000);
 
-    restart_trigger = 1;
+    flags.restart = 1;
     return 1;
   }
 
   // AP Mode restart trigger (time based)
-  if(!config.button_timer_mode && ap_mode)
+  if(!config.button_timer_mode && flags.access_point)
   {
     if(millis() - boot_time > 1080000) // ~20 min
     {
-      restart_trigger = 1;
+      flags.restart = 1;
       return 1;
     }
   }
@@ -1098,11 +1138,11 @@ bool check_system_timers()
   }
 
   // NTP sync timer
-  if(!ap_mode && millis() > timer_ntp_sync)
+  if(!flags.access_point && millis() > timer_ntp_sync)
   {
     sync_time();
 
-    if(time_synced)
+    if(flags.time_synced)
       timer_ntp_sync = millis() + 21600000; // 6 hours
     else
       timer_ntp_sync = millis() + 20000; // 20 s
@@ -1156,7 +1196,7 @@ bool check_data_sources()
       }
     }
 
-    high_temp_shutdown = trigger_shutdown;
+    flags.shutdown_htemp = trigger_shutdown;
     timer_ntc10k = millis() + 400;
     result = 1;
   }
@@ -1214,36 +1254,36 @@ void check_cells()
   String now_str = datetime_str(0, '/', ' ', ':');
 
   // ----------------------------------------------------------------------
-  // charger_high_voltage_shutdown check
+  // flags.shutdown_hvolt check
 
   // HV recon check
-  if(!hv_trigger && charger_high_voltage_shutdown && millis() > hv_shutdown_time)
+  if(!hv_trigger && flags.shutdown_hvolt && millis() > hv_shutdown_time)
   {
-    charger_high_voltage_shutdown = 0;
+    flags.shutdown_hvolt = 0;
     log_issue("HV recon");
   }
 
   // HV disconnect check
-  if(hv_trigger && !charger_high_voltage_shutdown)
+  if(hv_trigger && !flags.shutdown_hvolt)
   {
-    charger_high_voltage_shutdown = 1;
+    flags.shutdown_hvolt = 1;
     log_issue("HV shutdown");
   }
 
   // ----------------------------------------------------------------------
-  // low_voltage_shutdown
+  // flags.shutdown_lvolt
 
   // reconnect check
-  if(lv_recon_trigger && low_voltage_shutdown && millis() > lv_shutdown_time)
+  if(lv_recon_trigger && flags.shutdown_lvolt && millis() > lv_shutdown_time)
   {
-    low_voltage_shutdown = 0;
+    flags.shutdown_lvolt = 0;
     log_issue("LV reconnect");
   }
 
-  // low_voltage_shutdown check
-  if(lv_trigger && !low_voltage_shutdown)
+  // flags.shutdown_lvolt check
+  if(lv_trigger && !flags.shutdown_lvolt)
   {
-    low_voltage_shutdown = 1;
+    flags.shutdown_lvolt = 1;
 
     log_issue("LV Shutdown");
   }
@@ -1251,7 +1291,7 @@ void check_cells()
 
 bool check_grid()
 {
-  if(ap_mode)
+  if(flags.access_point)
     return 0;
 
   if (!config.button_timer_mode && update_p_grid() == 0)
@@ -1326,7 +1366,7 @@ void oled_print_info()
   oled_clear();
   oled_set2X();
 
-  if(ap_mode && !config.button_timer_mode)
+  if(flags.access_point && !config.button_timer_mode)
   {
 
     both_println(F("AP Mode"));

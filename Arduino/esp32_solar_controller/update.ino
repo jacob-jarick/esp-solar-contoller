@@ -3,7 +3,7 @@ void download_html_from_remote()
   if(!config.download_html)
     return;
 
-  if(self_update) // shouldnt happen BUUUT - avoid downloading new HTML while trying to do firmware updates (should happen after reboot)
+  if(flags.update_self) // shouldnt happen BUUUT - avoid downloading new HTML while trying to do firmware updates (should happen after reboot)
     return;
 
   const int asize = 21;
@@ -35,7 +35,7 @@ void download_html_from_remote()
   if(download_index > asize-1)
   {
     config.download_html = 0;
-    Fsave_config = 1;
+    flags.save_config = 1;
     return;
   }
 
@@ -44,7 +44,7 @@ void download_html_from_remote()
   if(!ok)
   {
     config.download_html = 0;
-    Fsave_config = 1;
+    flags.save_config = 1;
     log_issue("Error fetching latest html files.");
   }
 
@@ -101,9 +101,9 @@ int remote_version = 0;
 String check_for_update()
 {
   String message = "";
-  //   found_update = 0;
+  //   flags.update_found = 0;
 
-  if(found_update == 1)
+  if(flags.update_found == 1)
   {
     return String(F("Update Found (cached)"));
   }
@@ -127,7 +127,7 @@ String check_for_update()
     message += remote_version;
 
     if(remote_version > FW_VERSION)
-      found_update = 1;
+      flags.update_found = 1;
   }
   else
   {
@@ -143,9 +143,9 @@ uint8_t update_trys = 0;
 void do_update()
 {
   check_for_update();
-  self_update = 0;
+  flags.update_self = 0;
 
-  if(!found_update)
+  if(!flags.update_found)
   {
     oled_clear();
     both_println(F("No update"));
@@ -181,20 +181,20 @@ void do_update()
 
     if(update_trys < 20)
     {
-      self_update = 1;  // retry
+      flags.update_self = 1;  // retry
     }
     else
     {
       config.download_html = 0;
       save_config();
-      self_update = 0;
+      flags.update_self = 0;
     }
   }
   else if(ret == HTTP_UPDATE_NO_UPDATES)
   {
     config.download_html = 0;
     save_config();
-    self_update = 0;
+    flags.update_self = 0;
 
     both_println(F("NO_UPDATES"));
   }
