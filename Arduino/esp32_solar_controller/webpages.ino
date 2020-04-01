@@ -46,7 +46,7 @@ String js_table_add_row(const String id, const String cell1, const String cell2,
 // HTML Pages
 // =================================================================================================================
 
-// reget html trigger page config.download_html
+// reget html trigger page flags.download_html
 
 void force_ntp_sync()
 {
@@ -75,7 +75,7 @@ void web_html_redownload()
 
   server.send(200, mime_html, webpage);
 
-  config.download_html = 1;
+  flags.download_html = 1;
   download_index = 0;
 }
 

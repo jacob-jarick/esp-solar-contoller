@@ -1,6 +1,6 @@
 void download_html_from_remote()
 {
-  if(!config.download_html)
+  if(!flags.download_html)
     return;
 
   if(flags.update_self) // shouldnt happen BUUUT - avoid downloading new HTML while trying to do firmware updates (should happen after reboot)
@@ -34,7 +34,7 @@ void download_html_from_remote()
 
   if(download_index > asize-1)
   {
-    config.download_html = 0;
+    flags.download_html = 0;
     flags.save_config = 1;
     return;
   }
@@ -43,7 +43,7 @@ void download_html_from_remote()
 
   if(!ok)
   {
-    config.download_html = 0;
+    flags.download_html = 0;
     flags.save_config = 1;
     log_issue("Error fetching latest html files.");
   }
@@ -167,35 +167,36 @@ void do_update()
 
   t_httpUpdate_return ret = ESPhttpUpdate.update(url);
 
-  config.download_html = 1;
+//   flags.download_html = 1;
   save_config();
 
   if(ret == HTTP_UPDATE_FAILED)
   {
     oled_clear();
     both_println(F("ERROR"));
-    config.download_html = 0;
+//     flags.download_html = 0;
     log_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
 //     Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-    config.download_html = 0;
+//     flags.download_html = 0;
 
-    if(update_trys < 20)
+    if(update_trys < 10)
     {
       flags.update_self = 1;  // retry
     }
     else
     {
       flags.update_self = 0;
-      config.download_html = 0;
-      save_config();
+//       flags.download_html = 0;
+
+//       save_config();
     }
   }
   else if(ret == HTTP_UPDATE_NO_UPDATES)
   {
-    config.download_html = 0;
-    save_config();
+//     flags.download_html = 0;
     flags.update_self = 0;
 
+//     save_config();
     both_println(F("NO_UPDATES"));
   }
   else if (ret == HTTP_UPDATE_OK)

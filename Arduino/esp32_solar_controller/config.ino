@@ -13,6 +13,8 @@ void save_config()
 
   DynamicJsonDocument doc(config_json_size);
 
+  doc["fwver"] = FW_VERSION;
+
   doc["wifi_ssid1"] = config.wifi_ssid1;
 
   doc["wifi_pass1"] = config.wifi_pass1;
@@ -119,7 +121,7 @@ void save_config()
 
   doc["lv_shutdown_delay"] = config.lv_shutdown_delay;
   doc["hv_shutdown_delay"] = config.hv_shutdown_delay;
-  doc["download_html"] = (int)config.download_html;
+
   doc["charger_oot_min"] = config.charger_oot_min;
   doc["charger_oot_sec"] = config.charger_oot_sec;
   doc["inverter_oot_min"] = config.inverter_oot_min;
@@ -128,6 +130,7 @@ void save_config()
   doc["gmt"] = config.gmt;
   doc["dcvoltage_offset"] = config.dcvoltage_offset;
   doc["board_rev"] = config.board_rev;
+
 
   doc["webc_mode"] = (int)config.webc_mode;
   doc["led_status"] = (int)config.led_status;
@@ -197,6 +200,8 @@ bool load_config()
     Serial.println(F("Failed to read file, using default configuration"));
 
   f.close();
+
+  config.fwver = doc["fwver"];
 
   // NETWORK
   strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
@@ -317,7 +322,6 @@ bool load_config()
 
   // FLAGS
 
-  config.download_html = doc["download_html"];
   config.webc_mode = doc["webc_mode"];
 
   config.m247 = doc["m247"];

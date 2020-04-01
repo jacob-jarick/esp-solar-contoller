@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 66
+#define FW_VERSION 67
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -203,6 +203,8 @@ const uint8_t pin_asel3 = 26;
 
 struct Sconfig
 {
+  uint8_t fwver = 0;
+
   char inverter_url[smedium];
   char inverter_push_url[smedium];
   char meter_url[smedium];
@@ -212,7 +214,7 @@ struct Sconfig
 
   float lv_shutdown_delay; // float because we use fraction of hours eh 0.5h
   float hv_shutdown_delay;
-  bool download_html;
+
   uint8_t charger_oot_min;
   uint8_t charger_oot_sec;
 
@@ -272,42 +274,41 @@ struct Sconfig
 
   // bools
 
-  bool monitor_temp;
-  bool rotate_oled;
-  bool button_timer_mode;
-  bool blink_led;
-  bool blink_led_default;
-  bool avg_phase;
-  bool threephase;
-  bool monitor_phase_a;
-  bool monitor_phase_b;
-  bool monitor_phase_c;
-  bool flip_ipin;
-  bool flip_cpin;
-  bool auto_update;
-//   bool wifi_highpower_on;
-  bool i_enable;
-  bool c_enable;
-  bool day_is_timer;
-  bool night_is_timer;
-  bool cells_in_series;
-  bool monitor_battery;
+  bool monitor_temp = 0;
+  bool rotate_oled = 0;
+  bool button_timer_mode = 0;
+  bool blink_led = 0;
+  bool blink_led_default = 0;
+  bool avg_phase = 0;
+  bool threephase = 0;
+  bool monitor_phase_a = 0;
+  bool monitor_phase_b = 0;
+  bool monitor_phase_c = 0;
+  bool flip_ipin = 0;
+  bool flip_cpin = 0;
+  bool auto_update = 0;
+  bool i_enable = 0;
+  bool c_enable = 0;
+  bool day_is_timer = 0;
+  bool night_is_timer = 0;
+  bool cells_in_series = 0;
+  bool monitor_battery = 0;
 
-  bool m247;
+  bool m247 = 0;
 
   //
-  int day_watts;
-  int night_watts;
+  int day_watts = 0;
+  int night_watts = 0;
 
-  uint8_t button_timer_secs;
-  uint8_t button_timer_max;
-  uint8_t c_start_h;
-  uint8_t c_finish_h;
-  uint8_t i_start_h;
-  uint8_t i_finish_h;
+  uint8_t button_timer_secs = 0;
+  uint8_t button_timer_max = 0;
+  uint8_t c_start_h = 0;
+  uint8_t c_finish_h = 0;
+  uint8_t i_start_h = 0;
+  uint8_t i_finish_h = 0;
 
-  bool webc_mode;
-  bool led_status;
+  bool webc_mode = 0;
+  bool led_status = 0;
 };
 
 Sconfig config;
@@ -335,6 +336,8 @@ struct SysFlags
   bool save_config = 0;
 
   bool sdcard_read_error = 0;
+
+  bool download_html = 0;
 };
 
 SysFlags flags;
@@ -354,9 +357,11 @@ void setup()
 
 
   if(!load_config())
-   save_config();
+  {
+    flags.download_html = 1;
+    save_config();
+  }
 
-  vars_sanity_check();
   set_pins();
 
   // --------------------------------------------------------------------------------------
@@ -511,6 +516,12 @@ void setup()
   server.begin();
 
   tone += toneinc; beep_helper(tone, 250);
+
+  if(config.fwver != FW_VERSION)
+  {
+    flags.download_html = 1;
+    save_config();
+  }
 }
 
 void set_pins()
@@ -838,7 +849,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
   }
 
   // download html trigger
-  if(!flags.access_point && config.download_html)
+  if(!flags.access_point && flags.download_html)
   {
     download_html_from_remote();
     return 1;
