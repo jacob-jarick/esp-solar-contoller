@@ -346,8 +346,8 @@ SysFlags flags;
 
 void setup()
 {
-  int toneinc = 45;
-  int tone = 90;
+  const uint8_t toneinc = 45;
+  uint16_t tone = 90;
   ledcSetup(0, 1000, 8);
   ledcAttachPin(16, 0);
 
