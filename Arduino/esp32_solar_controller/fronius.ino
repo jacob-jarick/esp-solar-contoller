@@ -130,7 +130,7 @@ bool update_p_grid_3phase()
 //   check = json_decode_payload();
   // --------------------------------------------------------------------------
   // decode json
-  check = 1;
+
   DeserializationError error2 = deserializeJson(doc, payload.c_str());
 
   if (error2)
@@ -142,6 +142,7 @@ bool update_p_grid_3phase()
 
     return 0;
   }
+  check = 1;
 
   // --------------------------------------------------------------------------
   // get phase abc values from JSON
