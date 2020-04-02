@@ -695,13 +695,7 @@ void css_raw()
 void whatami()
 {
   String webpage;
-  webpage += "IP: " + WiFi.localIP().toString() + ", host: " + String(config.hostn) + ", Dev Type: ";
-
-  if(config.board_rev == 1)
-    webpage += "esp32 solar controller";
-
-  if(config.board_rev == 0)
-    webpage += "esp32 solar custom";
+  webpage += "IP: " + WiFi.localIP().toString() + ", host: " + String(config.hostn) + ", Dev Type: esp32";
 
   webpage += ", Description: " + String(config.description) + ", SSID: ";
   String tmps = WiFi.SSID();

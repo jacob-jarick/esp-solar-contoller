@@ -1145,11 +1145,6 @@ void set_led(const char m)
     digitalWrite(config.pin_led, !digitalRead(config.pin_led));
     return;
   }
-  else if(m == 4) // led OFF without changing config.blink_led
-  {
-    digitalWrite(config.pin_led, 1);
-    return;
-  }
 }
 
 void both_print_ip()
