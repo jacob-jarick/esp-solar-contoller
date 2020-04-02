@@ -98,6 +98,8 @@ bool update_p_grid()
   if(!inverter_synced)
     inverter_synced = 1;
 
+  timers.pgrid_last_update = millis();
+
   return 1;
 }
 
@@ -188,6 +190,7 @@ bool update_p_grid_3phase()
   if(!inverter_synced)
     inverter_synced = 1;
 
+  timers.pgrid_last_update = millis();
   return 1;
 }
 

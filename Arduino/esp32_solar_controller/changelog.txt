@@ -1,20 +1,20 @@
-     HEAD~0	44d6140 type fix
-     HEAD~1	85a7c59 download_html
-     HEAD~2	2de64d2 cleanup
-     HEAD~3	ebfd930 size_system_msgs
-     HEAD~4	73fa6ce Update esp32_solar_controller.ino
-     HEAD~5	f97d5fe system_msgs
-     HEAD~6	653b9d6 fixes
-     HEAD~7	24f3e35 tidy
-     HEAD~8	07806c7 battery_msg removed.
-     HEAD~9	015d5eb removed pcf support. small tidy up
-    HEAD~10	50a533c fsfree removed, random delays added for same mode
-    HEAD~11	a630bd1 consts, mode message
-    HEAD~12	39e96c1 modeset fix
-    HEAD~13	bc17be1 Update advance.htm
-    HEAD~14	1999f51 latest firmware
-    HEAD~15	4d68d5d remove all traces of frline
-    HEAD~16	d3f396c removing msg.txt
-    HEAD~17	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-    HEAD~18	a100849 Update esp32_solar_controller.ino
-    HEAD~19	115c792 images
+     HEAD~0	0cc9231 get_url & get_url_and_save
+     HEAD~1	44d6140 type fix
+     HEAD~2	85a7c59 download_html
+     HEAD~3	2de64d2 cleanup
+     HEAD~4	ebfd930 size_system_msgs
+     HEAD~5	73fa6ce Update esp32_solar_controller.ino
+     HEAD~6	f97d5fe system_msgs
+     HEAD~7	653b9d6 fixes
+     HEAD~8	24f3e35 tidy
+     HEAD~9	07806c7 battery_msg removed.
+    HEAD~10	015d5eb removed pcf support. small tidy up
+    HEAD~11	50a533c fsfree removed, random delays added for same mode
+    HEAD~12	a630bd1 consts, mode message
+    HEAD~13	39e96c1 modeset fix
+    HEAD~14	bc17be1 Update advance.htm
+    HEAD~15	1999f51 latest firmware
+    HEAD~16	4d68d5d remove all traces of frline
+    HEAD~17	d3f396c removing msg.txt
+    HEAD~18	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~19	a100849 Update esp32_solar_controller.ino
