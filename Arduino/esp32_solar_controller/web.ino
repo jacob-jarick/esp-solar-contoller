@@ -1,12 +1,10 @@
-
-
 bool get_url(String &url, String &payload)
 {
-//   if(url.equals(""))
-//   {
-//     Serial.println("get_url: blank URL.");
-//     return 0;
-//   }
+  if(url.equals(""))
+  {
+    Serial.println("get_url: blank URL.");
+    return 0;
+  }
 
   bool result = 0;
 

@@ -3,10 +3,6 @@
 bool update_p_grid()
 {
   bool check = 0;
-  bool fellback = 0;
-  String payload = "";
-  DynamicJsonDocument doc(jsonsize);
-
   if(config.threephase)
   {
     check = update_p_grid_3phase();
@@ -16,6 +12,10 @@ bool update_p_grid()
 
     return check;
   }
+
+  bool fellback = 0;
+  String payload = "";
+  DynamicJsonDocument doc(jsonsize);
 
   // main url - inverter_url
   String url = String(config.inverter_url);
@@ -140,8 +140,6 @@ bool update_p_grid_3phase()
 
     log_msg(String("Fronius JSON Decode Error: ") + error2.c_str() );
 
-//     payload = "";
-//     check = 0;
     return 0;
   }
 
@@ -163,8 +161,6 @@ bool update_p_grid_3phase()
     phase_sum += phase_b_watts;
   if(config.monitor_phase_c)
     phase_sum += phase_c_watts;
-
-
 
   // --------------------------------------------------------------------------
   // check time on JSON and compare to local time.
