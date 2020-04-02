@@ -1,57 +1,5 @@
 #define jsonsize 2500
 
-String get_payload(const String url)
-{
-  if(url.equals(""))
-  {
-    Serial.println("get_payload: blank URL.");
-    return "";
-  }
-
-  String payload;
-//   bool v = 0;
-
-//   WiFiClient client;
-  HTTPClient http;
-
-  http.setTimeout(httpget_timeout);
-
-  http.begin(url); //HTTP
-  int httpCode = http.GET();
-
-  if (httpCode > 0)
-  {
-    if (httpCode == HTTP_CODE_OK)
-    {
-      timers.pgrid_last_update = millis();
-      payload = http.getString();
-
-//       Serial.print("get OK: ");
-//       Serial.println(url);
-    }
-    else
-    {
-      Serial.print("\nHTTP ERROR: '" + url + "'" + String(httpCode));
-
-      log_msg(String(httpCode) + F(": ") + url);
-      payload = "";
-    }
-  }
-  else
-  {
-
-    Serial.print("\nHTTP ERROR: '" + url + "'" + String(httpCode));
-    Serial.println(http.errorToString(httpCode).c_str());
-
-    payload = "";
-
-    log_msg(http.errorToString(httpCode).c_str() + String(": ") + url);
-
-  }
-  http.end();
-  return payload;
-}
-
 bool update_p_grid()
 {
   bool check = 0;
@@ -70,13 +18,13 @@ bool update_p_grid()
   }
 
   // main url - inverter_url
+  String url = String(config.inverter_url);
   if(timers.use_fallback < millis())
   {
-    payload = get_payload(String(config.inverter_url));
+    bool result = get_url(url, payload);
 
-    if(payload.equals(""))
+    if(!result)
     {
-//       Serial.println("update_p_grid fetch: '" + String(config.inverter_url) + "' failed" );
       log_msg("update_p_grid fetch failed");
     }
     else
@@ -96,9 +44,10 @@ bool update_p_grid()
   if(!check && strlen(config.inverter_push_url))
   {
     fellback = 1;
-    payload = get_payload(String(config.inverter_push_url));
+    String url = String(config.inverter_push_url);
+    bool result = get_url(url, payload);
 
-    if(payload.equals(""))
+    if(!result)
     {
       Serial.println("update_p_grid fetch fallback: '" + String(config.inverter_url) + "' failed" );
       log_msg(F("Fronius Fallback failed"));
@@ -162,7 +111,8 @@ bool update_p_grid_3phase()
   String payload;
   DynamicJsonDocument doc(jsonsize);
 
-  bool check = get_payload(String(config.meter_url));
+  String url = String(config.meter_url);
+  bool check = get_url(url, payload);
 
   if(!check)
   {

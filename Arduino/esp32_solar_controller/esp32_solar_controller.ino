@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 67
+#define FW_VERSION 68
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -54,6 +54,11 @@ WiFiMulti WiFiMulti;
 #include "SSD1306AsciiWire.h"
 
 SSD1306AsciiWire oled;
+
+// -----------------------------------------------------------------------------------------
+// web.ino
+
+int get_url_code;
 
 // -----------------------------------------------------------------------------------------
 

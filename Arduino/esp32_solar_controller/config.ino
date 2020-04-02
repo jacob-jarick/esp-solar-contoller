@@ -452,28 +452,19 @@ void get_config_and_save(const String target_ip)
   http.setTimeout(httpget_timeout * 2);
 
   String url = http_str + target_ip + "/config_raw";
+  String file_dest = json_config_file;
 
-  File f = SD.open(json_config_file, FILE_WRITE);
-  if (f)
+  bool result = get_url_and_save(url, file_dest);
+
+  if (result)
   {
-    http.begin(url);
-    int httpCode = http.GET();
-    if (httpCode > 0)
-    {
-      if (httpCode == HTTP_CODE_OK)
-      {
-        http.writeToStream(&f);
-        oled_clear();
-        oled_println(F("Copy OK"));
+    oled_clear();
+    oled_println(F("Copy OK"));
 
-      }
-    }
-    else
-    {
-      both_println(F("HTTP GET error:"));
-      both_println(http.errorToString(httpCode).c_str());
-    }
-    f.close();
-    http.end();
+  }
+  else
+  {
+    both_println(F("HTTP code:")); // there may be a file error as well. so dont declare this as an error
+    both_println(http.errorToString(get_url_code).c_str());
   }
 }

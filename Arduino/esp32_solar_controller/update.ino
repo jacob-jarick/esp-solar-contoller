@@ -47,9 +47,14 @@ void download_html_from_remote()
     flags.save_config = 1;
     log_issue("Error fetching latest html files.");
   }
+  else
+  {
+    download_index++;
+  }
 
   return;
 }
+
 
 bool get_html_and_save(String filepath)
 {
@@ -57,44 +62,9 @@ bool get_html_and_save(String filepath)
   oled_println(F("Updating\nHTML\ngetting:"));
   oled_println(filepath);
 
-  HTTPClient http;
-  http.setTimeout(httpget_timeout);
-
   String url = String(config.pub_url) + "/data" + filepath;
 
-  File f = SD.open(filepath.c_str(), FILE_WRITE);
-  if (f)
-  {
-    http.begin(url);
-    int httpCode = http.GET();
-    if (httpCode > 0)
-    {
-      if (httpCode == HTTP_CODE_OK)
-      {
-        http.writeToStream(&f);
-        download_index++;
-        return 1;
-      }
-      else
-      {
-        both_println("HTTP BAD Code:" + String(httpCode, DEC) );
-//         both_println(http.errorToString().c_str());
-      }
-    }
-    else
-    {
-      both_println(F("HTTP GET error:"));
-      both_println(http.errorToString(httpCode).c_str());
-    }
-    f.close();
-    http.end();
-  }
-  else
-  {
-    Serial.println("get_html_and_save: cannot open '" + filepath + "' to update.");
-  }
-
-  return 0;
+  return get_url_and_save(url, filepath);
 }
 
 int remote_version = 0;
@@ -108,18 +78,12 @@ String check_for_update()
     return String(F("Update Found (cached)"));
   }
 
-//   WiFiClient client;
-  HTTPClient http;
-  http.setTimeout(httpget_timeout);
-
   String url_tmp = String(config.pub_url) + "/cv.txt";
+  String result = "";
 
-  http.begin(url_tmp);
-
-  int httpCode = http.GET();
-  if( httpCode == 200 )
+  if(get_url(url_tmp, result))
   {
-    remote_version = http.getString().toInt();
+    remote_version = result.toInt();
 
     message += F("Current: ");
     message += FW_VERSION;
@@ -131,11 +95,9 @@ String check_for_update()
   }
   else
   {
-    message += F("HTTP ERROR: ");
-    message += httpCode;
+    message += "HTTP ERROR: " + String(get_url_code);
   }
 
-  http.end();
   return message;
 }
 
