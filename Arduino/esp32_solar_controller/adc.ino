@@ -1,109 +1,195 @@
-//Todo swap to ADS1115
-
-
-uint8_t cells_update_pos = 0;
 void cells_update()
 {
-  read_cell_volts(cells_update_pos);
+  for(uint8_t cells_update_pos = 0; cells_update_pos < config.cell_count; cells_update_pos++)
+    read_cell_volts(cells_update_pos);
 
-  cells_update_pos++;
-  if(cells_update_pos >= config.cell_count)
+  volt_synced = 1;
+}
+
+
+void ntc_update()
+{
+  for(uint8_t ntc_update_pos = 0; ntc_update_pos < config.ntc10k_count; ntc_update_pos++)
+    ntc10k_read_temp(ntc_update_pos);
+}
+
+
+int16_t adc_read(const uint8_t p)
+{
+  return adc_val[p];
+}
+
+// // ADC ports 0-35
+// int16_t adc_read_old(const uint8_t p)
+// {
+//   uint8_t channel = 0;
+//   uint8_t vp = p; // virtual port
+//   bool addr_a = 0;
+//   bool addr_b = 0;
+//   bool addr_c = 0;
+//
+//   channel = p / 8;
+//   vp = p % 8;
+//
+//   if(vp == 0)
+//   {
+//     addr_a = 0;
+//     addr_b = 0;
+//     addr_c = 0;
+//   }
+//   else if(vp == 1)
+//   {
+//     addr_a = 0;
+//     addr_b = 0;
+//     addr_c = 1;
+//   }
+//   else if(vp == 2)
+//   {
+//     addr_a = 0;
+//     addr_b = 1;
+//     addr_c = 0;
+//   }
+//   else if(vp == 3)
+//   {
+//     addr_a = 0;
+//     addr_b = 1;
+//     addr_c = 1;
+//   }
+//   else if(vp == 4)
+//   {
+//     addr_a = 1;
+//     addr_b = 0;
+//     addr_c = 0;
+//   }
+//   else if(vp == 5)
+//   {
+//     addr_a = 1;
+//     addr_b = 0;
+//     addr_c = 1;
+//   }
+//   else if(vp == 6)
+//   {
+//     addr_a = 1;
+//     addr_b = 1;
+//     addr_c = 0;
+//   }
+//   else if(vp == 7)
+//   {
+//     addr_a = 1;
+//     addr_b = 1;
+//     addr_c = 1;
+//   }
+//
+//   // set ads1115 mux channel
+//   ads.readADC_SingleEnded(channel);
+//
+//   // set board mux channel
+//   digitalWrite(pin_asel1, addr_a);
+//   digitalWrite(pin_asel2, addr_b);
+//   digitalWrite(pin_asel3, addr_c);
+//   delay(3);
+//
+//   int16_t value = ads.readADC_SingleEnded(channel);
+//
+//   if(value < 0) // we are not measuring negative voltages
+//     return 0;
+//
+//   return value;
+// }
+
+// used on startup
+void adc_quick_poll()
+{
+  for(uint8_t i = 0; i < 8; i++)
   {
-    volt_synced = 1;
-    cells_update_pos = 0;
+    oled_print(".");
+    adc_poll();
   }
 }
 
-
-
-uint8_t ntc_update_pos = 0;
-void ntc_update()
-{
-  ntc10k_read_temp(ntc_update_pos);
-
-  ntc_update_pos++;
-  if(ntc_update_pos >= config.ntc10k_count)
-    ntc_update_pos = 0;
-}
-
-
 // ADC ports 0-35
-int16_t adc_read(const uint8_t p)
+uint8_t adc_poll_pos = 0;
+void adc_poll()
 {
-  uint8_t channel = 0;
-  uint8_t vp = p; // virtual port
   bool addr_a = 0;
   bool addr_b = 0;
   bool addr_c = 0;
 
-  channel = p / 8;
-  vp = p % 8;
-
-  if(vp == 0)
+  if(adc_poll_pos == 0)
   {
     addr_a = 0;
     addr_b = 0;
     addr_c = 0;
   }
-  else if(vp == 1)
+  else if(adc_poll_pos == 1)
   {
     addr_a = 0;
     addr_b = 0;
     addr_c = 1;
   }
-  else if(vp == 2)
+  else if(adc_poll_pos == 2)
   {
     addr_a = 0;
     addr_b = 1;
     addr_c = 0;
   }
-  else if(vp == 3)
+  else if(adc_poll_pos == 3)
   {
     addr_a = 0;
     addr_b = 1;
     addr_c = 1;
   }
-  else if(vp == 4)
+  else if(adc_poll_pos == 4)
   {
     addr_a = 1;
     addr_b = 0;
     addr_c = 0;
   }
-  else if(vp == 5)
+  else if(adc_poll_pos == 5)
   {
     addr_a = 1;
     addr_b = 0;
     addr_c = 1;
   }
-  else if(vp == 6)
+  else if(adc_poll_pos == 6)
   {
     addr_a = 1;
     addr_b = 1;
     addr_c = 0;
   }
-  else if(vp == 7)
+  else if(adc_poll_pos == 7)
   {
     addr_a = 1;
     addr_b = 1;
     addr_c = 1;
   }
 
-  // set ads1115 mux channel
-  ads.readADC_SingleEnded(channel);
+//   // set ads1115 mux channel
+//   ads.readADC_SingleEnded(channel);
 
   // set board mux channel
   digitalWrite(pin_asel1, addr_a);
   digitalWrite(pin_asel2, addr_b);
   digitalWrite(pin_asel3, addr_c);
-  delay(5);
 
-  int16_t value = ads.readADC_SingleEnded(channel);
+  for(uint8_t channel = 0; channel < 4; channel++)
+  {
+    // do 2 throw aways
+    ads.readADC_SingleEnded(channel);
+    ads.readADC_SingleEnded(channel);
 
-  if(value < 0) // we are not measuring negative voltages
-    return 0;
+    uint8_t p = (channel*8) + adc_poll_pos;
+    adc_val[p] = ads.readADC_SingleEnded(channel);
+  }
 
-  return value;
+
+  adc_poll_pos++;
+  if(adc_poll_pos > 7)
+    adc_poll_pos = 0;
+
+  return;
 }
+
 
 double read_cell_volts(const byte cell)
 {

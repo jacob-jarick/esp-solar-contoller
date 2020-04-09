@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 70
+#define FW_VERSION 72
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -79,6 +79,9 @@ const float ads_mv = 0.125 / 1000; // mv to volts
 // ads.setGain(GAIN_SIXTEEN);    // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
 
 bool volt_synced = 0;
+
+
+int16_t adc_val[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 // -----------------------------------------------------------------------------------------
 
@@ -521,6 +524,12 @@ void setup()
   server.begin();
 
   tone += toneinc; beep_helper(tone, 250);
+
+  //
+
+  oled_clear();
+  oled_println("ADC 1st Poll");
+  adc_quick_poll();
 
   if(config.fwver != FW_VERSION)
   {
@@ -977,6 +986,7 @@ bool check_data_sources()
 
   if(cds_pos == 1 && config.monitor_battery && millis() > timers.voltage)
   {
+    adc_poll();
     cells_update();
 
     if(volt_synced)

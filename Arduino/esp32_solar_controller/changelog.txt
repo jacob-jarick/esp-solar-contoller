@@ -1,20 +1,20 @@
-     HEAD~0	d937574 fronius fix
-     HEAD~1	0cc9231 get_url & get_url_and_save
-     HEAD~2	44d6140 type fix
-     HEAD~3	85a7c59 download_html
-     HEAD~4	2de64d2 cleanup
-     HEAD~5	ebfd930 size_system_msgs
-     HEAD~6	73fa6ce Update esp32_solar_controller.ino
-     HEAD~7	f97d5fe system_msgs
-     HEAD~8	653b9d6 fixes
-     HEAD~9	24f3e35 tidy
-    HEAD~10	07806c7 battery_msg removed.
-    HEAD~11	015d5eb removed pcf support. small tidy up
-    HEAD~12	50a533c fsfree removed, random delays added for same mode
-    HEAD~13	a630bd1 consts, mode message
-    HEAD~14	39e96c1 modeset fix
-    HEAD~15	bc17be1 Update advance.htm
-    HEAD~16	1999f51 latest firmware
-    HEAD~17	4d68d5d remove all traces of frline
-    HEAD~18	d3f396c removing msg.txt
-    HEAD~19	b5ca413 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~0	f4d2483 tidy
+     HEAD~1	2d7d88b Update fronius.ino
+     HEAD~2	9ee7cd4 strings
+     HEAD~3	d937574 fronius fix
+     HEAD~4	0cc9231 get_url & get_url_and_save
+     HEAD~5	44d6140 type fix
+     HEAD~6	85a7c59 download_html
+     HEAD~7	2de64d2 cleanup
+     HEAD~8	ebfd930 size_system_msgs
+     HEAD~9	73fa6ce Update esp32_solar_controller.ino
+    HEAD~10	f97d5fe system_msgs
+    HEAD~11	653b9d6 fixes
+    HEAD~12	24f3e35 tidy
+    HEAD~13	07806c7 battery_msg removed.
+    HEAD~14	015d5eb removed pcf support. small tidy up
+    HEAD~15	50a533c fsfree removed, random delays added for same mode
+    HEAD~16	a630bd1 consts, mode message
+    HEAD~17	39e96c1 modeset fix
+    HEAD~18	bc17be1 Update advance.htm
+    HEAD~19	1999f51 latest firmware

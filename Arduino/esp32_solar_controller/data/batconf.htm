@@ -10,47 +10,7 @@
 
 <center>
 
-<script type="text/javascript">
-function batcal_add_row(cell, voltage, modifier)
-{
-  console.log("batcal_add_row('" +  cell + "', '" + voltage + "', '" + modifier + "')");
 
-  var table = document.getElementById('battery_table');
-  var row = table.insertRow(-1);
-
-  var cell1 = row.insertCell(0);
-  cell1.innerHTML = cell;
-
-  // volt old
-  var cell2 = row.insertCell(1);
-  cell2.innerHTML = "<input id='bv_old" + cell + "' type=text name='bv_old" + cell + "' value='" + voltage + "' readonly>";
-
-  // mod old
-  var cell3 = row.insertCell(2);
-//   cell3.innerHTML = modifier;
-  cell3.innerHTML = "<input id='bvm_old" + cell + "' type=text name='bvm_old" + cell + "' value='" + modifier + "' readonly>";
-
-  // volt new
-  var cell4 = row.insertCell(3);
-  cell4.innerHTML = "<input id='bv" + cell + "' type=text name='bv" + cell + "' value='" + voltage + "'  onchange=\"battery_calc("+ cell +")\" >";
-
-  // mod new
-  var cell5 = row.insertCell(4);
-  cell5.innerHTML = "<input id='battery_volt_mod" + cell + "' type=text name='battery_volt_mod" + cell + "' value='" + modifier + "'>";
-}
-
-function battery_calc(cell)
-{
-  var mod_old = document.getElementById("bvm_old"+cell).value;
-  var volt_old = document.getElementById("bv_old"+cell).value;
-  var volt_new = document.getElementById("bv"+cell).value;
-
-  var mod_new = (volt_new / volt_old) * mod_old;
-  document.getElementById("battery_volt_mod"+cell).value = mod_new;
-
-}
-
-</script>
 
 <form action='/result' method='POST'>
 
