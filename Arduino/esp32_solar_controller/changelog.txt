@@ -1,20 +1,20 @@
-     HEAD~0	0ce2b49 phase voltage monitoring
-     HEAD~1	a4c4f77 rm volt_synced flag
-     HEAD~2	e85184d adc poll timer
-     HEAD~3	f81094a adc polling
-     HEAD~4	f4d2483 tidy
-     HEAD~5	2d7d88b Update fronius.ino
-     HEAD~6	9ee7cd4 strings
-     HEAD~7	d937574 fronius fix
-     HEAD~8	0cc9231 get_url & get_url_and_save
-     HEAD~9	44d6140 type fix
-    HEAD~10	85a7c59 download_html
-    HEAD~11	2de64d2 cleanup
-    HEAD~12	ebfd930 size_system_msgs
-    HEAD~13	73fa6ce Update esp32_solar_controller.ino
-    HEAD~14	f97d5fe system_msgs
-    HEAD~15	653b9d6 fixes
-    HEAD~16	24f3e35 tidy
-    HEAD~17	07806c7 battery_msg removed.
-    HEAD~18	015d5eb removed pcf support. small tidy up
-    HEAD~19	50a533c fsfree removed, random delays added for same mode
+     HEAD~0	6eb78c1 idle fix
+     HEAD~1	0ce2b49 phase voltage monitoring
+     HEAD~2	a4c4f77 rm volt_synced flag
+     HEAD~3	e85184d adc poll timer
+     HEAD~4	f81094a adc polling
+     HEAD~5	f4d2483 tidy
+     HEAD~6	2d7d88b Update fronius.ino
+     HEAD~7	9ee7cd4 strings
+     HEAD~8	d937574 fronius fix
+     HEAD~9	0cc9231 get_url & get_url_and_save
+    HEAD~10	44d6140 type fix
+    HEAD~11	85a7c59 download_html
+    HEAD~12	2de64d2 cleanup
+    HEAD~13	ebfd930 size_system_msgs
+    HEAD~14	73fa6ce Update esp32_solar_controller.ino
+    HEAD~15	f97d5fe system_msgs
+    HEAD~16	653b9d6 fixes
+    HEAD~17	24f3e35 tidy
+    HEAD~18	07806c7 battery_msg removed.
+    HEAD~19	015d5eb removed pcf support. small tidy up

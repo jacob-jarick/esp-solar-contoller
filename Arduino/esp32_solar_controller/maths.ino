@@ -54,3 +54,17 @@ uint8_t m_max(const uint8_t a, const uint8_t b)
 
   return b;
 }
+
+
+uint8_t m_min(const uint8_t a, const uint8_t b)
+{
+  if(a < b)
+    return a;
+
+  return b;
+}
+
+uint8_t m_diff(const uint8_t a, const uint8_t b)
+{
+  return m_max(a, b) - m_min(a, b);
+}

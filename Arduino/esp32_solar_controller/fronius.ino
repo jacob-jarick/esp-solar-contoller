@@ -176,19 +176,17 @@ bool update_p_grid_3phase()
 
   // must be same hour
 
-  int8_t h = tmp.substring(11, 13).toInt();
-  int8_t m = tmp.substring(14, 16).toInt();
-  if (hour(timetmp) != h)
-  {
-    log_msg("3p: hour does not match");
-    return 0;
-  }
+  uint8_t json_h = tmp.substring(11, 13).toInt() % 23;
+  uint8_t json_m = tmp.substring(14, 16).toInt() + (json_h * 60);
 
-  // must be  +/- 1min
+  uint8_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
 
-  if (minute(timetmp) < m-1 || minute(timetmp) > m+1)
+
+  uint8_t time_diff = m_diff(json_m, local_m);
+
+  if (time_diff > 2)
   {
-    log_msg("3p: minute does not match");
+    log_msg("3p: json timestamp " + String(time_diff) + "+ minutes out of sync");
     return 0;
   }
 
