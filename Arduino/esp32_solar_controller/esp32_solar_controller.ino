@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 72
+#define FW_VERSION 73
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -108,8 +108,7 @@ struct SysTimers
   unsigned long inverter_off = 0;
 
   unsigned long pgrid = 0;
-  unsigned long voltage = 0;
-  unsigned long ntc10k = 0;
+  unsigned long adc_poll = 0;
 
   unsigned long read_button = 0;
   unsigned long update_check = 0;
@@ -590,13 +589,12 @@ unsigned long systick = 0;
 
 void loop()
 {
-  for(uint8_t i = 0; i < 3; i++)
-    server.handleClient();
+  server.handleClient();
 
   if(systick > millis())
     return;
 
-  systick = millis() + 100;
+  systick = millis() + 30;
 
   if(check_system_triggers())
     return;
@@ -971,7 +969,7 @@ uint8_t cds_pos = 0;
 bool check_data_sources()
 {
   cds_pos++;
-  if(cds_pos >= 3)
+  if(cds_pos >= 2)
     cds_pos = 0;
 
 
@@ -980,37 +978,24 @@ bool check_data_sources()
   if(cds_pos == 0 && millis() > timers.pgrid)
   {
     check_grid();
-    timers.pgrid = millis() + 1555;
+    timers.pgrid = millis() + 1333;
     result = 1;
   }
 
-  if(cds_pos == 1 && config.monitor_battery && millis() > timers.voltage)
+  if(cds_pos == 1 && (config.monitor_battery || config.monitor_temp) && millis() > timers.adc_poll)
   {
     adc_poll();
-    cells_update();
 
-    if(volt_synced)
-      check_cells();
-
-    timers.voltage = millis() + 100;
-    result = 1;
-  }
-
-  if(cds_pos == 2 && config.monitor_temp && millis() > timers.ntc10k)
-  {
-    ntc_update();
-    bool trigger_shutdown = 0;
-    for(int i = 0; i < config.ntc10k_count; i++)
+    if(config.monitor_battery)
     {
-      if(ntc10k_sensors[i] > config.ntc_temp_max[i])
-      {
-        trigger_shutdown = 1;
-        break;
-      }
+      cells_update();
+      check_cells();
     }
 
-    flags.shutdown_htemp = trigger_shutdown;
-    timers.ntc10k = millis() + 400;
+    if(config.monitor_temp)
+      ntc_update();
+
+    timers.adc_poll = millis() + 50;
     result = 1;
   }
 

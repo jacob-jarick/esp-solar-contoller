@@ -11,6 +11,19 @@ void ntc_update()
 {
   for(uint8_t ntc_update_pos = 0; ntc_update_pos < config.ntc10k_count; ntc_update_pos++)
     ntc10k_read_temp(ntc_update_pos);
+
+  bool trigger_shutdown = 0;
+  for(int i = 0; i < config.ntc10k_count; i++)
+  {
+    if(ntc10k_sensors[i] > config.ntc_temp_max[i])
+    {
+      trigger_shutdown = 1;
+      break;
+    }
+  }
+
+  flags.shutdown_htemp = trigger_shutdown;
+
 }
 
 
