@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 75
+#define FW_VERSION 79
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -1085,7 +1085,10 @@ bool check_grid()
   if(flags.access_point)
     return 0;
 
-  if (!config.button_timer_mode && update_p_grid() == 0)
+  if(config.button_timer_mode)
+    return 0;
+
+  if(update_p_grid() == 0)
   {
     if(!inverter_synced)
     {
@@ -1281,7 +1284,7 @@ void calc_next_update()
   }
   else if(system_mode == 0) // IDLE
   {
-    rest_s = 60;
+    rest_s = random(1, 6);
   }
   else if(system_mode == 3) // cross over (not used atm)
   {
@@ -1369,9 +1372,9 @@ void modeset(byte m)
   system_mode = m;
 
   if(idle_forced)
-    timers.mode_check = millis() + random(5000, 15000); // 5 - 15 secs
+    timers.mode_check = millis() + random(1000, 5000); // 1 - 5 secs
   else if(same_mode)
-    timers.mode_check = millis() + random(500, 7000); // 0.5 to x secs
+    timers.mode_check = millis() + random(500, 4000); // 0.5 to x secs
   else
     calc_next_update();
 

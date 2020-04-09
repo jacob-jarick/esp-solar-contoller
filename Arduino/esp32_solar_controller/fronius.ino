@@ -175,14 +175,17 @@ bool update_p_grid_3phase()
   String tmp = root["Head"]["Timestamp"];
 
   // must be same hour
-  if (hour(timetmp) != tmp.substring(11, 13).toInt())
+
+  int8_t h = tmp.substring(11, 13).toInt();
+  int8_t m = tmp.substring(14, 16).toInt();
+  if (hour(timetmp) != h)
   {
     log_msg("3p: hour does not match");
     return 0;
   }
 
   // must be  +/- 1min
-  int8_t m = tmp.substring(14, 16).toInt();
+
   if (minute(timetmp) < m-1 || minute(timetmp) > m+1)
   {
     log_msg("3p: minute does not match");
