@@ -2,8 +2,6 @@ void cells_update()
 {
   for(uint8_t cells_update_pos = 0; cells_update_pos < config.cell_count; cells_update_pos++)
     read_cell_volts(cells_update_pos);
-
-  volt_synced = 1;
 }
 
 

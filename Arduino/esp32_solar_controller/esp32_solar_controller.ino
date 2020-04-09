@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 73
+#define FW_VERSION 74
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -77,9 +77,6 @@ const float ads_mv = 0.125 / 1000; // mv to volts
 // ads.setGain(GAIN_FOUR);       // 4x gain   +/- 1.024V  1 bit = 0.5mV    0.03125mV
 // ads.setGain(GAIN_EIGHT);      // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
 // ads.setGain(GAIN_SIXTEEN);    // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
-
-bool volt_synced = 0;
-
 
 int16_t adc_val[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -606,12 +603,6 @@ void loop()
   check_data_sources();
 
   // ----------------------------------------------------------------------
-
-  if(!volt_synced && config.monitor_battery)
-  {
-    // waiting on voltages to be read
-    return;
-  }
 
   // check if cell volt is low and force update
 

@@ -1,20 +1,20 @@
-     HEAD~0	f81094a adc polling
-     HEAD~1	f4d2483 tidy
-     HEAD~2	2d7d88b Update fronius.ino
-     HEAD~3	9ee7cd4 strings
-     HEAD~4	d937574 fronius fix
-     HEAD~5	0cc9231 get_url & get_url_and_save
-     HEAD~6	44d6140 type fix
-     HEAD~7	85a7c59 download_html
-     HEAD~8	2de64d2 cleanup
-     HEAD~9	ebfd930 size_system_msgs
-    HEAD~10	73fa6ce Update esp32_solar_controller.ino
-    HEAD~11	f97d5fe system_msgs
-    HEAD~12	653b9d6 fixes
-    HEAD~13	24f3e35 tidy
-    HEAD~14	07806c7 battery_msg removed.
-    HEAD~15	015d5eb removed pcf support. small tidy up
-    HEAD~16	50a533c fsfree removed, random delays added for same mode
-    HEAD~17	a630bd1 consts, mode message
-    HEAD~18	39e96c1 modeset fix
-    HEAD~19	bc17be1 Update advance.htm
+     HEAD~0	e85184d adc poll timer
+     HEAD~1	f81094a adc polling
+     HEAD~2	f4d2483 tidy
+     HEAD~3	2d7d88b Update fronius.ino
+     HEAD~4	9ee7cd4 strings
+     HEAD~5	d937574 fronius fix
+     HEAD~6	0cc9231 get_url & get_url_and_save
+     HEAD~7	44d6140 type fix
+     HEAD~8	85a7c59 download_html
+     HEAD~9	2de64d2 cleanup
+    HEAD~10	ebfd930 size_system_msgs
+    HEAD~11	73fa6ce Update esp32_solar_controller.ino
+    HEAD~12	f97d5fe system_msgs
+    HEAD~13	653b9d6 fixes
+    HEAD~14	24f3e35 tidy
+    HEAD~15	07806c7 battery_msg removed.
+    HEAD~16	015d5eb removed pcf support. small tidy up
+    HEAD~17	50a533c fsfree removed, random delays added for same mode
+    HEAD~18	a630bd1 consts, mode message
+    HEAD~19	39e96c1 modeset fix
