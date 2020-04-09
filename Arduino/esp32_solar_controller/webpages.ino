@@ -787,9 +787,9 @@ void stats()
   String extra_info = "";
   if(config.threephase)
   {
-    extra_info += "<pre>Phase A: " + String(phase_a_watts) + " watts\\n";
-    extra_info += "Phase B: " + String(phase_b_watts) + " watts\\n";
-    extra_info += "Phase C: " + String(phase_c_watts) + " watts\\n";
+    extra_info += "<pre>Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\\n";
+    extra_info += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\\n";
+    extra_info += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\\n";
     extra_info += "Monitored Sum: " + String(phase_sum) + " watts\\n";
     extra_info += "</pre>";
   }

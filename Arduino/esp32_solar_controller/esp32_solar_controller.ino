@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 74
+#define FW_VERSION 75
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -174,6 +174,10 @@ String system_msgs = "";
 float phase_a_watts = 0;
 float phase_b_watts = 0;
 float phase_c_watts = 0;
+
+float phase_a_voltage = 0;
+float phase_b_voltage = 0;
+float phase_c_voltage = 0;
 
 float phase_sum = 0;
 float phase_sum_old = 0;

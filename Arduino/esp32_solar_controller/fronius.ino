@@ -154,6 +154,11 @@ bool update_p_grid_3phase()
   phase_b_watts = Body_0["PowerReal_P_Phase_2"]; // 0
   phase_c_watts = Body_0["PowerReal_P_Phase_3"]; // 0
 
+  phase_a_voltage = Body_0["Voltage_AC_Phase_1"]; // 671.6
+  phase_b_voltage = Body_0["Voltage_AC_Phase_2"]; // 0
+  phase_c_voltage = Body_0["Voltage_AC_Phase_3"]; // 0
+
+
   phase_sum = 0;
 
   if(config.monitor_phase_a)
