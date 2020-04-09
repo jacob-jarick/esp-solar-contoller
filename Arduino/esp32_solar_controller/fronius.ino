@@ -177,14 +177,14 @@ bool update_p_grid_3phase()
   // must be same hour
 
   uint8_t json_h = tmp.substring(11, 13).toInt() % 23;
-  uint8_t json_m = tmp.substring(14, 16).toInt();
+  uint16_t json_m = tmp.substring(14, 16).toInt();
 
   json_m += (json_h * 60);
 
-  uint8_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
+  uint16_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
 
 
-  uint8_t time_diff = m_diff(json_m, local_m);
+  uint16_t time_diff = m_diff(json_m, local_m);
 
   if (time_diff > 2)
   {
