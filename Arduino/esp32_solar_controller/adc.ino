@@ -91,9 +91,6 @@ void adc_poll()
     addr_c = 1;
   }
 
-//   // set ads1115 mux channel
-//   ads.readADC_SingleEnded(channel);
-
   // set board mux channel
   digitalWrite(pin_asel1, addr_a);
   digitalWrite(pin_asel2, addr_b);
@@ -101,11 +98,14 @@ void adc_poll()
 
   for(uint8_t channel = 0; channel < 4; channel++)
   {
+    uint8_t p = (channel*8) + adc_poll_pos;
+
+    if(!adc_enable[p])
+      continue;
+
     // do 2 throw aways
     ads.readADC_SingleEnded(channel);
     ads.readADC_SingleEnded(channel);
-
-    uint8_t p = (channel*8) + adc_poll_pos;
     adc_val[p] = ads.readADC_SingleEnded(channel);
   }
 
