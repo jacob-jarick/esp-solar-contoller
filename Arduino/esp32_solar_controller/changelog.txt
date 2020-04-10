@@ -1,20 +1,20 @@
-     HEAD~0	42e4e46 time compare fix
-     HEAD~1	3f7b15f maths, time.
-     HEAD~2	6eb78c1 idle fix
-     HEAD~3	0ce2b49 phase voltage monitoring
-     HEAD~4	a4c4f77 rm volt_synced flag
-     HEAD~5	e85184d adc poll timer
-     HEAD~6	f81094a adc polling
-     HEAD~7	f4d2483 tidy
-     HEAD~8	2d7d88b Update fronius.ino
-     HEAD~9	9ee7cd4 strings
-    HEAD~10	d937574 fronius fix
-    HEAD~11	0cc9231 get_url & get_url_and_save
-    HEAD~12	44d6140 type fix
-    HEAD~13	85a7c59 download_html
-    HEAD~14	2de64d2 cleanup
-    HEAD~15	ebfd930 size_system_msgs
-    HEAD~16	73fa6ce Update esp32_solar_controller.ino
-    HEAD~17	f97d5fe system_msgs
-    HEAD~18	653b9d6 fixes
-    HEAD~19	24f3e35 tidy
+     HEAD~0	05c28a9 overflow fix
+     HEAD~1	42e4e46 time compare fix
+     HEAD~2	3f7b15f maths, time.
+     HEAD~3	6eb78c1 idle fix
+     HEAD~4	0ce2b49 phase voltage monitoring
+     HEAD~5	a4c4f77 rm volt_synced flag
+     HEAD~6	e85184d adc poll timer
+     HEAD~7	f81094a adc polling
+     HEAD~8	f4d2483 tidy
+     HEAD~9	2d7d88b Update fronius.ino
+    HEAD~10	9ee7cd4 strings
+    HEAD~11	d937574 fronius fix
+    HEAD~12	0cc9231 get_url & get_url_and_save
+    HEAD~13	44d6140 type fix
+    HEAD~14	85a7c59 download_html
+    HEAD~15	2de64d2 cleanup
+    HEAD~16	ebfd930 size_system_msgs
+    HEAD~17	73fa6ce Update esp32_solar_controller.ino
+    HEAD~18	f97d5fe system_msgs
+    HEAD~19	653b9d6 fixes

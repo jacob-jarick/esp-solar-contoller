@@ -24,90 +24,6 @@ void ntc_update()
 
 }
 
-
-int16_t adc_read(const uint8_t p)
-{
-  return adc_val[p];
-}
-
-// // ADC ports 0-35
-// int16_t adc_read_old(const uint8_t p)
-// {
-//   uint8_t channel = 0;
-//   uint8_t vp = p; // virtual port
-//   bool addr_a = 0;
-//   bool addr_b = 0;
-//   bool addr_c = 0;
-//
-//   channel = p / 8;
-//   vp = p % 8;
-//
-//   if(vp == 0)
-//   {
-//     addr_a = 0;
-//     addr_b = 0;
-//     addr_c = 0;
-//   }
-//   else if(vp == 1)
-//   {
-//     addr_a = 0;
-//     addr_b = 0;
-//     addr_c = 1;
-//   }
-//   else if(vp == 2)
-//   {
-//     addr_a = 0;
-//     addr_b = 1;
-//     addr_c = 0;
-//   }
-//   else if(vp == 3)
-//   {
-//     addr_a = 0;
-//     addr_b = 1;
-//     addr_c = 1;
-//   }
-//   else if(vp == 4)
-//   {
-//     addr_a = 1;
-//     addr_b = 0;
-//     addr_c = 0;
-//   }
-//   else if(vp == 5)
-//   {
-//     addr_a = 1;
-//     addr_b = 0;
-//     addr_c = 1;
-//   }
-//   else if(vp == 6)
-//   {
-//     addr_a = 1;
-//     addr_b = 1;
-//     addr_c = 0;
-//   }
-//   else if(vp == 7)
-//   {
-//     addr_a = 1;
-//     addr_b = 1;
-//     addr_c = 1;
-//   }
-//
-//   // set ads1115 mux channel
-//   ads.readADC_SingleEnded(channel);
-//
-//   // set board mux channel
-//   digitalWrite(pin_asel1, addr_a);
-//   digitalWrite(pin_asel2, addr_b);
-//   digitalWrite(pin_asel3, addr_c);
-//   delay(3);
-//
-//   int16_t value = ads.readADC_SingleEnded(channel);
-//
-//   if(value < 0) // we are not measuring negative voltages
-//     return 0;
-//
-//   return value;
-// }
-
 // used on startup
 void adc_quick_poll()
 {
@@ -204,7 +120,7 @@ void adc_poll()
 
 double read_cell_volts(const byte cell)
 {
-  double v = adc_read(cell);
+  double v = adc_val[cell];
 
   v *= ads_mv;
   v += config.dcvoltage_offset; // only use 1 offset
@@ -226,9 +142,7 @@ double read_cell_volts(const byte cell)
 
 float ntc10k_read_temp(const byte sensor)
 {
-  int virtual_pin = sensor + 16;
-
-  int16_t adc0 = adc_read(virtual_pin);
+  int16_t adc0 = adc_val[sensor + 16];
 
   // get resistance --------------------------------------------//
   float R0 = resistance(adc0);
