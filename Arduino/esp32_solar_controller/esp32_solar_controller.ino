@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 85
+#define FW_VERSION 86
 
 #define DAVG_MAGIC_NUM -12345678
 

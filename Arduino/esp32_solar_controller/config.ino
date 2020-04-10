@@ -399,14 +399,27 @@ void vars_sanity_check()
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
     config.battery_volt_min = config.pack_volt_min = m_max(config.battery_volt_min, config.pack_volt_min);
 
+  // -------------------------------------
+  // enable ADC channels for monitoring.
+
+  // disable all
   for(byte i = 0; i < 32; i++)
     adc_enable[i] = 0;
 
-  for(byte i = 0; i < config.cell_count; i++)
-    adc_enable[i] = 1;
+  // enable battery channels
+  if(config.monitor_battery)
+  {
+    for(byte i = 0; i < config.cell_count; i++)
+      adc_enable[i] = 1;
+  }
 
-  for(byte i = 0; i < config.ntc10k_count; i++)
-    adc_enable[i+16] = 1;
+  // enable temp channels
+  if(config.monitor_temp)
+  {
+    for(byte i = 0; i < config.ntc10k_count; i++)
+      adc_enable[i+16] = 1;
+  }
+  // -------------------------------------
 
   for(byte i = 0; i < count_cells; i++)
   {
