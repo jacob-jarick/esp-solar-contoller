@@ -2,30 +2,27 @@
 
 bool update_p_grid()
 {
-  bool check = 0;
   if(config.threephase)
-  {
-    check = update_p_grid_3phase();
+    return update_p_grid_3phase();
 
-    if(check)
-      set_power(phase_sum);
-
-    return check;
-  }
-
+  bool check = 0;
   bool fellback = 0;
   String payload = "";
   DynamicJsonDocument doc(jsonsize);
+  String url;
 
   // main url - inverter_url
-  String url = String(config.inverter_url);
-  if(timers.use_fallback < millis())
+  if(timers.use_fallback < millis() && strlen(config.inverter_url))
   {
+    url = String(config.inverter_url);
+
     bool result = get_url(url, payload);
 
     if(!result)
     {
-      log_msg("update_p_grid fetch failed");
+      log_msg("fetch inverter_url failed");
+      fellback = 1;
+      timers.use_fallback = millis() + (10 * 1000);
     }
     else
     {
@@ -34,28 +31,20 @@ bool update_p_grid()
   }
   else
   {
-    Serial.println("fallback timer active." );
+    fellback = 1;
+    Serial.println("fallback timer active." ); // or blank URL`
   }
 
-  if(!check)
-    timers.use_fallback = millis() + (10 * 1000);
-
   // push url (fallback)
-  if(!check && strlen(config.inverter_push_url))
+  if(fellback && strlen(config.inverter_push_url))
   {
-    fellback = 1;
-    String url = String(config.inverter_push_url);
+    url = String(config.inverter_push_url);
     bool result = get_url(url, payload);
 
     if(!result)
-    {
-      Serial.println("update_p_grid fetch fallback: '" + String(config.inverter_url) + "' failed" );
-      log_msg(F("Fronius Fallback failed"));
-    }
+      log_msg(F("Error fetch inverter_push_url"));
     else
-    {
       check = 1;
-    }
   }
 
   if(!check)
@@ -68,12 +57,8 @@ bool update_p_grid()
 
   if (error2)
   {
-    Serial.println(String("JSON Decode ERROR") + error2.c_str());
-    Serial.println(payload);
-
-    timers.use_fallback = millis() + (5 * 1000);
-
     log_msg(String("update_p_grid JSON Decode ERROR") + error2.c_str());
+    timers.use_fallback = millis() + (10 * 1000);
 
     return 0;
   }
@@ -85,14 +70,10 @@ bool update_p_grid()
   JsonObject Body_Data_Site;
 
   if(fellback)
-  {
-    Body_Data_Site = root["Body"]["Site"];
-  }
+    Body_Data_Site = root["Body"]["Site"]; // push json body location
   else
-  {
-    JsonObject Body_Data = root["Body"]["Data"];
-    Body_Data_Site = Body_Data["Site"];
-  }
+    Body_Data_Site = root["Body"]["Data"]["Site"]; // fetch (direct) json body location
+
   set_power(Body_Data_Site["P_Grid"]);
 
   if(!inverter_synced)
@@ -105,58 +86,117 @@ bool update_p_grid()
 
 bool update_p_grid_3phase()
 {
-  if(!strlen(config.meter_url))
-  {
-    return 0;
-  }
+
+  bool fellback = 0;
+  bool check = 0;
 
   String payload;
   DynamicJsonDocument doc(jsonsize);
 
-  String url = String(config.meter_url);
-  bool check = get_url(url, payload);
+  String url = String(config.threephase_direct_url);
 
-  if(!check)
+
+  // Direct 3phase URL
+  if(timers.use_fallback < millis() && strlen(config.threephase_direct_url) )
   {
-    oled_clear();
-    log_msg("Fronius 3phase URL fetch Error");
-    both_println(F("1 HTTP Fetch\nERROR"));
-    oled_set2X();
-    both_println(WiFi.localIP().toString());
+    check = get_url(url, payload);
 
-    return 0;
+    if(!check)
+    {
+      log_msg("Fronius 3phase Direct URL fetch Error");
+      fellback = 1;
+    }
+
+    // decode json
+    if(!fellback)
+    {
+      DeserializationError error2 = deserializeJson(doc, payload.c_str());
+
+      if (error2)
+      {
+        log_msg(String("Fronius JSON Decode Error: ") + error2.c_str() );
+        fellback = 1;
+      }
+    }
+
+    if(fellback)
+      timers.use_fallback = millis() + (10 * 1000);
+  }
+  else
+  {
+    fellback = 1;
   }
 
-//   check = json_decode_payload();
+
+  // attempt push URL
+  if(fellback)
+  {
+    if(!strlen(config.threephase_push_url))
+      return 0;
+
+    url = String(config.threephase_push_url);
+    check = get_url(url, payload);
+
+    if(!check)
+    {
+      log_msg("Fronius 3phase Fallback URL fetch Error");
+      return 0;
+    }
+
+    DeserializationError error2 = deserializeJson(doc, payload.c_str());
+
+    if (error2)
+    {
+      log_msg(String("Fronius 3p Fallback JSON Decode Error: ") + error2.c_str() );
+      return 0;
+    }
+
+  }
+
+  JsonObject root = doc.as<JsonObject>();
+  JsonObject Body_0;
+
   // --------------------------------------------------------------------------
-  // decode json
+  // check time on JSON and compare to local time.
 
-  DeserializationError error2 = deserializeJson(doc, payload.c_str());
-
-  if (error2)
+  if(fellback)
   {
-    Serial.println(String("JSON Decode ERROR") + error2.c_str());
-    Serial.println(payload);
+    time_t timetmp = now();
+    String tmp = root["Head"]["Timestamp"];
 
-    log_msg(String("Fronius JSON Decode Error: ") + error2.c_str() );
+    // must be same hour
 
-    return 0;
+    uint8_t json_h = tmp.substring(11, 13).toInt() % 23;
+    uint16_t json_m = tmp.substring(14, 16).toInt();
+
+    json_m += (json_h * 60);
+
+    uint16_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
+
+    uint16_t time_diff = m_diff(json_m, local_m);
+
+    if (time_diff > 2)
+    {
+      log_msg("3p: json timestamp " + String(time_diff) + "+ minutes out of sync");
+      return 0;
+    }
   }
-  check = 1;
 
   // --------------------------------------------------------------------------
   // get phase abc values from JSON
 
-  JsonObject root = doc.as<JsonObject>();
-  JsonObject Body_0 = root["Body"]["0"];
+  if(fellback)
+    Body_0 = root["Body"]["0"]; // push URL
+  else
+    Body_0 = root["Body"]["Data"]["0"]; // fetch (direct) url
 
-  phase_a_watts = Body_0["PowerReal_P_Phase_1"]; // 671.6
-  phase_b_watts = Body_0["PowerReal_P_Phase_2"]; // 0
-  phase_c_watts = Body_0["PowerReal_P_Phase_3"]; // 0
+  phase_a_watts = Body_0["PowerReal_P_Phase_1"];
+  phase_b_watts = Body_0["PowerReal_P_Phase_2"];
+  phase_c_watts = Body_0["PowerReal_P_Phase_3"];
 
-  phase_a_voltage = Body_0["Voltage_AC_Phase_1"]; // 671.6
-  phase_b_voltage = Body_0["Voltage_AC_Phase_2"]; // 0
-  phase_c_voltage = Body_0["Voltage_AC_Phase_3"]; // 0
+  phase_a_voltage = Body_0["Voltage_AC_Phase_1"];
+  phase_b_voltage = Body_0["Voltage_AC_Phase_2"];
+  phase_c_voltage = Body_0["Voltage_AC_Phase_3"];
 
 
   phase_sum = 0;
@@ -168,34 +208,13 @@ bool update_p_grid_3phase()
   if(config.monitor_phase_c)
     phase_sum += phase_c_watts;
 
-  // --------------------------------------------------------------------------
-  // check time on JSON and compare to local time.
-
-  time_t timetmp = now();
-  String tmp = root["Head"]["Timestamp"];
-
-  // must be same hour
-
-  uint8_t json_h = tmp.substring(11, 13).toInt() % 23;
-  uint16_t json_m = tmp.substring(14, 16).toInt();
-
-  json_m += (json_h * 60);
-
-  uint16_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
-
-
-  uint16_t time_diff = m_diff(json_m, local_m);
-
-  if (time_diff > 2)
-  {
-    log_msg("3p: json timestamp " + String(time_diff) + "+ minutes out of sync");
-    return 0;
-  }
-
   if(!inverter_synced)
     inverter_synced = 1;
 
   timers.pgrid_last_update = millis();
+
+  set_power(phase_sum);
+
   return 1;
 }
 

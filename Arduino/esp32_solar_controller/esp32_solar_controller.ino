@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 88
+#define FW_VERSION 89
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -216,7 +216,8 @@ struct Sconfig
 
   char inverter_url[smedium];
   char inverter_push_url[smedium];
-  char meter_url[smedium];
+  char threephase_direct_url[smedium];
+  char threephase_push_url[smedium];
   char pub_url[smedium];
 
   // sortme

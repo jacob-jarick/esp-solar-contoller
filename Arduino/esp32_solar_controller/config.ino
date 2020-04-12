@@ -33,7 +33,9 @@ void save_config()
 
   doc["inverter_url"] = config.inverter_url;
   doc["inverter_push_url"] = config.inverter_push_url;
-  doc["meter_url"] = config.meter_url;
+  doc["3p_push_url"] = config.threephase_push_url;
+  doc["3p_direct_url"] = config.threephase_direct_url;
+
   doc["pub_url"] = config.pub_url;
 
 //   doc[""] = config.;
@@ -203,63 +205,65 @@ bool load_config()
 
   f.close();
 
-  config.fwver = doc["fwver"];
+  config.fwver = doc["fwver"] | 0;
 
   // NETWORK
-  strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
-  strlcpy(config.wifi_pass1, doc["wifi_pass1"], sizeof(config.wifi_pass1));
-  strlcpy(config.wifi_ssid2, doc["wifi_ssid2"], sizeof(config.wifi_ssid2));
-  strlcpy(config.wifi_pass2, doc["wifi_pass2"], sizeof(config.wifi_pass2));
+  strlcpy(config.wifi_ssid1, doc["wifi_ssid1"] | "", sizeof(config.wifi_ssid1));
+  strlcpy(config.wifi_pass1, doc["wifi_pass1"] | "", sizeof(config.wifi_pass1));
+  strlcpy(config.wifi_ssid2, doc["wifi_ssid2"] | "", sizeof(config.wifi_ssid2));
+  strlcpy(config.wifi_pass2, doc["wifi_pass2"] | "", sizeof(config.wifi_pass2));
 
-  strlcpy(config.hostn, doc["hostn"], sizeof(config.hostn));
-  strlcpy(config.description, doc["description"], sizeof(config.description));
+  strlcpy(config.hostn, doc["hostn"] | "esp32sc", sizeof(config.hostn));
+  strlcpy(config.description, doc["description"] | "new", sizeof(config.description));
 
 
   // URLS
   strlcpy(config.inverter_url, doc["inverter_url"], sizeof(config.inverter_url));
-  strlcpy(config.inverter_push_url, doc["inverter_push_url"], sizeof(config.inverter_push_url));
-  strlcpy(config.meter_url, doc["meter_url"], sizeof(config.meter_url));
+  strlcpy(config.inverter_push_url, doc["inverter_push_url"] | "", sizeof(config.inverter_push_url));
+  strlcpy(config.threephase_push_url, doc["3p_push_url"] | "", sizeof(config.threephase_push_url));
+  strlcpy(config.threephase_direct_url, doc["3p_direct_url"] | "", sizeof(config.threephase_direct_url));
+
   strlcpy(config.pub_url, doc["pub_url"], sizeof(config.pub_url));
 
   // HOSTS
-  strlcpy(config.ntp_server, doc["ntp_server"], sizeof(config.ntp_server));
-  strlcpy(config.update_host, doc["update_host"], sizeof(config.update_host));
+  strlcpy(config.ntp_server, doc["ntp_server"] | "0.au.pool.ntp.org", sizeof(config.ntp_server));
+  strlcpy(config.update_host, doc["update_host"] | "", sizeof(config.update_host));
 
   // NTC
-  config.monitor_temp = doc["monitor_temp"];
-  config.ntc10k_count = doc["ntc10k_count"];
+  config.monitor_temp = doc["monitor_temp"] | 0;
+  config.ntc10k_count = doc["ntc10k_count"] | 0;
 
   for(uint8_t i = 0; i < count_ntc; i++)
   {
-    config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)];
-    config.ntc_temp_max[i] = doc["temp_max" + String(i+1)];
+    config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)] | 1;
+    config.ntc_temp_max[i] = doc["temp_max" + String(i+1)] | 50;
   }
 
   for(int i = 0; i < count_cells; i++)
-    config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
+    config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)] | 1;
 
   // PINS
-  config.pin_led = doc["pin_led"];
-  config.pin_charger = doc["pin_charger"];
-  config.pin_inverter = doc["pin_inverter"];
-  config.pin_wd = doc["pin_wd"];
-  config.pin_flash = doc["pin_flash"];
-  config.pin_sda = doc["pin_sda"];
-  config.pin_scl = doc["pin_scl"];
-  config.pin_buzzer = doc["pin_buzzer"];
+  config.pin_led = doc["pin_led"] | OPT_DEFAULT;
+  config.pin_charger = doc["pin_charger"] | OPT_DEFAULT;
+  config.pin_inverter = doc["pin_inverter"] | OPT_DEFAULT;
+  config.pin_wd = doc["pin_wd"] | OPT_DEFAULT;
+  config.pin_flash = doc["pin_flash"] | OPT_DEFAULT;
+  config.pin_sda = doc["pin_sda"] | OPT_DEFAULT;
+  config.pin_scl = doc["pin_scl"] | OPT_DEFAULT;
+  config.pin_buzzer = doc["pin_buzzer"] | OPT_DEFAULT;
 
   // cell voltage limits
-  config.pack_volt_min = doc["pack_volt_min"];
-  config.battery_volt_min = doc["battery_volt_min"];
-  config.battery_volt_rec = doc["battery_volt_rec"];
-  config.battery_volt_max = doc["battery_volt_max"];
+  config.pack_volt_min = doc["pack_volt_min"] | 0;
+  config.battery_volt_min = doc["battery_volt_min"] | 3;
+  config.battery_volt_rec = doc["battery_volt_rec"] | 3.2;
+  config.battery_volt_max = doc["battery_volt_max"] | 4.2;
 
   // VMON Calibration
 
-  config.cells_in_series = doc["cells_in_series"];
-  config.monitor_battery = doc["monitor_battery"];
-  config.cell_count = doc["cell_count"];
-  config.dcvoltage_offset = doc["dcvoltage_offset"];
+  config.cells_in_series = doc["cells_in_series"] | 1;
+  config.monitor_battery = doc["monitor_battery"] | 0;
+  config.cell_count = doc["cell_count"] | 0;
+  config.dcvoltage_offset = doc["dcvoltage_offset"] | 0;
 
 
   // i2c dev addresses
@@ -268,70 +272,70 @@ bool load_config()
 
   // Fronius
 
-  config.avg_phase = doc["avg_phase"];
+  config.avg_phase = doc["avg_phase"] | 0;
 
   // fronius 3phase options
-  config.threephase = doc["threephase"];
-  config.monitor_phase_a = doc["monitor_phase_a"];
-  config.monitor_phase_b = doc["monitor_phase_b"];
-  config.monitor_phase_c = doc["monitor_phase_c"];
+  config.threephase = doc["threephase"] | 0;
+  config.monitor_phase_a = doc["monitor_phase_a"] | 0;
+  config.monitor_phase_b = doc["monitor_phase_b"] | 0;
+  config.monitor_phase_c = doc["monitor_phase_c"] | 0;
 
   // bools
 
 
-  config.rotate_oled = doc["rotate_oled"];
-  config.button_timer_mode = doc["button_timer_mode"];
+  config.rotate_oled = doc["rotate_oled"] | 0;
+  config.button_timer_mode = doc["button_timer_mode"] | 0;
 
-  config.hv_monitor = doc["hv_monitor"];
+  config.hv_monitor = doc["hv_monitor"] | 0;
 
 
-  config.flip_ipin = doc["flip_ipin"];
-  config.flip_cpin = doc["flip_cpin"];
-  config.auto_update = doc["auto_update"];
+  config.flip_ipin = doc["flip_ipin"] | 0;
+  config.flip_cpin = doc["flip_cpin"] | 0;
+  config.auto_update = doc["auto_update"] | 0;
 //   config.wifi_highpower_on = doc["wifi_highpower_on"];
-  config.i_enable = doc["i_enable"];
-  config.c_enable = doc["c_enable"];
-  config.day_is_timer = doc["day_is_timer"];
-  config.night_is_timer = doc["night_is_timer"];
+  config.i_enable = doc["i_enable"] | 0;
+  config.c_enable = doc["c_enable"] | 0;
+  config.day_is_timer = doc["day_is_timer"] | 0;
+  config.night_is_timer = doc["night_is_timer"] | 0;
 
   // ?
 
   // Day Device
-  config.day_watts = doc["day_watts"];
+  config.day_watts = doc["day_watts"] | 0;
 
-  config.night_watts = doc["night_watts"];
-  config.button_timer_secs = doc["button_timer_secs"];
-  config.button_timer_max = doc["button_timer_max"];
-  config.c_start_h = doc["c_start_h"];
-  config.c_finish_h = doc["c_finish_h"];
-  config.i_start_h = doc["i_start_h"];
-  config.i_finish_h = doc["i_finish_h"];
+  config.night_watts = doc["night_watts"] | 0;
+  config.button_timer_secs = doc["button_timer_secs"] | 5;
+  config.button_timer_max = doc["button_timer_max"] | 360;
+  config.c_start_h = doc["c_start_h"] | 8;
+  config.c_finish_h = doc["c_finish_h"] | 17;
+  config.i_start_h = doc["i_start_h"] | 18;
+  config.i_finish_h = doc["i_finish_h"] | 6;
 
   // sortme
 
-  config.lv_shutdown_delay = doc["lv_shutdown_delay"];
-  config.hv_shutdown_delay = doc["hv_shutdown_delay"];
-  config.charger_oot_min = doc["charger_oot_min"];
-  config.charger_oot_sec = doc["charger_oot_sec"];
+  config.lv_shutdown_delay = doc["lv_shutdown_delay"] | 1;
+  config.hv_shutdown_delay = doc["hv_shutdown_delay"] | 1;
+  config.charger_oot_min = doc["charger_oot_min"] | 5;
+  config.charger_oot_sec = doc["charger_oot_sec"] | 0;
 
-  config.inverter_oot_min = doc["inverter_oot_min"];
-  config.inverter_oot_sec = doc["inverter_oot_sec"];
+  config.inverter_oot_min = doc["inverter_oot_min"] | 0;
+  config.inverter_oot_sec = doc["inverter_oot_sec"] | 30;
 
-  config.gmt = doc["gmt"];
+  config.gmt = doc["gmt"] | 0;
 
 
-  config.board_rev = doc["board_rev"];
+  config.board_rev = doc["board_rev"] | 1;
 
   // FLAGS
 
-  config.webc_mode = doc["webc_mode"];
+  config.webc_mode = doc["webc_mode"] | 1;
 
-  config.m247 = doc["m247"];
+  config.m247 = doc["m247"] | 0;
 
   // LED
-  config.led_status = doc["led_status"];
-  config.blink_led = doc["blink_led"];
-  config.blink_led_default = doc["blink_led_default"];
+  config.led_status = doc["led_status"] | 0;
+  config.blink_led = doc["blink_led"] | 1;
+  config.blink_led_default = doc["blink_led_default"] | 1;
 
   vars_sanity_check();
 
