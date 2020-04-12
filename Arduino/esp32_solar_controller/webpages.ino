@@ -249,7 +249,7 @@ void battery_info()
     if(cells_volts[i] < config.battery_volt_min)
       tmp += " UNDERVOLT";
 
-    if(cells_volts[i] > config.battery_volt_over)
+    if(cells_volts[i] > config.battery_volt_max)
       tmp += " OVERVOLT";
 
     webpage += js_table_add_row("battery_table", String(i+1), String(cells_volts[i], 4),  tmp);
@@ -329,14 +329,15 @@ void battery_config()
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + String(F("Battery Config")) );
   webpage += js_radio_helper(F("monitor_battery1"), F("monitor_battery0"), config.monitor_battery);
 
+
+  webpage += js_radio_helper(F("hv_monitor1"), F("hv_monitor0"), config.hv_monitor);
+
   webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-16");
 
   webpage += html_create_input(F("bvmin"), F("battery_volt_min"), "10", String(config.battery_volt_min, 4), "float");
 
   webpage += html_create_input(F("bvrec"), F("battery_volt_rec"), "10", String(config.battery_volt_rec, 4), "float");
-  webpage += html_create_input(F("bvidl"), F("battery_volt_idl"), "10", String(config.battery_volt_idl, 4), "float");
   webpage += html_create_input(F("bvmax"), F("battery_volt_max"), "10", String(config.battery_volt_max, 4), "float");
-  webpage += html_create_input(F("cvo"), F("battery_volt_over"), "10", String(config.battery_volt_over, 4), "float");
   webpage += html_create_input(F("pvm"), F("pack_volt_min"), "10", String(config.pack_volt_min, 4), "float");
   webpage += html_create_input(F("voff"), F("ups_volt_ofs"), "10", String(config.dcvoltage_offset, 4), "float");
 
@@ -537,6 +538,10 @@ void web_config_submit()
       else if (server.argName(i) == F("monitor_battery"))
         config.monitor_battery = server.arg(i).toInt();
 
+      else if (server.argName(i) == F("hv_monitor"))
+        config.hv_monitor = server.arg(i).toInt();
+
+
       else if (server.argName(i) == F("cells_in_series"))
         config.cells_in_series = server.arg(i).toInt();
 
@@ -545,9 +550,6 @@ void web_config_submit()
 
       else if (server.argName(i) == F("battery_volt_max"))
         config.battery_volt_max = server.arg(i).toFloat();
-
-      else if (server.argName(i) == F("battery_volt_over"))
-        config.battery_volt_over = server.arg(i).toFloat();
 
       else if (server.argName(i) == F("cell_count"))
         config.cell_count = server.arg(i).toInt();
@@ -561,12 +563,6 @@ void web_config_submit()
 
       else if (server.argName(i) == F("monitor_temp"))
         config.monitor_temp = server.arg(i).toInt();
-
-
-      else if (server.argName(i) == F("battery_volt_idl"))
-        config.battery_volt_idl = server.arg(i).toFloat();
-
-
 
 
       else if(server.argName(i).startsWith("ntc_temp"))

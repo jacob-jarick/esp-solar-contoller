@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 86
+#define FW_VERSION 88
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -271,9 +271,7 @@ struct Sconfig
   float pack_volt_min;
   float battery_volt_min;
   float battery_volt_rec;
-  float battery_volt_idl;
   float battery_volt_max;
-  float battery_volt_over;
 
   char description[smedium];
 
@@ -302,6 +300,8 @@ struct Sconfig
   bool night_is_timer = 0;
   bool cells_in_series = 0;
   bool monitor_battery = 0;
+
+  bool hv_monitor = 1;
 
   bool m247 = 0;
 
@@ -611,7 +611,7 @@ void loop()
 
   // check if cell volt is low and force update
 
-  if(config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_over)
+  if(config.hv_monitor && config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_max)
   {
     mode_reason = "cell over volt. force IDLE.";
     log_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
@@ -1022,7 +1022,7 @@ void check_cells()
       cell_volt_high = cells_volts[i];
 
     // HV check
-    if(cells_volts[i] >= config.battery_volt_over)
+    if(config.hv_monitor && cells_volts[i] >= config.battery_volt_max)
     {
       hv_trigger = 1;
       timers.hv_shutdown = ms + (config.hv_shutdown_delay * 3600000.0);
@@ -1048,18 +1048,21 @@ void check_cells()
   // ----------------------------------------------------------------------
   // flags.shutdown_hvolt check
 
-  // HV recon check
-  if(!hv_trigger && flags.shutdown_hvolt && millis() > timers.hv_shutdown)
+  if(config.hv_monitor)
   {
-    flags.shutdown_hvolt = 0;
-    log_issue("HV recon");
-  }
+    // HV recon check
+    if(!hv_trigger && flags.shutdown_hvolt && millis() > timers.hv_shutdown)
+    {
+      flags.shutdown_hvolt = 0;
+      log_issue("HV recon");
+    }
 
-  // HV disconnect check
-  if(hv_trigger && !flags.shutdown_hvolt)
-  {
-    flags.shutdown_hvolt = 1;
-    log_issue("HV shutdown");
+    // HV disconnect check
+    if(hv_trigger && !flags.shutdown_hvolt)
+    {
+      flags.shutdown_hvolt = 1;
+      log_issue("HV shutdown");
+    }
   }
 
   // ----------------------------------------------------------------------

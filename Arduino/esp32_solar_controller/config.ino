@@ -68,9 +68,7 @@ void save_config()
   doc["pack_volt_min"] = config.pack_volt_min;
   doc["battery_volt_min"] = config.battery_volt_min;
   doc["battery_volt_rec"] = config.battery_volt_rec;
-  doc["battery_volt_idl"] = config.battery_volt_idl;
   doc["battery_volt_max"] = config.battery_volt_max;
-  doc["battery_volt_over"] = config.battery_volt_over;
 
   // bytes
 
@@ -105,6 +103,10 @@ void save_config()
   doc["night_is_timer"] = (int)config.night_is_timer;
   doc["cells_in_series"] = (int)config.cells_in_series;
   doc["monitor_battery"] = (int)config.monitor_battery;
+
+  doc["hv_monitor"] = (int)config.hv_monitor;
+
+
 
   // ?
 
@@ -250,9 +252,7 @@ bool load_config()
   config.pack_volt_min = doc["pack_volt_min"];
   config.battery_volt_min = doc["battery_volt_min"];
   config.battery_volt_rec = doc["battery_volt_rec"];
-  config.battery_volt_idl = doc["battery_volt_idl"];
   config.battery_volt_max = doc["battery_volt_max"];
-  config.battery_volt_over = doc["battery_volt_over"];
 
   // VMON Calibration
 
@@ -281,6 +281,8 @@ bool load_config()
 
   config.rotate_oled = doc["rotate_oled"];
   config.button_timer_mode = doc["button_timer_mode"];
+
+  config.hv_monitor = doc["hv_monitor"];
 
 
   config.flip_ipin = doc["flip_ipin"];
@@ -392,9 +394,6 @@ void vars_sanity_check()
     config.lv_shutdown_delay = 1;
 
   config.cell_count = constrain(config.cell_count, 1, 16);
-
-    config.battery_volt_idl = m_max(config.battery_volt_idl, config.battery_volt_rec);
-    config.battery_volt_over = m_max(config.battery_volt_over, config.battery_volt_max);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
     config.battery_volt_min = config.pack_volt_min = m_max(config.battery_volt_min, config.pack_volt_min);
