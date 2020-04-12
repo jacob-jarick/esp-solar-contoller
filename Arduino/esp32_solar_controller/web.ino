@@ -2,7 +2,8 @@ bool get_url(String &url, String &payload)
 {
   if(url.equals(""))
   {
-    Serial.println("get_url: blank URL.");
+//     Serial.println("get_url: blank URL.");
+    log_msg("get_url: blank URL.");
     return 0;
   }
 
@@ -23,7 +24,8 @@ bool get_url(String &url, String &payload)
   else
   {
     payload = "";
-    Serial.println("HTTP BAD Code:" + String(get_url_code, DEC) );
+//     Serial.println("HTTP BAD Code:" + String(get_url_code, DEC) );
+    log_msg("HTTP BAD Code:" + String(get_url_code, DEC) );
   }
 
   http.end();

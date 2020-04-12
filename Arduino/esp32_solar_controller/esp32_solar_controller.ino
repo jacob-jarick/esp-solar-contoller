@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 89
+#define FW_VERSION 95
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -67,7 +67,7 @@ int get_url_code;
 Adafruit_ADS1115 ads;
 
 const adsGain_t ads_gain = GAIN_ONE;
-const float ads_mv = 0.125 / 1000; // mv to volts
+const float ads_mv = 0.125 / 1000;
 
 //                                                                ADS1015  ADS1115
 //                                                                -------  -------

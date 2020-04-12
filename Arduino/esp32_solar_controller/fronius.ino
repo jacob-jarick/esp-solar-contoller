@@ -88,7 +88,6 @@ bool update_p_grid_3phase()
 {
 
   bool fellback = 0;
-  bool check = 0;
 
   String payload;
   DynamicJsonDocument doc(jsonsize);
@@ -99,7 +98,7 @@ bool update_p_grid_3phase()
   // Direct 3phase URL
   if(timers.use_fallback < millis() && strlen(config.threephase_direct_url) )
   {
-    check = get_url(url, payload);
+    bool check = get_url(url, payload);
 
     if(!check)
     {
@@ -118,9 +117,6 @@ bool update_p_grid_3phase()
         fellback = 1;
       }
     }
-
-    if(fellback)
-      timers.use_fallback = millis() + (10 * 1000);
   }
   else
   {
@@ -131,11 +127,13 @@ bool update_p_grid_3phase()
   // attempt push URL
   if(fellback)
   {
+    timers.use_fallback = millis() + (60 * 1000);
+
     if(!strlen(config.threephase_push_url))
       return 0;
 
     url = String(config.threephase_push_url);
-    check = get_url(url, payload);
+    bool check = get_url(url, payload);
 
     if(!check)
     {

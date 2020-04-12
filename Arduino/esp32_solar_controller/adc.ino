@@ -126,10 +126,7 @@ double read_cell_volts(const byte cell)
   v += config.dcvoltage_offset; // only use 1 offset
   v *= config.battery_volt_mod[cell];
 
-  if(config.battery_volt_mod[cell] == 1) // if 1 we must be calibrating manually.
-    cells_volts_real[cell] = v;
-  else
-    cells_volts_real[cell] = dirty_average(cells_volts_real[cell], v, 3); // TODO user enabled / disabled
+  cells_volts_real[cell] = dirty_average(cells_volts_real[cell], v, 4); // TODO user enabled / disabled
 
   cells_volts[cell] = cells_volts_real[cell]; // copy AFTER avg
 

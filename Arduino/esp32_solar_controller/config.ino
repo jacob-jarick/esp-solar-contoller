@@ -240,7 +240,7 @@ bool load_config()
   }
 
   for(int i = 0; i < count_cells; i++)
-    config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)] | 1;
+    config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
 
   // PINS
   config.pin_led = doc["pin_led"] | OPT_DEFAULT;
