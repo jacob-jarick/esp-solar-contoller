@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 95
+#define FW_VERSION 96
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -89,6 +89,12 @@ const unsigned int localPort = 2390;      // local port to listen for UDP packet
 const byte NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
 byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets
 WiFiUDP udp;
+
+// -----------------------------------------------------------------------------------------
+
+#include "QuickMedianLib.h"
+
+//  used in ADC.ino
 
 //------------------------------------------------------------------------------
 // timers

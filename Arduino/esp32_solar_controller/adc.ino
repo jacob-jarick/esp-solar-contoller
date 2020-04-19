@@ -103,10 +103,17 @@ void adc_poll()
     if(!adc_enable[p])
       continue;
 
-    // do 2 throw aways
-    ads.readADC_SingleEnded(channel);
-    ads.readADC_SingleEnded(channel);
-    adc_val[p] = ads.readADC_SingleEnded(channel);
+    // do X reads
+    const uint8_t read_count = 5;
+    int16_t areads[read_count];
+
+    for(uint8_t r = 0; r < read_count; r++)
+      areads[r] = ads.readADC_SingleEnded(channel);
+
+//     ads.readADC_SingleEnded(channel);
+//     adc_val[p] = ads.readADC_SingleEnded(channel);
+
+    adc_val[p] = QuickMedian<int16_t>::GetMedian(areads, sizeof(areads) / sizeof(int16_t));
   }
 
 
