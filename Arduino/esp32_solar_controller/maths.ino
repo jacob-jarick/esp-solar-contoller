@@ -15,17 +15,17 @@ double dirty_average(const double oldv, const double newv, const byte count)
   return result;
 }
 
-void bubbleSort(uint16_t a[], const uint16_t size) {
-  for(uint16_t i=0; i<(size-1); i++) {
-    for(uint16_t o=0; o<(size-(i+1)); o++) {
-      if(a[o] > a[o+1]) {
-        uint16_t t = a[o];
-        a[o] = a[o+1];
-        a[o+1] = t;
-      }
-    }
-  }
-}
+// void bubbleSort(uint16_t a[], const uint16_t size) {
+//   for(uint16_t i=0; i<(size-1); i++) {
+//     for(uint16_t o=0; o<(size-(i+1)); o++) {
+//       if(a[o] > a[o+1]) {
+//         uint16_t t = a[o];
+//         a[o] = a[o+1];
+//         a[o+1] = t;
+//       }
+//     }
+//   }
+// }
 
 
 // max

@@ -1,20 +1,20 @@
-     HEAD~0	dc6a8cd ADC
-     HEAD~1	59952d8 fronius 3phase work
-     HEAD~2	046bee8 latest fw
-     HEAD~3	555f1da removed battery_volt_idl & battery_volt_over
-     HEAD~4	80dd254 adc_enable
-     HEAD~5	807b7bc adc_enable
-     HEAD~6	6bde9a9 remove adc_read
-     HEAD~7	05c28a9 overflow fix
-     HEAD~8	42e4e46 time compare fix
-     HEAD~9	3f7b15f maths, time.
-    HEAD~10	6eb78c1 idle fix
-    HEAD~11	0ce2b49 phase voltage monitoring
-    HEAD~12	a4c4f77 rm volt_synced flag
-    HEAD~13	e85184d adc poll timer
-    HEAD~14	f81094a adc polling
-    HEAD~15	f4d2483 tidy
-    HEAD~16	2d7d88b Update fronius.ino
-    HEAD~17	9ee7cd4 strings
-    HEAD~18	d937574 fronius fix
-    HEAD~19	0cc9231 get_url & get_url_and_save
+     HEAD~0	c762897 QuickMedianLib
+     HEAD~1	dc6a8cd ADC
+     HEAD~2	59952d8 fronius 3phase work
+     HEAD~3	046bee8 latest fw
+     HEAD~4	555f1da removed battery_volt_idl & battery_volt_over
+     HEAD~5	80dd254 adc_enable
+     HEAD~6	807b7bc adc_enable
+     HEAD~7	6bde9a9 remove adc_read
+     HEAD~8	05c28a9 overflow fix
+     HEAD~9	42e4e46 time compare fix
+    HEAD~10	3f7b15f maths, time.
+    HEAD~11	6eb78c1 idle fix
+    HEAD~12	0ce2b49 phase voltage monitoring
+    HEAD~13	a4c4f77 rm volt_synced flag
+    HEAD~14	e85184d adc poll timer
+    HEAD~15	f81094a adc polling
+    HEAD~16	f4d2483 tidy
+    HEAD~17	2d7d88b Update fronius.ino
+    HEAD~18	9ee7cd4 strings
+    HEAD~19	d937574 fronius fix

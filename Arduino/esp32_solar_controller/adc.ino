@@ -104,7 +104,7 @@ void adc_poll()
       continue;
 
     // do X reads
-    const uint8_t read_count = 5;
+    const uint8_t read_count = 7;
     int16_t areads[read_count];
 
     for(uint8_t r = 0; r < read_count; r++)
