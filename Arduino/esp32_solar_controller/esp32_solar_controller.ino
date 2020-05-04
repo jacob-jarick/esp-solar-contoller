@@ -62,6 +62,8 @@ int get_url_code;
 
 // -----------------------------------------------------------------------------------------
 
+#include "libraries/Ads1115_mux/Ads1115_mux.h"
+
 #include <Adafruit_ADS1015.h>
 
 Adafruit_ADS1115 ads;
