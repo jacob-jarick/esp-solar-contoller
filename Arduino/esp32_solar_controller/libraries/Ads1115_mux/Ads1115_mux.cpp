@@ -128,7 +128,7 @@ void Ads1115_mux::adc_poll()
 
 float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 {
-  int16_t adc0 = adc_val[sensor + 16];
+  int16_t adc0 = adc_val[sensor];
   float R0 = resistance(adc0);
   float temperature0 = steinhart(R0);
 
