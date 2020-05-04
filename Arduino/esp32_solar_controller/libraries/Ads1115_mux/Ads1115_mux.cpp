@@ -1,4 +1,16 @@
-Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc);
+#include "Arduino.h"
+#include "QuickMedianLib.h"
+#include <Adafruit_ADS1015.h>
+#include "Ads1115_mux.h"
+
+uint8_t _pina;
+uint8_t _pinb;
+uint8_t _pinc;
+uint8_t _adc_poll_pos;
+Adafruit_ADS1115 _ads;
+
+
+Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 {
   _pina = pina;
   _pinb = pinb;
@@ -13,13 +25,20 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc);
 
   _adc_poll_pos = 0;
 
-  adc_val[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  adc_enable[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  for(uint8_t i = 0; i < 32; i++)
+  {
+    adc_val[i] = 0;
+    adc_enable[i] = 0;
+  }
+
+  const adsGain_t ads_gain = GAIN_ONE;
+
+  _ads.setGain(ads_gain);
 }
 
 
 
-Ads1115_mux::void adc_poll()
+void Ads1115_mux::adc_poll()
 {
   bool addr_a = 0;
   bool addr_b = 0;
@@ -91,10 +110,7 @@ Ads1115_mux::void adc_poll()
     int16_t areads[read_count];
 
     for(uint8_t r = 0; r < read_count; r++)
-      areads[r] = ads.readADC_SingleEnded(channel);
-
-    //     ads.readADC_SingleEnded(channel);
-    //     adc_val[p] = ads.readADC_SingleEnded(channel);
+      areads[r] = _ads.readADC_SingleEnded(channel);
 
     adc_val[p] = QuickMedian<int16_t>::GetMedian(areads, sizeof(areads) / sizeof(int16_t));
   }
@@ -110,7 +126,7 @@ Ads1115_mux::void adc_poll()
 
 
 
-float ntc10k_read_temp(const byte sensor)
+float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 {
   int16_t adc0 = adc_val[sensor + 16];
   float R0 = resistance(adc0);
@@ -122,7 +138,7 @@ float ntc10k_read_temp(const byte sensor)
 // borrowed this code from: https://github.com/OSBSS/Thermistor_v2/blob/master/Thermistor_v2.ino
 
 // Get resistance -------------------------------------------//
-float resistance(const int16_t adc)
+float Ads1115_mux::resistance(const int16_t adc)
 {
   float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case
   float R = 10000/(65535/ADCvalue-1);  // 65535 refers to 16-bit number
@@ -130,7 +146,7 @@ float resistance(const int16_t adc)
 }
 
 // Get temperature from Steinhart equation -------------------------------------------//
-float steinhart(const float R)
+float Ads1115_mux::steinhart(const float R)
 {
   float Rref = 10000.0;
   float A = 0.003354016;

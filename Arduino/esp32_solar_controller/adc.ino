@@ -1,14 +1,14 @@
 void cells_update()
 {
-  for(uint8_t cells_update_pos = 0; cells_update_pos < config.cell_count; cells_update_pos++)
-    read_cell_volts(cells_update_pos);
+  for(uint8_t x = 0; x < config.cell_count; x++)
+    read_cell_volts(x);
 }
 
 
 void ntc_update()
 {
   for(uint8_t ntc_update_pos = 0; ntc_update_pos < config.ntc10k_count; ntc_update_pos++)
-    ntc10k_read_temp(ntc_update_pos);
+    adsmux.ntc10k_read_temp(ntc_update_pos);
 
   bool trigger_shutdown = 0;
   for(int i = 0; i < config.ntc10k_count; i++)
@@ -30,10 +30,11 @@ void adc_quick_poll()
   for(uint8_t i = 0; i < 8; i++)
   {
     oled_print(".");
-    adc_poll();
+    adsmux.adc_poll();
   }
 }
 
+/*
 // ADC ports 0-35
 uint8_t adc_poll_pos = 0;
 void adc_poll()
@@ -123,11 +124,11 @@ void adc_poll()
 
   return;
 }
-
+*/
 
 double read_cell_volts(const byte cell)
 {
-  double v = adc_val[cell];
+  double v = adsmux.adc_val[cell];
 
   v *= ads_mv;
   v += config.dcvoltage_offset; // only use 1 offset
@@ -143,6 +144,7 @@ double read_cell_volts(const byte cell)
   return cells_volts[cell];
 }
 
+/*
 
 float ntc10k_read_temp(const byte sensor)
 {
@@ -184,3 +186,5 @@ float steinhart(const float R)
   float T = 1/(A + (B*E) + (C*(E*E)) + (D*(E*E*E)));
   return T-273.15;
 }
+
+*/

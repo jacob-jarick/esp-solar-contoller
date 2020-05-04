@@ -62,14 +62,25 @@ int get_url_code;
 
 // -----------------------------------------------------------------------------------------
 
-#include "libraries/Ads1115_mux/Ads1115_mux.h"
+#include "QuickMedianLib.h"
+#include <Adafruit_ADS1015.h>
 
+
+#include <Ads1115_mux.h>
+const uint8_t pin_asel1 = 27;
+const uint8_t pin_asel2 = 14;
+const uint8_t pin_asel3 = 26;
+
+const adsGain_t ads_gain = GAIN_ONE;
+const float ads_mv = 0.125 / 1000;
+
+Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3);
+
+/*
 #include <Adafruit_ADS1015.h>
 
 Adafruit_ADS1115 ads;
 
-const adsGain_t ads_gain = GAIN_ONE;
-const float ads_mv = 0.125 / 1000;
 
 //                                                                ADS1015  ADS1115
 //                                                                -------  -------
@@ -82,6 +93,8 @@ const float ads_mv = 0.125 / 1000;
 
 int16_t adc_val[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 bool adc_enable[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+*/
 
 // -----------------------------------------------------------------------------------------
 
@@ -199,10 +212,6 @@ uint8_t download_index = 0; // html page download index
 byte system_mode = 0;
 
 // =================================================================================================
-
-const uint8_t pin_asel1 = 27;
-const uint8_t pin_asel2 = 14;
-const uint8_t pin_asel3 = 26;
 
 
 //------------------------------------------------------------------------------
@@ -417,7 +426,7 @@ void setup()
 
     oled_clear();
 
-    ads.setGain(ads_gain);
+//     ads.setGain(ads_gain);
 //     ads.begin(); // not required, may trigger i2c restart
   }
 
@@ -989,7 +998,7 @@ bool check_data_sources()
 
   if(cds_pos == 1 && (config.monitor_battery || config.monitor_temp) && millis() > timers.adc_poll)
   {
-    adc_poll();
+    adsmux.adc_poll();
 
     if(config.monitor_battery)
     {

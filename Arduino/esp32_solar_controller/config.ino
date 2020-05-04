@@ -407,20 +407,20 @@ void vars_sanity_check()
 
   // disable all
   for(byte i = 0; i < 32; i++)
-    adc_enable[i] = 0;
+    adsmux.adc_enable[i] = 0;
 
   // enable battery channels
   if(config.monitor_battery)
   {
     for(byte i = 0; i < config.cell_count; i++)
-      adc_enable[i] = 1;
+      adsmux.adc_enable[i] = 1;
   }
 
   // enable temp channels
   if(config.monitor_temp)
   {
     for(byte i = 0; i < config.ntc10k_count; i++)
-      adc_enable[i+16] = 1;
+      adsmux.adc_enable[i+16] = 1;
   }
   // -------------------------------------
 
