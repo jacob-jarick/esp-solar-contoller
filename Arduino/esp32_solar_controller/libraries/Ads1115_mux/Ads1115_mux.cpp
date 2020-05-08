@@ -1,5 +1,4 @@
 #include "Arduino.h"
-// #include "QuickMedianLib.h"
 #include <Adafruit_ADS1015.h>
 #include "Ads1115_mux.h"
 
@@ -23,7 +22,7 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
     digitalWrite(pins_asel[x], LOW);
   }
 
-  _adc_poll_pos = 0;
+  _adc_poll_pos = 8;
 
   for(uint8_t i = 0; i < 32; i++)
   {
@@ -31,15 +30,30 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
     adc_enable[i] = 0;
   }
 
-  const adsGain_t ads_gain = GAIN_ONE;
-
-  _ads.setGain(ads_gain);
+  _ads.setGain(GAIN_ONE);
 }
 
 
 
 void Ads1115_mux::adc_poll()
 {
+  _adc_poll_pos++;
+  if(_adc_poll_pos > 7)
+    _adc_poll_pos = 0;
+
+  // if all ports for current pos disabled, return
+  if
+  (
+    !adc_enable[_adc_poll_pos] &&
+    !adc_enable[8+_adc_poll_pos] &&
+    !adc_enable[16+_adc_poll_pos] &&
+    !adc_enable[24+_adc_poll_pos]
+  )
+  {
+    return;
+  }
+
+
   bool addr_a = 0;
   bool addr_b = 0;
   bool addr_c = 0;
@@ -113,15 +127,8 @@ void Ads1115_mux::adc_poll()
       areads[r] = _ads.readADC_SingleEnded(channel);
 
     bubbleSort(areads,read_count);
-
-//     adc_val[p] = QuickMedian<int16_t>::GetMedian(areads, sizeof(areads) / sizeof(int16_t));
     adc_val[p] = areads[read_count/2];
   }
-
-
-  _adc_poll_pos++;
-  if(_adc_poll_pos > 7)
-    _adc_poll_pos = 0;
 
   return;
 }
@@ -129,6 +136,9 @@ void Ads1115_mux::adc_poll()
 
 
 // note on my esp32 board ntc sensors are 16-31
+
+// borrowed NTC code from: https://github.com/OSBSS/Thermistor_v2/blob/master/Thermistor_v2.ino
+
 float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 {
   int16_t adc0 = adc_val[sensor];
@@ -137,8 +147,6 @@ float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 
   return temperature0;
 }
-
-// borrowed this code from: https://github.com/OSBSS/Thermistor_v2/blob/master/Thermistor_v2.ino
 
 // Get resistance -------------------------------------------//
 float Ads1115_mux::resistance(const int16_t adc)
@@ -165,10 +173,14 @@ float Ads1115_mux::steinhart(const float R)
 
 // bubble sort
 // https://www.femtech.dk/teaching-day-2017-at-diku/02-bubble-sort-algorithm/
-void Ads1115_mux::bubbleSort(int16_t a[], uint8_t size) {
-  for(uint8_t i=0; i<(size-1); i++) {
-    for(uint8_t o=0; o<(size-(i+1)); o++) {
-      if(a[o] > a[o+1]) {
+void Ads1115_mux::bubbleSort(int16_t a[], const uint8_t size)
+{
+  for(uint8_t i=0; i<(size-1); i++)
+  {
+    for(uint8_t o=0; o<(size-(i+1)); o++)
+    {
+      if(a[o] > a[o+1])
+      {
         int16_t t = a[o];
         a[o] = a[o+1];
         a[o+1] = t;

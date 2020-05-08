@@ -38,6 +38,8 @@ void adc_quick_poll()
 
 double read_cell_volts(const byte cell)
 {
+  const double ads_mv = 0.125 / 1000;
+
   double v = adsmux.adc_val[cell];
 
   v *= ads_mv;
