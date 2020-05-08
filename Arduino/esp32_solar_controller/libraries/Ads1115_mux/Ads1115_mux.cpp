@@ -2,19 +2,8 @@
 #include <Adafruit_ADS1015.h>
 #include "Ads1115_mux.h"
 
-// uint8_t _pina;
-// uint8_t _pinb;
-// uint8_t _pinc;
-// uint8_t _adc_poll_pos;
-// Adafruit_ADS1115 _ads;
-
-
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 {
-  _pina = pina;
-  _pinb = pinb;
-  _pinc = pinc;
-
   _pins[0] = pina;
   _pins[1] = pinb;
   _pins[2] = pinc;

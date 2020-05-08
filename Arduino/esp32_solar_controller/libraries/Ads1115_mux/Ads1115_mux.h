@@ -26,16 +26,12 @@ class Ads1115_mux
     void bubbleSort(int16_t a[], const uint8_t size);
     void digital_write(const uint8_t pin, const bool status);
 
-    uint8_t _pina;
-    uint8_t _pinb;
-    uint8_t _pinc;
     uint8_t _adc_poll_pos;
 
     uint8_t _pins[3];
     bool _pin_mode[3];
 
     Adafruit_ADS1115 _ads;
-
 };
 
 #endif
