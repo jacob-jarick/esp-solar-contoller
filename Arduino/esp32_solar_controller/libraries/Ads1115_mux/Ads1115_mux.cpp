@@ -2,11 +2,11 @@
 #include <Adafruit_ADS1015.h>
 #include "Ads1115_mux.h"
 
-uint8_t _pina;
-uint8_t _pinb;
-uint8_t _pinc;
-uint8_t _adc_poll_pos;
-Adafruit_ADS1115 _ads;
+// uint8_t _pina;
+// uint8_t _pinb;
+// uint8_t _pinc;
+// uint8_t _adc_poll_pos;
+// Adafruit_ADS1115 _ads;
 
 
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
@@ -14,6 +14,10 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
   _pina = pina;
   _pinb = pinb;
   _pinc = pinc;
+
+  _pins[0] = pina;
+  _pins[1] = pinb;
+  _pins[2] = pinc;
 
   uint8_t pins_asel[3] = {pina, pinb, pinc };
   for(uint8_t x = 0; x < 3; x++)
@@ -30,9 +34,26 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
     adc_enable[i] = 0;
   }
 
+  // setup pin
+  for(uint8_t i = 0; i <3; i++)
+  {
+    digital_write(i, 1);  // set high to clear cache
+    digital_write(i, 0);  // set low
+  }
+
   _ads.setGain(GAIN_ONE);
 }
 
+
+/// cached digital write as arduinos port writes are slow.
+void Ads1115_mux::digital_write(const uint8_t pin, const bool status)
+{
+  if(_pin_mode[pin] == status)
+    return;
+
+  _pin_mode[pin] = status;
+  digitalWrite(_pins[pin], status);
+}
 
 
 void Ads1115_mux::adc_poll()
@@ -108,9 +129,15 @@ void Ads1115_mux::adc_poll()
   }
 
   // set board mux channel
+  /*
   digitalWrite(_pina, addr_a);
   digitalWrite(_pinb, addr_b);
   digitalWrite(_pinc, addr_c);
+  */
+
+  digital_write(0, addr_a);
+  digital_write(1, addr_b);
+  digital_write(2, addr_c);
 
   for(uint8_t channel = 0; channel < 4; channel++)
   {
