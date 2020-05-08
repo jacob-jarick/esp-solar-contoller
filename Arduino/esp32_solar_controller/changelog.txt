@@ -1,20 +1,20 @@
-     HEAD~0	c762897 QuickMedianLib
-     HEAD~1	dc6a8cd ADC
-     HEAD~2	59952d8 fronius 3phase work
-     HEAD~3	046bee8 latest fw
-     HEAD~4	555f1da removed battery_volt_idl & battery_volt_over
-     HEAD~5	80dd254 adc_enable
-     HEAD~6	807b7bc adc_enable
-     HEAD~7	6bde9a9 remove adc_read
-     HEAD~8	05c28a9 overflow fix
-     HEAD~9	42e4e46 time compare fix
-    HEAD~10	3f7b15f maths, time.
-    HEAD~11	6eb78c1 idle fix
-    HEAD~12	0ce2b49 phase voltage monitoring
-    HEAD~13	a4c4f77 rm volt_synced flag
-    HEAD~14	e85184d adc poll timer
-    HEAD~15	f81094a adc polling
-    HEAD~16	f4d2483 tidy
-    HEAD~17	2d7d88b Update fronius.ino
-    HEAD~18	9ee7cd4 strings
-    HEAD~19	d937574 fronius fix
+     HEAD~0	9023f4c Ads1115_mux
+     HEAD~1	b03adf0 Ads1115_mux library
+     HEAD~2	1438e9c Ads1115_mux lib
+     HEAD~3	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~4	6263a4e tidy
+     HEAD~5	dbfe7a3 Create psu2.zip
+     HEAD~6	c762897 QuickMedianLib
+     HEAD~7	dc6a8cd ADC
+     HEAD~8	59952d8 fronius 3phase work
+     HEAD~9	046bee8 latest fw
+    HEAD~10	555f1da removed battery_volt_idl & battery_volt_over
+    HEAD~11	80dd254 adc_enable
+    HEAD~12	807b7bc adc_enable
+    HEAD~13	6bde9a9 remove adc_read
+    HEAD~14	05c28a9 overflow fix
+    HEAD~15	42e4e46 time compare fix
+    HEAD~16	3f7b15f maths, time.
+    HEAD~17	6eb78c1 idle fix
+    HEAD~18	0ce2b49 phase voltage monitoring
+    HEAD~19	a4c4f77 rm volt_synced flag

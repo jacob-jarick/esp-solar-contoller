@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 97
+#define FW_VERSION 99
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -62,7 +62,7 @@ int get_url_code;
 
 // -----------------------------------------------------------------------------------------
 
-#include "QuickMedianLib.h"
+// #include "QuickMedianLib.h"
 #include <Adafruit_ADS1015.h>
 
 

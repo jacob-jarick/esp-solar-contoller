@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "QuickMedianLib.h"
+// #include "QuickMedianLib.h"
 #include <Adafruit_ADS1015.h>
 #include "Ads1115_mux.h"
 
@@ -112,7 +112,10 @@ void Ads1115_mux::adc_poll()
     for(uint8_t r = 0; r < read_count; r++)
       areads[r] = _ads.readADC_SingleEnded(channel);
 
-    adc_val[p] = QuickMedian<int16_t>::GetMedian(areads, sizeof(areads) / sizeof(int16_t));
+    bubbleSort(areads,read_count);
+
+//     adc_val[p] = QuickMedian<int16_t>::GetMedian(areads, sizeof(areads) / sizeof(int16_t));
+    adc_val[p] = areads[read_count/2];
   }
 
 
@@ -125,7 +128,7 @@ void Ads1115_mux::adc_poll()
 
 
 
-
+// note on my esp32 board ntc sensors are 16-31
 float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 {
   int16_t adc0 = adc_val[sensor];
@@ -157,4 +160,19 @@ float Ads1115_mux::steinhart(const float R)
 
   float T = 1/(A + (B*E) + (C*(E*E)) + (D*(E*E*E)));
   return T-273.15;
+}
+
+
+// bubble sort
+// https://www.femtech.dk/teaching-day-2017-at-diku/02-bubble-sort-algorithm/
+void Ads1115_mux::bubbleSort(int16_t a[], uint8_t size) {
+  for(uint8_t i=0; i<(size-1); i++) {
+    for(uint8_t o=0; o<(size-(i+1)); o++) {
+      if(a[o] > a[o+1]) {
+        int16_t t = a[o];
+        a[o] = a[o+1];
+        a[o+1] = t;
+      }
+    }
+  }
 }
