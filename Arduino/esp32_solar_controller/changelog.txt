@@ -1,20 +1,20 @@
-     HEAD~0	e2ecf9d Ads1115_mux::digital_write
-     HEAD~1	e049c75 Ads1115_mux optmizations
-     HEAD~2	bd6836e remove QuickMedianLib dep
-     HEAD~3	9023f4c Ads1115_mux
-     HEAD~4	b03adf0 Ads1115_mux library
-     HEAD~5	1438e9c Ads1115_mux lib
-     HEAD~6	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-     HEAD~7	6263a4e tidy
-     HEAD~8	dbfe7a3 Create psu2.zip
-     HEAD~9	c762897 QuickMedianLib
-    HEAD~10	dc6a8cd ADC
-    HEAD~11	59952d8 fronius 3phase work
-    HEAD~12	046bee8 latest fw
-    HEAD~13	555f1da removed battery_volt_idl & battery_volt_over
-    HEAD~14	80dd254 adc_enable
-    HEAD~15	807b7bc adc_enable
-    HEAD~16	6bde9a9 remove adc_read
-    HEAD~17	05c28a9 overflow fix
-    HEAD~18	42e4e46 time compare fix
-    HEAD~19	3f7b15f maths, time.
+     HEAD~0	861b2dc maths to libary
+     HEAD~1	00fee9c var cleanup
+     HEAD~2	e2ecf9d Ads1115_mux::digital_write
+     HEAD~3	e049c75 Ads1115_mux optmizations
+     HEAD~4	bd6836e remove QuickMedianLib dep
+     HEAD~5	9023f4c Ads1115_mux
+     HEAD~6	b03adf0 Ads1115_mux library
+     HEAD~7	1438e9c Ads1115_mux lib
+     HEAD~8	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~9	6263a4e tidy
+    HEAD~10	dbfe7a3 Create psu2.zip
+    HEAD~11	c762897 QuickMedianLib
+    HEAD~12	dc6a8cd ADC
+    HEAD~13	59952d8 fronius 3phase work
+    HEAD~14	046bee8 latest fw
+    HEAD~15	555f1da removed battery_volt_idl & battery_volt_over
+    HEAD~16	80dd254 adc_enable
+    HEAD~17	807b7bc adc_enable
+    HEAD~18	6bde9a9 remove adc_read
+    HEAD~19	05c28a9 overflow fix
