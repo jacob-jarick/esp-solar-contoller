@@ -400,7 +400,7 @@ void vars_sanity_check()
   config.cell_count = constrain(config.cell_count, 1, 16);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
-    config.battery_volt_min = config.pack_volt_min = m_max(config.battery_volt_min, config.pack_volt_min);
+    config.battery_volt_min = config.pack_volt_min = mmaths.mmax(config.battery_volt_min, config.pack_volt_min);
 
   // -------------------------------------
   // enable ADC channels for monitoring.

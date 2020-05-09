@@ -171,7 +171,7 @@ bool update_p_grid_3phase()
 
     uint16_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
 
-    uint16_t time_diff = m_diff(json_m, local_m);
+    uint16_t time_diff = mmaths.mdiff(json_m, local_m);
 
     if (time_diff > 2)
     {
@@ -219,7 +219,7 @@ bool update_p_grid_3phase()
 void set_power(const float p)
 {
   phase_sum = p;
-  phase_avg = dirty_average(phase_avg, phase_sum, 3);
+  phase_avg = mmaths.dirty_average(phase_avg, phase_sum, 3);
 
   if(config.avg_phase)
     phase_sum = phase_avg;

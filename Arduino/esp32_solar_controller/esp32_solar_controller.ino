@@ -12,9 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 101
-
-#define DAVG_MAGIC_NUM -12345678
+#define FW_VERSION 102
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -73,6 +71,12 @@ Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3);
 
 // -----------------------------------------------------------------------------------------
 
+#include <Mmaths.h>
+
+Mmaths mmaths;
+
+// -----------------------------------------------------------------------------------------
+
 #include <TimeLib.h>
 
 const unsigned int localPort = 2390;      // local port to listen for UDP packets
@@ -111,13 +115,13 @@ SysTimers timers;
 //------------------------------------------------------------------------------
 // cell voltages & ntc
 
-double cells_volts[16] = {DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM};
-double cells_volts_real[16] = {DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM};
+double cells_volts[16]; // = {mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num};
+double cells_volts_real[16]; // = {mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num};
 float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
 
-float ntc10k_sensors[16]  = {DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM, DAVG_MAGIC_NUM};
+float ntc10k_sensors[16];
 
 //------------------------------------------------------------------------------
 
@@ -173,7 +177,7 @@ float phase_c_voltage = 0;
 float phase_sum = 0;
 float phase_sum_old = 0;
 
-float phase_avg = DAVG_MAGIC_NUM;
+float phase_avg = mmaths.magic_num;
 
 String passwd = "";
 
@@ -517,6 +521,15 @@ void setup()
 
   oled_clear();
   oled_println("ADC 1st Poll");
+
+  for(uint8_t i = 0; i < 16; i++)
+  {
+    cells_volts_real[i] = double(mmaths.magic_num);
+    cells_volts[i] = double(mmaths.magic_num);
+
+    ntc10k_sensors[i] = mmaths.magic_num;
+  }
+
   adc_quick_poll();
 
   if(config.fwver != FW_VERSION)
