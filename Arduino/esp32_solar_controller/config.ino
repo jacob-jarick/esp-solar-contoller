@@ -42,7 +42,7 @@ void save_config()
 
   for(uint8_t i = 0; i < count_ntc; i++)
   {
-    doc["temp_mod" + String(i+1)] = config.ntc_temp_mods[i];
+//     doc["temp_mod" + String(i+1)] = config.ntc_temp_mods[i];
     doc["temp_max" + String(i+1)] = config.ntc_temp_max[i];
   }
 
@@ -235,7 +235,7 @@ bool load_config()
 
   for(uint8_t i = 0; i < count_ntc; i++)
   {
-    config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)] | 1;
+//     config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)] | 1;
     config.ntc_temp_max[i] = doc["temp_max" + String(i+1)] | 50;
   }
 

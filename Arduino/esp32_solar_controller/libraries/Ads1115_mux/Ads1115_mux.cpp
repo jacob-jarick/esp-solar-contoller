@@ -117,13 +117,6 @@ void Ads1115_mux::adc_poll()
     addr_c = 1;
   }
 
-  // set board mux channel
-  /*
-  digitalWrite(_pina, addr_a);
-  digitalWrite(_pinb, addr_b);
-  digitalWrite(_pinc, addr_c);
-  */
-
   digital_write(0, addr_a);
   digital_write(1, addr_b);
   digital_write(2, addr_c);
@@ -135,7 +128,6 @@ void Ads1115_mux::adc_poll()
     if(!adc_enable[p])
       continue;
 
-    // do X reads
     const uint8_t read_count = 7;
     int16_t areads[read_count];
 

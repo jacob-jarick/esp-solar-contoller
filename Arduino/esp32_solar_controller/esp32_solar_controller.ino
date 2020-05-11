@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 103
+#define FW_VERSION 104
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -232,7 +232,7 @@ struct Sconfig
   char wifi_ssid2[ssmall];
   char wifi_pass2[ssmall];
 
-  double ntc_temp_mods[count_ntc];
+//   double ntc_temp_mods[count_ntc];
 
   double battery_volt_mod[count_cells];
 
@@ -613,7 +613,7 @@ void loop()
 
   if(config.hv_monitor && config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_max)
   {
-    mode_reason = "cell over volt. force IDLE.";
+    mode_reason = "cell over volt (" + String(cell_volt_low, 3) + "v). force IDLE.";
     log_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 
@@ -626,7 +626,7 @@ void loop()
 
   if(config.monitor_battery && system_mode == 2 && cell_volt_low <= config.battery_volt_min)
   {
-    mode_reason = "Cell under volt, force IDLE";
+    mode_reason = "Cell under volt (" + String(cell_volt_low, 3) + "v), force IDLE";
     log_msg(mode_reason  + "\n");
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 

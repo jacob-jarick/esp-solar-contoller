@@ -186,6 +186,7 @@ void ntc10k_config()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k config");
 
+  /*
   for(int i = 0; i < count_ntc; i++)
   {
     String input_name = "ntc_temp_mod";
@@ -194,6 +195,7 @@ void ntc10k_config()
 
     webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_mods[i], 7), ".");
   }
+  */
 
   for(int i = 0; i < count_ntc; i++)
   {
@@ -576,13 +578,15 @@ void web_config_submit()
       {
         for(int x = 0; x < count_ntc; x++)
         {
+          /*
           if (server.argName(i) == String("ntc_temp_mod") + String(x+1) )
           {
             config.ntc_temp_mods[x] = server.arg(i).toFloat();
             skip2next = 1;
             break;
           }
-          else if (server.argName(i) == String("ntc_temp_max") + String(x+1) )
+          else */
+          if (server.argName(i) == String("ntc_temp_max") + String(x+1) )
           {
             config.ntc_temp_max[x] = server.arg(i).toInt();
             skip2next = 1;

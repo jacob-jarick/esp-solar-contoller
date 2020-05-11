@@ -12,8 +12,7 @@ void ntc_update()
     ntc10k_sensors[sensor] = mmaths.dirty_average(ntc10k_sensors[sensor], adsmux.ntc10k_read_temp(sensor+16), 3);
   }
 
-  if(flags.shutdown_htemp)
-    return;
+  flags.shutdown_htemp = 0;
 
   for(int i = 0; i < config.ntc10k_count; i++)
   {
