@@ -186,17 +186,6 @@ void ntc10k_config()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k config");
 
-  /*
-  for(int i = 0; i < count_ntc; i++)
-  {
-    String input_name = "ntc_temp_mod";
-    String id_name = "ntc_temp_mod" + String(i+1);
-    input_name += String(i + 1);
-
-    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_mods[i], 7), ".");
-  }
-  */
-
   for(int i = 0; i < count_ntc; i++)
   {
     String input_name = "ntc_temp_max";
