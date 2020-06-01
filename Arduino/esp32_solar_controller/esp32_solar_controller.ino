@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 105
+#define FW_VERSION 109
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -68,6 +68,14 @@ const uint8_t pin_asel2 = 14;
 const uint8_t pin_asel3 = 26;
 
 Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3);
+
+// -----------------------------------------------------------------------------------------
+// lm75a
+
+// note: modify library and comment out wire.begin and wire.end
+
+#include <M2M_LM75A.h>
+M2M_LM75A lm75a(0x4f);
 
 // -----------------------------------------------------------------------------------------
 
@@ -165,6 +173,7 @@ const String json_config_file     = "/config.jsn";
 const uint16_t size_system_msgs = 1024;
 String system_msgs = "";
 
+float board_temp = 0;
 
 float phase_a_watts = 0;
 float phase_b_watts = 0;
@@ -338,6 +347,8 @@ struct SysFlags
   bool sdcard_read_error = 0;
 
   bool download_html = 0;
+
+  bool lm75a = 0;
 };
 
 SysFlags flags;
@@ -399,8 +410,9 @@ void setup()
 
     oled_clear();
 
-//     ads.setGain(ads_gain);
-//     ads.begin(); // not required, may trigger i2c restart
+
+    if(i2c_ping(0x4f))
+      flags.lm75a = 1;
   }
 
   // --------------------------------------------------------------------------------------
@@ -979,9 +991,10 @@ bool check_data_sources()
     result = 1;
   }
 
-  if(cds_pos == 1 && (config.monitor_battery || config.monitor_temp) && millis() > timers.adc_poll)
+  if(cds_pos == 1 && (config.monitor_battery || config.monitor_temp || flags.lm75a) && millis() > timers.adc_poll)
   {
-    adsmux.adc_poll();
+    if(config.monitor_battery || config.monitor_temp)
+      adsmux.adc_poll();
 
     if(config.monitor_battery)
     {
@@ -991,6 +1004,11 @@ bool check_data_sources()
 
     if(config.monitor_temp)
       ntc_update();
+
+
+    if(flags.lm75a)
+      board_temp = lm75a.getTemperature();
+
 
     timers.adc_poll = millis() + 50;
     result = 1;
@@ -1219,7 +1237,7 @@ void oled_print_info()
       oled_println("");
     }
   }
-  else if(config.monitor_temp)
+  else if(config.monitor_temp && config.ntc10k_count > 0)
   {
     oled_set2X();
     oled_println(String(oled_temp_pos + 1) + ": " +  String(ntc10k_sensors[oled_temp_pos], 1) + "c\n" );

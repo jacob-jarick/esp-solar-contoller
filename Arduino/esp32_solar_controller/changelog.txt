@@ -1,20 +1,20 @@
-     HEAD~0	0955589 tidy
-     HEAD~1	67f40ce html cleanup
-     HEAD~2	0283629 html cleanup
-     HEAD~3	e7364be rm ntc_temp_mods
-     HEAD~4	87c5774 shutdown_htemp optimization
-     HEAD~5	861b2dc maths to libary
-     HEAD~6	00fee9c var cleanup
-     HEAD~7	e2ecf9d Ads1115_mux::digital_write
-     HEAD~8	e049c75 Ads1115_mux optmizations
-     HEAD~9	bd6836e remove QuickMedianLib dep
-    HEAD~10	9023f4c Ads1115_mux
-    HEAD~11	b03adf0 Ads1115_mux library
-    HEAD~12	1438e9c Ads1115_mux lib
-    HEAD~13	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-    HEAD~14	6263a4e tidy
-    HEAD~15	dbfe7a3 Create psu2.zip
-    HEAD~16	c762897 QuickMedianLib
-    HEAD~17	dc6a8cd ADC
-    HEAD~18	59952d8 fronius 3phase work
-    HEAD~19	046bee8 latest fw
+     HEAD~0	41bea88 arduino JSON lib update
+     HEAD~1	0955589 tidy
+     HEAD~2	67f40ce html cleanup
+     HEAD~3	0283629 html cleanup
+     HEAD~4	e7364be rm ntc_temp_mods
+     HEAD~5	87c5774 shutdown_htemp optimization
+     HEAD~6	861b2dc maths to libary
+     HEAD~7	00fee9c var cleanup
+     HEAD~8	e2ecf9d Ads1115_mux::digital_write
+     HEAD~9	e049c75 Ads1115_mux optmizations
+    HEAD~10	bd6836e remove QuickMedianLib dep
+    HEAD~11	9023f4c Ads1115_mux
+    HEAD~12	b03adf0 Ads1115_mux library
+    HEAD~13	1438e9c Ads1115_mux lib
+    HEAD~14	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~15	6263a4e tidy
+    HEAD~16	dbfe7a3 Create psu2.zip
+    HEAD~17	c762897 QuickMedianLib
+    HEAD~18	dc6a8cd ADC
+    HEAD~19	59952d8 fronius 3phase work

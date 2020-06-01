@@ -876,6 +876,11 @@ void sys_info()
 
   webpage += js_helper_innerhtml(F("flash_size"), fssize());
 
+  if(flags.lm75a)
+    webpage += js_helper_innerhtml(F("board_temp"), String(board_temp, 2) + "C");
+  else
+    webpage += js_helper_innerhtml(F("board_temp"), "LM75a not present");
+
   webpage += js_helper_innerhtml(F("wifi_sigs"), String(WiFi.RSSI()) + " dBm" );
 
   tmps = WiFi.SSID(); tmps.trim();
@@ -1390,21 +1395,21 @@ void i2c_scan()
       {
         webpage += "OLED:\t\t0x" + String(address, HEX)  + "\n";
       }
-      else if (address == 0x60 || address == 0x61 ||  address == 0x62 || address == 0x63)
-      {
-        webpage += "MCP4725:\t0x" + String(address, HEX) + "\n";
-      }
-      else if (address == 0x48 || address == 0x49 ||  address == 0x4a || address == 0x4b)
+      else if (address == 0x48)
       {
         webpage += "ADS1115:\t0x" + String(address, HEX) + "\n";
       }
-      else if (address >= 0x38 && address <= 0x3F)
+      else if (address == 0x49)
       {
-        webpage += "PCF8574a:\t0x" + String(address, HEX) + "\n";
+        webpage += "ADS1015:\t0x" + String(address, HEX) + "\n";
       }
-      else if (address >= 0x20 && address <= 0x27)
+      else if (address == 0x4f)
       {
-        webpage += "PCF8574:\t0x" + String(address, HEX) + "\n";
+        webpage += "LM75a:\t\t0x" + String(address, HEX) + "\n";
+      }
+      else if (address == 0x20)
+      {
+        webpage += "PCA9555PW:\t0x" + String(address, HEX) + "\n";
       }
       else
         webpage += "Unknown:\t0x" + String(address, HEX) + "\n";
