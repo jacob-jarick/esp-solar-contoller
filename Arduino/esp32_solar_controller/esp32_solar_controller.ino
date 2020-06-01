@@ -1237,6 +1237,11 @@ void oled_print_info()
       oled_println("");
     }
   }
+  else if(flags.lm75a)
+  {
+    oled_set2X();
+    oled_println(String(board_temp, 2) + "c\n" );
+  }
   else if(config.monitor_temp && config.ntc10k_count > 0)
   {
     oled_set2X();
