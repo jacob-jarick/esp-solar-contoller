@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 109
+#define FW_VERSION 112
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -349,6 +349,8 @@ struct SysFlags
   bool download_html = 0;
 
   bool lm75a = 0;
+
+  bool f3p_error1 = 0; // Fronius 3p Fallback JSON Decode Error:
 };
 
 SysFlags flags;
@@ -1339,6 +1341,18 @@ void modeset(byte m)
   // check prior mode - set cooldown timers
   if(m != system_mode) // we care about prior mode (system_mode) which hasnt changed yet but will.
   {
+    // log mode change
+    String tmp = "";
+    if(m == 0)
+      tmp = "Idle";
+    else if(m == 1)
+      tmp = "Charge";
+    else if(m == 2)
+      tmp = "Drain";
+
+    log_msg(String("modeset: ") + tmp );
+
+    // update timers IF swapping modes from inverter on OR charger on
     if(system_mode == 1) // charger turning off
     {
       timers.charger_off = millis() + (config.charger_oot_min * 60 * 1000) + (config.charger_oot_sec * 1000);

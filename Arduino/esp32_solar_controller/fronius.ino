@@ -145,11 +145,19 @@ bool update_p_grid_3phase()
 
     if (error2)
     {
-      log_msg(String("Fronius 3p Fallback JSON Decode Error: ") + error2.c_str() );
+      if(flags.f3p_error1) // failed prior attempt, log message and clear flag
+      {
+        log_msg(String("Fronius 3p Fallback JSON Decode Error: ") + error2.c_str() );
+        flags.f3p_error1 = 0;
+      }
+      else
+      {
+        flags.f3p_error1 = 1; // set error flag, if happens next time log message
+      }
       return 0;
     }
-
   }
+  flags.f3p_error1 = 0; // clear error flag as no error found
 
   JsonObject root = doc.as<JsonObject>();
   JsonObject Body_0;
@@ -162,14 +170,19 @@ bool update_p_grid_3phase()
     time_t timetmp = now();
     String tmp = root["Head"]["Timestamp"];
 
-    // must be same hour
-
-    uint8_t json_h = tmp.substring(11, 13).toInt() % 23;
+//  2020-06-25T21:04:11+08:00
+    uint8_t json_d = tmp.substring(8, 10).toInt();
+    uint8_t json_h = tmp.substring(11, 13).toInt();
     uint16_t json_m = tmp.substring(14, 16).toInt();
 
-    json_m += (json_h * 60);
 
-    uint16_t local_m = ((hour(timetmp) % 23) * 60) + minute(timetmp);
+
+    uint8_t local_d = day(timetmp);
+    uint16_t local_h = hour(timetmp);
+
+    uint16_t local_m = (local_d * 24 * 60) + (local_h * 60) + minute(timetmp);
+
+    json_m += (json_d * 24 * 60)  + (json_h * 60);
 
     uint16_t time_diff = mmaths.mdiff(json_m, local_m);
 
