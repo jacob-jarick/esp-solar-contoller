@@ -1379,7 +1379,16 @@ void port_info()
   server.send(200, mime_txt, webpage);
 }
 
+void adc_info_raw()
+{
+  String webpage = "#\tEN\tVal\n";
 
+  for(byte i = 0; i< 32; i++)
+    webpage += String(i) + "\t" + String(adsmux.adc_enable[i]) + "\t" + String(adsmux.adc_val[i]) + "\n";
+
+
+  server.send(200, mime_txt, webpage);
+}
 
 void i2c_scan()
 {

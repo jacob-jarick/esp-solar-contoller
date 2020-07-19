@@ -13,7 +13,13 @@ class Ads1115_mux
   public:
     Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc);
 
+    void setup();
+
     void adc_poll();
+
+    bool adctype = 1;
+
+    bool i2c_ping(const char address);
 
     int16_t adc_val[32];
     bool adc_enable[32];
@@ -32,6 +38,7 @@ class Ads1115_mux
     bool _pin_mode[3];
 
     Adafruit_ADS1115 _ads;
+    Adafruit_ADS1015 _ads2;
 };
 
 #endif

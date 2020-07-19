@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 112
+#define FW_VERSION 114
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -415,6 +415,9 @@ void setup()
 
     if(i2c_ping(0x4f))
       flags.lm75a = 1;
+
+
+    adsmux.setup();
   }
 
   // --------------------------------------------------------------------------------------
@@ -524,6 +527,8 @@ void setup()
   server.on("/battery_info", battery_info);
 
   server.on("/bms_raw_info", bms_raw_info);
+
+  server.on("/adc_info_raw", adc_info_raw);
 
   server.on("/batcal", battery_calibrate);
 

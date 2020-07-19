@@ -9,7 +9,7 @@ void ntc_update()
 {
   for(uint8_t sensor = 0; sensor < config.ntc10k_count; sensor++)
   {
-    ntc10k_sensors[sensor] = mmaths.dirty_average(ntc10k_sensors[sensor], adsmux.ntc10k_read_temp(sensor+16), 3);
+    ntc10k_sensors[sensor] = mmaths.dirty_average(ntc10k_sensors[sensor], adsmux.ntc10k_read_temp(sensor+16), 2);
   }
 
   flags.shutdown_htemp = 0;

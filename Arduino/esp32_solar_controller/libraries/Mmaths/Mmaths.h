@@ -10,7 +10,7 @@ class Mmaths
 
     int16_t magic_num;
 
-    double dirty_average(const double oldv, const double newv, const uint8_t count);
+    double dirty_average(const double oldv, const double newv, uint8_t count);
     double mmax(const double a, const double b);
     float mmax(const float a, const float b);
     uint16_t mmax(const uint16_t a, const uint16_t b);

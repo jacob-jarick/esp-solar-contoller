@@ -6,10 +6,14 @@ Mmaths::Mmaths()
   magic_num = int16_t(-123);
 }
 
-double Mmaths::dirty_average(const double oldv, const double newv, const uint8_t count)
+double Mmaths::dirty_average(const double oldv, const double newv, uint8_t count)
 {
   if(oldv == magic_num) // if uninitalized (ie set to magic_num then dont avg).
     return newv;
+
+  // must be at least 2
+  if(count < 2)
+    count = 2;
 
   double result = 0;
   for (uint8_t i = 0; i < count - 1; i++)
