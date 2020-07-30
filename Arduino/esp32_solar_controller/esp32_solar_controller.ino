@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 114
+#define FW_VERSION 117
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -61,7 +61,7 @@ int get_url_code;
 // -----------------------------------------------------------------------------------------
 
 
-#include <Adafruit_ADS1015.h>
+// #include <Adafruit_ADS1015.h>
 #include <Ads1115_mux.h>
 const uint8_t pin_asel1 = 27;
 const uint8_t pin_asel2 = 14;
@@ -729,7 +729,7 @@ void loop()
     // IDLE
     else if (phase_sum < config.night_watts * -1 ) // turn off inverter
     {
-      mode_reason += "Night: IDLE\n";
+      mode_reason += "Night: IDLE (grid " + String(phase_sum,1) + " < night_watts)\n";
       finv = 0;
     }
     // timer check

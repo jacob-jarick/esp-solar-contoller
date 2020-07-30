@@ -1,20 +1,20 @@
-     HEAD~0	f1ea356 warnings and docs
-     HEAD~1	13d2d1c lm75a temp displayed on oled
-     HEAD~2	eac9129 lm75a code added
-     HEAD~3	41bea88 arduino JSON lib update
-     HEAD~4	0955589 tidy
-     HEAD~5	67f40ce html cleanup
-     HEAD~6	0283629 html cleanup
-     HEAD~7	e7364be rm ntc_temp_mods
-     HEAD~8	87c5774 shutdown_htemp optimization
-     HEAD~9	861b2dc maths to libary
-    HEAD~10	00fee9c var cleanup
-    HEAD~11	e2ecf9d Ads1115_mux::digital_write
-    HEAD~12	e049c75 Ads1115_mux optmizations
-    HEAD~13	bd6836e remove QuickMedianLib dep
-    HEAD~14	9023f4c Ads1115_mux
-    HEAD~15	b03adf0 Ads1115_mux library
-    HEAD~16	1438e9c Ads1115_mux lib
-    HEAD~17	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-    HEAD~18	6263a4e tidy
-    HEAD~19	dbfe7a3 Create psu2.zip
+     HEAD~0	d1024a3 ads1015 support added
+     HEAD~1	f1ea356 warnings and docs
+     HEAD~2	13d2d1c lm75a temp displayed on oled
+     HEAD~3	eac9129 lm75a code added
+     HEAD~4	41bea88 arduino JSON lib update
+     HEAD~5	0955589 tidy
+     HEAD~6	67f40ce html cleanup
+     HEAD~7	0283629 html cleanup
+     HEAD~8	e7364be rm ntc_temp_mods
+     HEAD~9	87c5774 shutdown_htemp optimization
+    HEAD~10	861b2dc maths to libary
+    HEAD~11	00fee9c var cleanup
+    HEAD~12	e2ecf9d Ads1115_mux::digital_write
+    HEAD~13	e049c75 Ads1115_mux optmizations
+    HEAD~14	bd6836e remove QuickMedianLib dep
+    HEAD~15	9023f4c Ads1115_mux
+    HEAD~16	b03adf0 Ads1115_mux library
+    HEAD~17	1438e9c Ads1115_mux lib
+    HEAD~18	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~19	6263a4e tidy
