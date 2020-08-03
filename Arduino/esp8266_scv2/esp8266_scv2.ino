@@ -20,7 +20,7 @@ Arduino ide settings:
  - Exceptions Disabled
 
  */
-#define FW_VERSION 7
+#define FW_VERSION 8
 
 #define DAVG_MAGIC_NUM -12345678
 
@@ -509,7 +509,7 @@ bool wifi_connect(char s[ssmall], char p[ssmall])
 
   while (WiFi.status() != WL_CONNECTED)
   {
-    if (recon > 400)
+    if (recon > 150)
     {
       both_println(F("Wifi Fail"));
       return 0;

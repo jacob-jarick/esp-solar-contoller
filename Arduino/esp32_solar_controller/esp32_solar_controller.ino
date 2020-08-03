@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 117
+#define FW_VERSION 120
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1343,7 +1343,15 @@ void calc_next_update()
 
 void modeset(byte m)
 {
-  // check prior mode - set cooldown timers
+  // if swapping direct from one device to another, force a n Second idle in between
+  bool idle_forced = 0;
+  if( (system_mode == 1 && m == 2) || (system_mode == 2 && m == 1) )
+  {
+    idle_forced = 1;
+    m = 0;
+  }
+
+// check prior mode - set cooldown timers
   if(m != system_mode) // we care about prior mode (system_mode) which hasnt changed yet but will.
   {
     // log mode change
@@ -1354,6 +1362,8 @@ void modeset(byte m)
       tmp = "Charge";
     else if(m == 2)
       tmp = "Drain";
+    else
+      tmp = String(m)  + "?";
 
     log_msg(String("modeset: ") + tmp );
 
@@ -1366,14 +1376,6 @@ void modeset(byte m)
     {
       timers.inverter_off = millis() + (config.inverter_oot_min * 60 * 1000) + (config.inverter_oot_sec * 1000);
     }
-  }
-
-  // if swapping direct from one device to another, force a n Second idle in between
-  bool idle_forced = 0;
-  if( (system_mode == 1 && m == 2) || (system_mode == 2 && m == 1) )
-  {
-    idle_forced = 1;
-    m = 0;
   }
 
   bool c_pinmode = 0;

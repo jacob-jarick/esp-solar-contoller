@@ -430,6 +430,7 @@ void vars_sanity_check()
       config.battery_volt_mod[i] = 1;
   }
 
+  if(config.board_rev < 0 || config.board_rev > 2)
     config.board_rev = 1;
 
   // board revisions
@@ -437,6 +438,15 @@ void vars_sanity_check()
   {
     config.pin_sda = OPT_DEFAULT;
     config.pin_scl = OPT_DEFAULT;
+    config.pin_buzzer = 16;
+    config.pin_led = 2;
+    config.pin_inverter = 25;
+    config.pin_charger = 33;
+  }
+  else if(config.board_rev == 2) // mini (i stupidly reversed the pins)
+  {
+    config.pin_sda = 21;
+    config.pin_scl = 22;
     config.pin_buzzer = 16;
     config.pin_led = 2;
     config.pin_inverter = 25;
