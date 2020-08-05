@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 120
+#define FW_VERSION 127
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000

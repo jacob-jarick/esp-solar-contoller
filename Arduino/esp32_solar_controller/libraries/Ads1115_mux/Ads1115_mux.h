@@ -8,6 +8,9 @@
 
 #include <Adafruit_ADS1015.h>
 
+// esp32 adc
+#include <driver/adc.h>
+
 class Ads1115_mux
 {
   public:
@@ -17,7 +20,7 @@ class Ads1115_mux
 
     void adc_poll();
 
-    bool adctype = 1;
+    bool adctype;
 
     bool i2c_ping(const char address);
 

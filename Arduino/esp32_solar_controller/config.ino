@@ -430,7 +430,7 @@ void vars_sanity_check()
       config.battery_volt_mod[i] = 1;
   }
 
-  if(config.board_rev < 0 || config.board_rev > 2)
+  if(config.board_rev > 2)
     config.board_rev = 1;
 
   // board revisions

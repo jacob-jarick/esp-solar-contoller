@@ -33,7 +33,9 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
     digital_write(i, 1);  // set high to clear cache
     digital_write(i, 0);  // set low
   }
+
 }
+
 
 // setup needs i2c and serial started.
 void Ads1115_mux::setup()
@@ -42,18 +44,21 @@ void Ads1115_mux::setup()
   {
     Serial.println("ADS1115 found.");
     adctype = 1;
+    _ads.setGain(GAIN_ONE);
   }
-  else
+  else if(i2c_ping(0x49))
   {
     Serial.println("ADS1015 found.");
     adctype = 0;
     _ads2 = Adafruit_ADS1015((uint8_t)  0x49);
+    _ads2.setGain(GAIN_ONE);
+  }
+  else
+  {
+    Serial.println("no ADC found.");
+    return;
   }
 
-  if(adctype)
-    _ads.setGain(GAIN_ONE);
-  else
-    _ads2.setGain(GAIN_ONE);
 }
 
 /// cached digital write as arduinos port writes are slow.
@@ -155,9 +160,9 @@ void Ads1115_mux::adc_poll()
 
     for(uint8_t r = 0; r < read_count; r++)
     {
-      if(adctype)
+      if(adctype == 1)
         areads[r] = _ads.readADC_SingleEnded(channel);
-      else
+      else if (adctype == 0)
         areads[r] = _ads2.readADC_SingleEnded(channel);
     }
 
@@ -187,9 +192,11 @@ float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 float Ads1115_mux::resistance(const int16_t adc)
 {
   float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case
+
+//   float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case
   float R;
 
-  if(adctype)
+  if(adctype == 1)
     R = 10000/(65535/ADCvalue-1);  // 65535 refers to 16-bit number
   else
     R = 10000/(4095/ADCvalue-1);  // 4095 refers to 12-bit number

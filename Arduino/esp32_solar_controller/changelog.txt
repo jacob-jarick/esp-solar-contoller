@@ -1,20 +1,20 @@
-     HEAD~0	2ea31ad messages
-     HEAD~1	d1024a3 ads1015 support added
-     HEAD~2	f1ea356 warnings and docs
-     HEAD~3	13d2d1c lm75a temp displayed on oled
-     HEAD~4	eac9129 lm75a code added
-     HEAD~5	41bea88 arduino JSON lib update
-     HEAD~6	0955589 tidy
-     HEAD~7	67f40ce html cleanup
-     HEAD~8	0283629 html cleanup
-     HEAD~9	e7364be rm ntc_temp_mods
-    HEAD~10	87c5774 shutdown_htemp optimization
-    HEAD~11	861b2dc maths to libary
-    HEAD~12	00fee9c var cleanup
-    HEAD~13	e2ecf9d Ads1115_mux::digital_write
-    HEAD~14	e049c75 Ads1115_mux optmizations
-    HEAD~15	bd6836e remove QuickMedianLib dep
-    HEAD~16	9023f4c Ads1115_mux
-    HEAD~17	b03adf0 Ads1115_mux library
-    HEAD~18	1438e9c Ads1115_mux lib
-    HEAD~19	2726997 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~0	225833f micro board. esp8266 firmware refresh
+     HEAD~1	2ea31ad messages
+     HEAD~2	d1024a3 ads1015 support added
+     HEAD~3	f1ea356 warnings and docs
+     HEAD~4	13d2d1c lm75a temp displayed on oled
+     HEAD~5	eac9129 lm75a code added
+     HEAD~6	41bea88 arduino JSON lib update
+     HEAD~7	0955589 tidy
+     HEAD~8	67f40ce html cleanup
+     HEAD~9	0283629 html cleanup
+    HEAD~10	e7364be rm ntc_temp_mods
+    HEAD~11	87c5774 shutdown_htemp optimization
+    HEAD~12	861b2dc maths to libary
+    HEAD~13	00fee9c var cleanup
+    HEAD~14	e2ecf9d Ads1115_mux::digital_write
+    HEAD~15	e049c75 Ads1115_mux optmizations
+    HEAD~16	bd6836e remove QuickMedianLib dep
+    HEAD~17	9023f4c Ads1115_mux
+    HEAD~18	b03adf0 Ads1115_mux library
+    HEAD~19	1438e9c Ads1115_mux lib
