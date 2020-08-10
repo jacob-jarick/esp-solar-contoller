@@ -27,6 +27,8 @@ class Ads1115_mux
     int16_t adc_val[32];
     bool adc_enable[32];
 
+    bool adc_found;
+
     float ntc10k_read_temp(const byte sensor);
     float resistance(const int16_t adc);
     float steinhart(const float R);

@@ -8,6 +8,8 @@ Adafruit_ADS1015 _ads2(0x49);
 
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 {
+  adc_found = 1;
+
   _pins[0] = pina;
   _pins[1] = pinb;
   _pins[2] = pinc;
@@ -55,6 +57,7 @@ void Ads1115_mux::setup()
   }
   else
   {
+    adc_found = 0;
     Serial.println("no ADC found.");
     return;
   }
@@ -64,6 +67,9 @@ void Ads1115_mux::setup()
 /// cached digital write as arduinos port writes are slow.
 void Ads1115_mux::digital_write(const uint8_t pin, const bool status)
 {
+  if(!adc_found)
+    return;
+
   if(_pin_mode[pin] == status)
     return;
 
@@ -74,6 +80,9 @@ void Ads1115_mux::digital_write(const uint8_t pin, const bool status)
 
 void Ads1115_mux::adc_poll()
 {
+  if(!adc_found)
+    return;
+
   _adc_poll_pos++;
   if(_adc_poll_pos > 7)
     _adc_poll_pos = 0;
@@ -181,6 +190,9 @@ void Ads1115_mux::adc_poll()
 
 float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 {
+  if(!adc_found)
+    return 0;
+
 //   int16_t adc0 = adc_val[sensor];
   float R0 = resistance(adc_val[sensor]);
   float temperature0 = steinhart(R0);
@@ -191,6 +203,10 @@ float Ads1115_mux::ntc10k_read_temp(const byte sensor)
 // Get resistance -------------------------------------------//
 float Ads1115_mux::resistance(const int16_t adc)
 {
+  if(!adc_found)
+    return 0;
+
+
   float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case
 
 //   float ADCvalue = adc*(8.192/3.3);  // Vcc = 8.192 on GAIN_ONE setting, Arduino Vcc = 3.3V in this case

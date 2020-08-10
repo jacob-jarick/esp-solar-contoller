@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 127
+#define FW_VERSION 130
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -539,17 +539,25 @@ void setup()
   //
 
   oled_clear();
-  oled_println("ADC 1st Poll");
 
-  for(uint8_t i = 0; i < 16; i++)
+  if(adsmux.adc_found)
   {
-    cells_volts_real[i] = double(mmaths.magic_num);
-    cells_volts[i] = double(mmaths.magic_num);
+    oled_println("ADC 1st Poll");
 
-    ntc10k_sensors[i] = mmaths.magic_num;
+    for(uint8_t i = 0; i < 16; i++)
+    {
+      cells_volts_real[i] = double(mmaths.magic_num);
+      cells_volts[i] = double(mmaths.magic_num);
+
+      ntc10k_sensors[i] = mmaths.magic_num;
+    }
+
+    adc_quick_poll();
   }
-
-  adc_quick_poll();
+  else
+  {
+    config.monitor_battery = 0; // turn off battery monitoring if we cannot detect ADS chip
+  }
 
   if(config.fwver != FW_VERSION)
   {
