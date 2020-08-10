@@ -86,14 +86,12 @@ bool update_p_grid()
 
 bool update_p_grid_3phase()
 {
-
   bool fellback = 0;
 
   String payload;
   DynamicJsonDocument doc(jsonsize);
 
   String url = String(config.threephase_direct_url);
-
 
   // Direct 3phase URL
   if(timers.use_fallback < millis() && strlen(config.threephase_direct_url) )

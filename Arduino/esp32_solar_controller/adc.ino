@@ -1,5 +1,8 @@
 void cells_update()
 {
+  if(!adsmux.adc_found)
+    return;
+
   for(uint8_t x = 0; x < config.cell_count; x++)
     read_cell_volts(x);
 }
@@ -7,6 +10,9 @@ void cells_update()
 
 void ntc_update()
 {
+  if(!adsmux.adc_found)
+    return;
+
   for(uint8_t sensor = 0; sensor < config.ntc10k_count; sensor++)
   {
     ntc10k_sensors[sensor] = mmaths.dirty_average(ntc10k_sensors[sensor], adsmux.ntc10k_read_temp(sensor+16), 2);
@@ -27,6 +33,9 @@ void ntc_update()
 // used on startup
 void adc_quick_poll()
 {
+  if(!adsmux.adc_found)
+    return;
+
   for(uint8_t i = 0; i < 8; i++)
   {
     oled_print(".");
@@ -37,6 +46,9 @@ void adc_quick_poll()
 
 double read_cell_volts(const byte cell)
 {
+  if(!adsmux.adc_found)
+    return -1;
+
   const double ads_mv = 0.125 / 1000;
 
   double v = adsmux.adc_val[cell];

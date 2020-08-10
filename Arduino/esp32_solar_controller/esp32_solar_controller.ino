@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 130
+#define FW_VERSION 131
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -368,7 +368,6 @@ void setup()
 
   sd_setup(tone);
 
-
   if(!load_config())
   {
     flags.download_html = 1;
@@ -557,6 +556,7 @@ void setup()
   else
   {
     config.monitor_battery = 0; // turn off battery monitoring if we cannot detect ADS chip
+    config.monitor_temp = 0;
   }
 
   if(config.fwver != FW_VERSION)
