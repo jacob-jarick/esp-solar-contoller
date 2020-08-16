@@ -88,6 +88,8 @@ void save_config()
   doc["monitor_temp"] = (int)config.monitor_temp;
   doc["rotate_oled"] = (int)config.rotate_oled;
   doc["button_timer_mode"] = (int)config.button_timer_mode;
+  doc["display_mode"] = (int)config.display_mode;
+
   doc["blink_led"] = (int)config.blink_led;
   doc["blink_led_default"] = (int)config.blink_led_default;
   doc["avg_phase"] = (int)config.avg_phase;
@@ -285,6 +287,7 @@ bool load_config()
 
   config.rotate_oled = doc["rotate_oled"] | 0;
   config.button_timer_mode = doc["button_timer_mode"] | 0;
+  config.display_mode = doc["display_mode"] | 0;
 
   config.hv_monitor = doc["hv_monitor"] | 0;
 

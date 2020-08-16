@@ -208,6 +208,10 @@ bool update_p_grid_3phase()
   phase_c_voltage = Body_0["Voltage_AC_Phase_3"];
 
 
+  energy_consumed = Body_0["EnergyReal_WAC_Sum_Consumed"];
+  energy_consumed =  energy_consumed / 1000;
+
+
   phase_sum = 0;
 
   if(config.monitor_phase_a)

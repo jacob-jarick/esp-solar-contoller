@@ -304,6 +304,9 @@ void advance_config()
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
+//   webpage += js_radio_helper(F("display_phases1"), F("display_phases0"), config.display_phases);
+  webpage += js_select_helper(F("display_mode"), String(config.display_mode));
+
   // BOARD Revision
   webpage += js_select_helper(F("board_rev"), String(config.board_rev));
 
@@ -437,6 +440,9 @@ void web_config_submit()
 
       else if (server.argName(i) == F("web_mode"))
         config.webc_mode = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("display_mode"))
+        config.display_mode = server.arg(i).toInt();
 
       // BOARD
       else if (server.argName(i) == F("name_input"))
@@ -826,6 +832,39 @@ void stats()
   webpage += js_helper_innerhtml(F("next_update"), nu_string);
 
 
+  webpage += web_footer();
+
+  server.send(200, mime_html, webpage);
+}
+
+void threepase_info()
+{
+  String webpage;
+  webpage =  get_file(html_3pinfo);
+
+
+
+
+  if(!config.threephase)
+  {
+    webpage += "three phase mode is disabled</pre>";
+    webpage += js_header();
+    webpage += web_footer();
+
+    server.send(200, mime_html, webpage);
+    return;
+  }
+
+
+  webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\n";
+  webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
+  webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
+  webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
+  webpage += "Energy Consumed: " + String(energy_consumed, 1) + " Kwh\n";
+  webpage += "</pre>";
+
+
+  webpage += js_header();
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);

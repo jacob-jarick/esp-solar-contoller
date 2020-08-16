@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 131
+#define FW_VERSION 139
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -146,6 +146,7 @@ const String html_config          = "/config" + dothtml;
 const String html_battery         = "/batconf" + dothtml;
 const String html_calibrate       = "/batcal" + dothtml;
 const String html_timer           = "/timer" + dothtml;
+const String html_3pinfo          = "/3pinfo" + dothtml;
 const String html_cpconfig        = "/cpconfig" + dothtml;
 const String html_stats           = "/stats" + dothtml;
 const String html_mode            = "/mode" + dothtml;
@@ -182,6 +183,8 @@ float phase_c_watts = 0;
 float phase_a_voltage = 0;
 float phase_b_voltage = 0;
 float phase_c_voltage = 0;
+
+float energy_consumed = 0;
 
 float phase_sum = 0;
 float phase_sum_old = 0;
@@ -302,6 +305,8 @@ struct Sconfig
   bool monitor_battery = 0;
 
   bool hv_monitor = 1;
+
+  uint8_t display_mode = 0;
 
   bool m247 = 0;
 
@@ -530,6 +535,8 @@ void setup()
   server.on("/adc_info_raw", adc_info_raw);
 
   server.on("/batcal", battery_calibrate);
+
+  server.on("/3pinfo", threepase_info);
 
   server.begin();
 
@@ -1205,6 +1212,37 @@ void oled_print_info()
     rbtime /= 60;
     both_println(String(F("Reboot in:\n")) + String(rbtime) + String(F(" min")));
     oled_set2X();
+
+    return;
+  }
+
+  if(config.display_mode == 1)
+  {
+    oled_println("A " + String(phase_a_watts, 1) + "W");
+    oled_println("B " + String(phase_b_watts, 1) + "W");
+    oled_println("C " + String(phase_c_watts, 1) + "W");
+    oled_set1X();
+    oled_println(WiFi.localIP().toString());
+
+    return;
+  }
+  if(config.display_mode == 2)
+  {
+    oled_println("A " + String(phase_a_voltage, 1) + "v");
+    oled_println("B " + String(phase_b_voltage, 1) + "v");
+    oled_println("C " + String(phase_c_voltage, 1) + "v");
+    oled_set1X();
+    oled_println(WiFi.localIP().toString());
+
+    return;
+  }
+  if(config.display_mode == 3)
+  {
+    oled_println("A " + String(phase_a_watts / phase_a_voltage, 3) + "A");
+    oled_println("B " + String(phase_b_watts / phase_b_voltage, 3) + "A");
+    oled_println("C " + String(phase_c_watts / phase_c_voltage, 3) + "A");
+    oled_set1X();
+    oled_println(WiFi.localIP().toString());
 
     return;
   }
