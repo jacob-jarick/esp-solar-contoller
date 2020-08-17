@@ -842,9 +842,6 @@ void threepase_info()
   String webpage;
   webpage =  get_file(html_3pinfo);
 
-
-
-
   if(!config.threephase)
   {
     webpage += "three phase mode is disabled</pre>";
@@ -860,7 +857,7 @@ void threepase_info()
   webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
   webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
   webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
-  webpage += "Energy Consumed: " + String(energy_consumed, 1) + " Kwh\n";
+  webpage += "Todays Usage: " + String(energy_consumed - energy_consumed_old, 1) + " Kwh\n";
   webpage += "</pre>";
 
 

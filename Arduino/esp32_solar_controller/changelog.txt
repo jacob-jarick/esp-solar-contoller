@@ -1,20 +1,20 @@
-     HEAD~0	6deabb3 f(!adsmux.adc_found)
-     HEAD~1	ae95865 bool adc_found
-     HEAD~2	bbd1553 fw 27
-     HEAD~3	225833f micro board. esp8266 firmware refresh
-     HEAD~4	2ea31ad messages
-     HEAD~5	d1024a3 ads1015 support added
-     HEAD~6	f1ea356 warnings and docs
-     HEAD~7	13d2d1c lm75a temp displayed on oled
-     HEAD~8	eac9129 lm75a code added
-     HEAD~9	41bea88 arduino JSON lib update
-    HEAD~10	0955589 tidy
-    HEAD~11	67f40ce html cleanup
-    HEAD~12	0283629 html cleanup
-    HEAD~13	e7364be rm ntc_temp_mods
-    HEAD~14	87c5774 shutdown_htemp optimization
-    HEAD~15	861b2dc maths to libary
-    HEAD~16	00fee9c var cleanup
-    HEAD~17	e2ecf9d Ads1115_mux::digital_write
-    HEAD~18	e049c75 Ads1115_mux optmizations
-    HEAD~19	bd6836e remove QuickMedianLib dep
+     HEAD~0	4284f38 Oled Display Options
+     HEAD~1	6deabb3 f(!adsmux.adc_found)
+     HEAD~2	ae95865 bool adc_found
+     HEAD~3	bbd1553 fw 27
+     HEAD~4	225833f micro board. esp8266 firmware refresh
+     HEAD~5	2ea31ad messages
+     HEAD~6	d1024a3 ads1015 support added
+     HEAD~7	f1ea356 warnings and docs
+     HEAD~8	13d2d1c lm75a temp displayed on oled
+     HEAD~9	eac9129 lm75a code added
+    HEAD~10	41bea88 arduino JSON lib update
+    HEAD~11	0955589 tidy
+    HEAD~12	67f40ce html cleanup
+    HEAD~13	0283629 html cleanup
+    HEAD~14	e7364be rm ntc_temp_mods
+    HEAD~15	87c5774 shutdown_htemp optimization
+    HEAD~16	861b2dc maths to libary
+    HEAD~17	00fee9c var cleanup
+    HEAD~18	e2ecf9d Ads1115_mux::digital_write
+    HEAD~19	e049c75 Ads1115_mux optmizations

@@ -12,7 +12,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 139
+#define FW_VERSION 143
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -184,6 +184,7 @@ float phase_a_voltage = 0;
 float phase_b_voltage = 0;
 float phase_c_voltage = 0;
 
+float energy_consumed_old = 0;
 float energy_consumed = 0;
 
 float phase_sum = 0;
@@ -1009,6 +1010,16 @@ bool check_data_sources()
   if(cds_pos == 0 && millis() > timers.pgrid)
   {
     check_grid();
+
+    // track daily energy
+    // set energy_consumed_old to energy_consumed if value is 0 (fresh boot) OR start of new day (hour and min == 0)
+    time_t timetmp = now();
+    if(!energy_consumed_old || (!hour(timetmp) && !minute(timetmp)) )
+    {
+      energy_consumed_old = energy_consumed;
+    }
+
+
     timers.pgrid = millis() + 1333;
     result = 1;
   }
@@ -1152,37 +1163,27 @@ bool check_grid()
 
 // ======================================================================================================================
 
-char led_cur = 255;
 void set_led(const char m)
 {
   if(config.pin_led == OPT_DISABLE)
     return;
 
-  if(led_cur == m && m != 3)
-  {
-    return;
-  }
-  led_cur = m;
-
-  if(m == 0)
-  {
-    config.blink_led = 0;
-    config.led_status = 0;
-  }
-  else if (m == 1)
-  {
-    config.blink_led = 0;
-    config.led_status = 1;
-  }
-  else if (m == 2) // toggle
-  {
-    config.led_status = !config.led_status;
-  }
-  else if(m == 3) // toggle without changing value of config.led_status
+  if(m == 3) // toggle without changing value of config.led_status
   {
     digitalWrite(config.pin_led, !digitalRead(config.pin_led));
     return;
   }
+
+  config.blink_led = 0;
+
+  if(m == 0)
+    config.led_status = 0;
+  else if (m == 1)
+    config.led_status = 1;
+  else if (m == 2) // toggle
+    config.led_status = !config.led_status;
+
+  digitalWrite(config.pin_led, config.led_status);
 }
 
 void both_print_ip()
@@ -1238,10 +1239,27 @@ void oled_print_info()
   }
   if(config.display_mode == 3)
   {
-    oled_println("A " + String(phase_a_watts / phase_a_voltage, 3) + "A");
-    oled_println("B " + String(phase_b_watts / phase_b_voltage, 3) + "A");
-    oled_println("C " + String(phase_c_watts / phase_c_voltage, 3) + "A");
+    oled_println("A " + String(phase_a_watts / phase_a_voltage, 2) + "A");
+    oled_println("B " + String(phase_b_watts / phase_b_voltage, 2) + "A");
+    oled_println("C " + String(phase_c_watts / phase_c_voltage, 2) + "A");
     oled_set1X();
+    oled_println(WiFi.localIP().toString());
+
+    return;
+  }
+  if(config.display_mode == 4)
+  {
+    if(phase_sum >= 1000)
+      oled_println("Now " + String(phase_sum/1000, 2) + "kW");
+    else
+      oled_println("Now " + String(phase_sum, 0) + "W");
+
+    oled_println("Day " + String(energy_consumed - energy_consumed_old, 1) + "kWh");
+
+    oled_println("   $" + String((energy_consumed - energy_consumed_old) * 0.29, 2) + "c");
+
+    oled_set1X();
+    oled_println("");
     oled_println(WiFi.localIP().toString());
 
     return;
