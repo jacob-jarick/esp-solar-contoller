@@ -126,6 +126,8 @@ void datasrcs()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
 
+  webpage += js_helper(F("cpkwh"), String(config.cpkwh, 2));
+
   webpage += js_helper(F("inverter_url"), String(config.inverter_url));
   webpage += js_helper(F("inverter_push_url"), String(config.inverter_push_url));
   webpage += js_helper(F("pub_url"), String(config.pub_url));
@@ -473,7 +475,9 @@ void web_config_submit()
       else if (server.argName(i) == F("gmt"))
         config.gmt = server.arg(i).toInt();
 
-      // DAY Device
+
+      else if (server.argName(i) == F("cpkwh"))
+        config.cpkwh = server.arg(i).toFloat();
 
       else if (server.argName(i) == F("inverter_url"))
         strlcpy(config.inverter_url, server.arg(i).c_str(), sizeof(config.inverter_url));

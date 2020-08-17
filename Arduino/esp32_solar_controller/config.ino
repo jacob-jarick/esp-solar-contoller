@@ -72,6 +72,9 @@ void save_config()
   doc["battery_volt_rec"] = config.battery_volt_rec;
   doc["battery_volt_max"] = config.battery_volt_max;
 
+  doc["cpkwh"] = config.cpkwh;
+
+
   // bytes
 
   doc["ntc10k_count"] = config.ntc10k_count;
@@ -281,6 +284,8 @@ bool load_config()
   config.monitor_phase_a = doc["monitor_phase_a"] | 0;
   config.monitor_phase_b = doc["monitor_phase_b"] | 0;
   config.monitor_phase_c = doc["monitor_phase_c"] | 0;
+
+  config.cpkwh = doc["cpkwh"] | 0;
 
   // bools
 

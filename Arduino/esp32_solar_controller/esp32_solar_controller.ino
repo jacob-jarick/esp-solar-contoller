@@ -7,12 +7,14 @@ so I configure the IDE to use:
 
 * WEMOS LOLIN32
 * Patition Scheme: Minimal SPIFFS, large app with OTA
+* CPU 240Mhz (WiFi/BT)
+* Flash Frequency 80Mhz
 
 this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 143
+#define FW_VERSION 146
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -276,6 +278,8 @@ struct Sconfig
   float battery_volt_min;
   float battery_volt_rec;
   float battery_volt_max;
+
+  float cpkwh;
 
   char description[smedium];
 
@@ -998,6 +1002,7 @@ bool check_system_timers()
 // ======================================================================================================================
 
 uint8_t cds_pos = 0;
+int8_t cds_day = -1;
 bool check_data_sources()
 {
   cds_pos++;
@@ -1014,8 +1019,10 @@ bool check_data_sources()
     // track daily energy
     // set energy_consumed_old to energy_consumed if value is 0 (fresh boot) OR start of new day (hour and min == 0)
     time_t timetmp = now();
-    if(!energy_consumed_old || (!hour(timetmp) && !minute(timetmp)) )
+    uint8_t tday = day(timetmp);
+    if(!energy_consumed_old ||  tday != cds_day)
     {
+      cds_day = tday;
       energy_consumed_old = energy_consumed;
     }
 
@@ -1249,14 +1256,25 @@ void oled_print_info()
   }
   if(config.display_mode == 4)
   {
-    if(phase_sum >= 1000)
-      oled_println("Now " + String(phase_sum/1000, 2) + "kW");
+    float tpsum = 0;
+
+    // NOTE: Western Power and other cunts bill ignoring exports or charging 7c for export on phase A and 29c for import on B or C.
+    //tpsum = phase_a_watts + phase_b_watts + phase_c_watts;
+    if(phase_a_watts > 0)
+      tpsum += phase_a_watts;
+    if(phase_b_watts > 0)
+      tpsum += phase_b_watts;
+    if(phase_c_watts > 0)
+      tpsum += phase_c_watts;
+
+    if(tpsum >= 1000)
+      oled_println("Now " + String(tpsum/1000, 2) + "kW");
     else
-      oled_println("Now " + String(phase_sum, 0) + "W");
+      oled_println("Now " + String(tpsum, 0) + "W");
 
     oled_println("Day " + String(energy_consumed - energy_consumed_old, 1) + "kWh");
 
-    oled_println("   $" + String((energy_consumed - energy_consumed_old) * 0.29, 2) + "c");
+    oled_println("  $ " + String((energy_consumed - energy_consumed_old) * config.cpkwh, 2) );
 
     oled_set1X();
     oled_println("");
