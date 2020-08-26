@@ -688,7 +688,7 @@ void loop()
       log_msg("High Temp Shutdown.");
     }
 
-    unsigned long tmp_sec = (millis() / 1000) % 2;
+    unsigned long tmp_sec = (millis() / 1000) % 3;
     if(tmp_sec)
       beep_helper(700, 25); // ALARM
 
