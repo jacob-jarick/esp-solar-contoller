@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 146
+#define FW_VERSION 157
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -186,7 +186,7 @@ float phase_a_voltage = 0;
 float phase_b_voltage = 0;
 float phase_c_voltage = 0;
 
-float energy_consumed_old = 0;
+// float energy_consumed_old = 0;
 float energy_consumed = 0;
 
 float phase_sum = 0;
@@ -229,6 +229,8 @@ struct Sconfig
 
   float lv_shutdown_delay; // float because we use fraction of hours eh 0.5h
   float hv_shutdown_delay;
+
+  float otsdh;
 
   uint8_t charger_oot_min;
   uint8_t charger_oot_sec;
@@ -302,6 +304,7 @@ struct Sconfig
   bool flip_ipin = 0;
   bool flip_cpin = 0;
   bool auto_update = 0;
+  bool inv_idle_mode = 0;
   bool i_enable = 0;
   bool c_enable = 0;
   bool day_is_timer = 0;
@@ -675,6 +678,26 @@ void loop()
   }
 
 
+  // -------------------------------------------------------------------------
+  // High Temp Check
+
+  if(config.monitor_temp && flags.shutdown_htemp)
+  {
+    if(system_mode != 0)
+    {
+      log_msg("High Temp Shutdown.");
+    }
+
+    unsigned long tmp_sec = (millis() / 1000) % 2;
+    if(tmp_sec)
+      beep_helper(700, 25); // ALARM
+
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " +  "Idle (High Temp)\n";
+    modeset(0);
+
+    return;
+  }
+
   // finish loop unless its time to update
   if (timers.mode_check > millis())
     return;
@@ -710,18 +733,19 @@ void loop()
   // IDLE checks
 
   if
-    (
-      (!flags.day && !flags.night) || // not day or night
-      (!config.i_enable && !config.c_enable) ||   // both devices disabled
-      (!config.i_enable && flags.night && !flags.day) ||  // night time only and night time dev disabled
-      (!config.c_enable && flags.day && !flags.night) ||   // day time only and day time dev disabled
-      (config.monitor_temp && flags.shutdown_htemp)
-    )
-    {
-      mode_reason += F("Idle\n");
-      modeset(0);
-      return;
-    }
+  (
+    (!flags.day && !flags.night) || // not day or night
+    (!config.i_enable && !config.c_enable) ||   // both devices disabled
+    (!config.i_enable && flags.night && !flags.day) ||  // night time only and night time dev disabled
+    (!config.c_enable && flags.day && !flags.night)   // day time only and day time dev disabled
+
+  )
+  {
+    mode_reason += F("Idle (1)\n");
+    modeset(0);
+    return;
+  }
+
   // -------------------------------------------------------------------------
   // Night Device
 
@@ -747,6 +771,11 @@ void loop()
       finv = 1;
     }
     // IDLE
+    else if (config.inv_idle_mode && phase_sum < 0 ) // turn off inverter
+    {
+      mode_reason += "Night: IDLE (grid " + String(phase_sum,1) + " < 0)\n";
+      finv = 0;
+    }
     else if (phase_sum < config.night_watts * -1 ) // turn off inverter
     {
       mode_reason += "Night: IDLE (grid " + String(phase_sum,1) + " < night_watts)\n";
@@ -1002,20 +1031,20 @@ bool check_system_timers()
 // ======================================================================================================================
 
 uint8_t cds_pos = 0;
-int8_t cds_day = -1;
+// int8_t cds_day = -1;
 bool check_data_sources()
 {
+  bool result = 0;
+
   cds_pos++;
   if(cds_pos >= 2)
     cds_pos = 0;
-
-
-  bool result = 0;
 
   if(cds_pos == 0 && millis() > timers.pgrid)
   {
     check_grid();
 
+    /*
     // track daily energy
     // set energy_consumed_old to energy_consumed if value is 0 (fresh boot) OR start of new day (hour and min == 0)
     time_t timetmp = now();
@@ -1025,6 +1054,7 @@ bool check_data_sources()
       cds_day = tday;
       energy_consumed_old = energy_consumed;
     }
+    */
 
 
     timers.pgrid = millis() + 1333;
@@ -1272,9 +1302,9 @@ void oled_print_info()
     else
       oled_println("Now " + String(tpsum, 0) + "W");
 
-    oled_println("Day " + String(energy_consumed - energy_consumed_old, 1) + "kWh");
+    oled_println("Day " + String(energy_consumed, 1) + "kWh");
 
-    oled_println("  $ " + String((energy_consumed - energy_consumed_old) * config.cpkwh, 2) );
+    oled_println("  $ " + String((energy_consumed) * config.cpkwh, 2) );
 
     oled_set1X();
     oled_println("");
@@ -1399,6 +1429,14 @@ void calc_next_update()
 
     return;
   }
+
+  if(system_mode == 0 && config.monitor_temp && flags.shutdown_htemp) // High Temp IDLE
+  {
+
+    rest_s = config.otsdh * 60 * 60 * 1000;
+  }
+
+
   else if(system_mode == 0) // IDLE
   {
     rest_s = random(1, 6);

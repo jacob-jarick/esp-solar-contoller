@@ -1,4 +1,6 @@
-#define jsonsize 2500
+// #define jsonsize 2500
+
+const size_t jsonsize = 1024 * 3;
 
 bool update_p_grid()
 {
@@ -208,8 +210,8 @@ bool update_p_grid_3phase()
   phase_c_voltage = Body_0["Voltage_AC_Phase_3"];
 
 
-  energy_consumed = Body_0["EnergyReal_WAC_Sum_Consumed"];
-  energy_consumed =  energy_consumed / 1000;
+//   energy_consumed = Body_0["EnergyReal_WAC_Sum_Consumed"];
+//   energy_consumed =  energy_consumed / 1000;
 
 
   phase_sum = 0;
@@ -223,6 +225,34 @@ bool update_p_grid_3phase()
 
   if(!inverter_synced)
     inverter_synced = 1;
+
+  // calculate actual usage here
+
+  if(timers.pgrid_last_update != 0 && flags.time_synced)
+  {
+    float tmp_phase_sum = 0;
+
+    if(phase_a_watts > 0)
+      tmp_phase_sum += phase_a_watts;
+    if(phase_b_watts > 0)
+      tmp_phase_sum += phase_b_watts;
+    if(phase_c_watts > 0)
+      tmp_phase_sum += phase_c_watts;
+
+    float tmp_ms = millis() - timers.pgrid_last_update;
+    energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
+
+    time_t timetmp = now();
+    uint16_t local_h = hour(timetmp);
+    uint16_t local_m = minute(timetmp);
+
+    if(!local_h && !local_m) // reset at midnight
+    {
+      energy_consumed = 0;
+    }
+  }
+
+  // END calculate actual usage here
 
   timers.pgrid_last_update = millis();
 

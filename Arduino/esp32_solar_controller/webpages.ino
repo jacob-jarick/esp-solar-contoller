@@ -188,6 +188,9 @@ void ntc10k_config()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k config");
 
+  webpage += html_create_input(F("otsdh"), F("otsdh"), "3", String(config.otsdh, 2), "0-X");
+
+
   for(int i = 0; i < count_ntc; i++)
   {
     String input_name = "ntc_temp_max";
@@ -301,6 +304,7 @@ void advance_config()
   webpage += js_radio_helper(F("webc_mode_1"), F("webc_mode_0"), config.webc_mode);
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
+  webpage += js_radio_helper(F("inv_idle_mode_on"), F("inv_idle_mode_off"), config.inv_idle_mode);
 
   webpage += js_radio_helper(F("avg_phase1"), F("avg_phase0"), config.avg_phase);
 
@@ -442,6 +446,9 @@ void web_config_submit()
 
       else if (server.argName(i) == F("web_mode"))
         config.webc_mode = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("inv_idle_mode"))
+        config.inv_idle_mode = server.arg(i).toInt();
 
       else if (server.argName(i) == F("display_mode"))
         config.display_mode = server.arg(i).toInt();
@@ -768,12 +775,12 @@ void stats()
     mymode += F("24/7");
   else if (flags.day && flags.night)
     mymode += F("DAY + NIGHT");
-  else if (!flags.day && flags.night)
+  else if (!flags.day && config.i_enable && config.c_enable && flags.night)
     mymode += F("NIGHT");
   else if (flags.day && !flags.night)
     mymode += F("DAY");
   else
-    mymode += "???";
+    mymode += "ZzZz";
 
   mymode += F("\n");
 
@@ -861,7 +868,7 @@ void threepase_info()
   webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
   webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
   webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
-  webpage += "Todays Usage: " + String(energy_consumed - energy_consumed_old, 1) + " Kwh\n";
+  webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh\n";
   webpage += "</pre>";
 
 

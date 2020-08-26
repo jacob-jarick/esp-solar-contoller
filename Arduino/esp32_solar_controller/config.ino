@@ -2,7 +2,9 @@
 // Config Files
 // =============================================================================================================================================
 
-#define config_json_size 8192
+// #define config_json_size 8192
+
+const size_t config_json_size = 1024 * 5;
 
 void save_config()
 {
@@ -43,13 +45,16 @@ void save_config()
   for(uint8_t i = 0; i < count_ntc; i++)
   {
 //     doc["temp_mod" + String(i+1)] = config.ntc_temp_mods[i];
-    doc["temp_max" + String(i+1)] = config.ntc_temp_max[i];
+    doc["mt" + String(i+1)] = config.ntc_temp_max[i];
   }
 
   for(uint8_t i = 0; i < count_cells; i++)
   {
     doc["volt_mod" + String(i+1)] = config.battery_volt_mod[i];
   }
+
+  doc["otsdh"] = config.otsdh;
+
 
   // PINS
 
@@ -103,6 +108,8 @@ void save_config()
   doc["flip_ipin"] = (int)config.flip_ipin;
   doc["flip_cpin"] = (int)config.flip_cpin;
   doc["auto_update"] = (int)config.auto_update;
+  doc["inv_idle_mode"] = (int)config.inv_idle_mode;
+
   doc["i_enable"] = (int)config.i_enable;
   doc["c_enable"] = (int)config.c_enable;
   doc["day_is_timer"] = (int)config.day_is_timer;
@@ -241,11 +248,13 @@ bool load_config()
   for(uint8_t i = 0; i < count_ntc; i++)
   {
 //     config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)] | 1;
-    config.ntc_temp_max[i] = doc["temp_max" + String(i+1)] | 50;
+    config.ntc_temp_max[i] = doc["mt" + String(i+1)] | 50; // mt = max temp
   }
 
   for(int i = 0; i < count_cells; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
+
+  config.otsdh = doc["otsdh"] | 1; // overtemp shutdown hours
 
   // PINS
   config.pin_led = doc["pin_led"] | OPT_DEFAULT;
@@ -285,7 +294,7 @@ bool load_config()
   config.monitor_phase_b = doc["monitor_phase_b"] | 0;
   config.monitor_phase_c = doc["monitor_phase_c"] | 0;
 
-  config.cpkwh = doc["cpkwh"] | 0;
+  config.cpkwh = doc["cpkwh"] | 0.28;
 
   // bools
 
@@ -300,6 +309,7 @@ bool load_config()
   config.flip_ipin = doc["flip_ipin"] | 0;
   config.flip_cpin = doc["flip_cpin"] | 0;
   config.auto_update = doc["auto_update"] | 0;
+  config.inv_idle_mode = doc["inv_idle_mode"] | 0;
 //   config.wifi_highpower_on = doc["wifi_highpower_on"];
   config.i_enable = doc["i_enable"] | 0;
   config.c_enable = doc["c_enable"] | 0;
@@ -398,6 +408,9 @@ void vars_sanity_check()
   config.webc_mode = 1;
 
   set_led(config.led_status);
+
+  if(config.otsdh < 0.1)
+    config.otsdh = 0.1;
 
   if(config.hv_shutdown_delay < 0)
     config.hv_shutdown_delay = 1;
