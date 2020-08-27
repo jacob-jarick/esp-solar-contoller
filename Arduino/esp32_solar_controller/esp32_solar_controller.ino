@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 158
+#define FW_VERSION 160
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -30,7 +30,7 @@ this seems to resolve OTA issues.
 #include <WiFi.h>
 #include <WiFiMulti.h>
 #include <WiFiClient.h>
-#include <WiFiAP.h>
+#include <WiFiAP.h> // todo remove as WiFi is configured via SD card json config
 #include <WiFiUdp.h>
 #include <ESPmDNS.h>
 

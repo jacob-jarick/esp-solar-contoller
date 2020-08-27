@@ -2,6 +2,8 @@
 
 const size_t jsonsize = 1024 * 3;
 
+int8_t fronius_day = -1;
+
 bool update_p_grid()
 {
   if(config.threephase)
@@ -240,14 +242,17 @@ bool update_p_grid_3phase()
       tmp_phase_sum += phase_c_watts;
 
     float tmp_ms = millis() - timers.pgrid_last_update;
-    energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
+//     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
+    energy_consumed += tmp_phase_sum * tmp_ms / 3600.0; // simplified maths, should catch decimals better too.
 
     time_t timetmp = now();
     uint16_t local_h = hour(timetmp);
     uint16_t local_m = minute(timetmp);
+    int8_t local_d = day(timetmp);
 
-    if(!local_h && !local_m && energy_consumed > 0) // reset at midnight
+    if(fronius_day != local_d) // reset at midnight
     {
+      fronius_day = local_d;
       energy_consumed_old = energy_consumed;
       energy_consumed = 0;
     }
