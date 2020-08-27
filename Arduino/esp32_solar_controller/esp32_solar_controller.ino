@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 157
+#define FW_VERSION 158
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -186,7 +186,7 @@ float phase_a_voltage = 0;
 float phase_b_voltage = 0;
 float phase_c_voltage = 0;
 
-// float energy_consumed_old = 0;
+float energy_consumed_old = 0; // previous day
 float energy_consumed = 0;
 
 float phase_sum = 0;
@@ -1031,7 +1031,6 @@ bool check_system_timers()
 // ======================================================================================================================
 
 uint8_t cds_pos = 0;
-// int8_t cds_day = -1;
 bool check_data_sources()
 {
   bool result = 0;
@@ -1043,19 +1042,6 @@ bool check_data_sources()
   if(cds_pos == 0 && millis() > timers.pgrid)
   {
     check_grid();
-
-    /*
-    // track daily energy
-    // set energy_consumed_old to energy_consumed if value is 0 (fresh boot) OR start of new day (hour and min == 0)
-    time_t timetmp = now();
-    uint8_t tday = day(timetmp);
-    if(!energy_consumed_old ||  tday != cds_day)
-    {
-      cds_day = tday;
-      energy_consumed_old = energy_consumed;
-    }
-    */
-
 
     timers.pgrid = millis() + 1333;
     result = 1;

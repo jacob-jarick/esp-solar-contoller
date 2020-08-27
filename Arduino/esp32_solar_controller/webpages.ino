@@ -110,6 +110,8 @@ void web_config()
   webpage += js_radio_helper(F("timer_enable"), F("timer_disable"), config.day_is_timer);
   webpage += js_radio_helper(F("ntimer_enable"), F("ntimer_disable"), config.night_is_timer);
 
+  webpage += js_radio_helper(F("inv_idle_mode_on"), F("inv_idle_mode_off"), config.inv_idle_mode);
+
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -304,7 +306,6 @@ void advance_config()
   webpage += js_radio_helper(F("webc_mode_1"), F("webc_mode_0"), config.webc_mode);
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
-  webpage += js_radio_helper(F("inv_idle_mode_on"), F("inv_idle_mode_off"), config.inv_idle_mode);
 
   webpage += js_radio_helper(F("avg_phase1"), F("avg_phase0"), config.avg_phase);
 
@@ -869,6 +870,7 @@ void threepase_info()
   webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
   webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh\n";
+  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh\n";
   webpage += "</pre>";
 
 

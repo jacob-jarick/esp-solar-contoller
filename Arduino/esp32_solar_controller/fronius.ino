@@ -246,8 +246,9 @@ bool update_p_grid_3phase()
     uint16_t local_h = hour(timetmp);
     uint16_t local_m = minute(timetmp);
 
-    if(!local_h && !local_m) // reset at midnight
+    if(!local_h && !local_m && energy_consumed > 0) // reset at midnight
     {
+      energy_consumed_old = energy_consumed;
       energy_consumed = 0;
     }
   }
