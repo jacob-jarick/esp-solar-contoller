@@ -1,20 +1,20 @@
-     HEAD~0	2a3af8e Idle When Export<
-     HEAD~1	6f1586c alarm tweak
-     HEAD~2	99f2cb1 ntc temp, usage tracking
-     HEAD~3	52683bb Cost Per Kwh
-     HEAD~4	15c8f95 led, stats
-     HEAD~5	4284f38 Oled Display Options
-     HEAD~6	6deabb3 f(!adsmux.adc_found)
-     HEAD~7	ae95865 bool adc_found
-     HEAD~8	bbd1553 fw 27
-     HEAD~9	225833f micro board. esp8266 firmware refresh
-    HEAD~10	2ea31ad messages
-    HEAD~11	d1024a3 ads1015 support added
-    HEAD~12	f1ea356 warnings and docs
-    HEAD~13	13d2d1c lm75a temp displayed on oled
-    HEAD~14	eac9129 lm75a code added
-    HEAD~15	41bea88 arduino JSON lib update
-    HEAD~16	0955589 tidy
-    HEAD~17	67f40ce html cleanup
-    HEAD~18	0283629 html cleanup
-    HEAD~19	e7364be rm ntc_temp_mods
+     HEAD~0	5dfce2f fronius new day tracking
+     HEAD~1	2a3af8e Idle When Export<
+     HEAD~2	6f1586c alarm tweak
+     HEAD~3	99f2cb1 ntc temp, usage tracking
+     HEAD~4	52683bb Cost Per Kwh
+     HEAD~5	15c8f95 led, stats
+     HEAD~6	4284f38 Oled Display Options
+     HEAD~7	6deabb3 f(!adsmux.adc_found)
+     HEAD~8	ae95865 bool adc_found
+     HEAD~9	bbd1553 fw 27
+    HEAD~10	225833f micro board. esp8266 firmware refresh
+    HEAD~11	2ea31ad messages
+    HEAD~12	d1024a3 ads1015 support added
+    HEAD~13	f1ea356 warnings and docs
+    HEAD~14	13d2d1c lm75a temp displayed on oled
+    HEAD~15	eac9129 lm75a code added
+    HEAD~16	41bea88 arduino JSON lib update
+    HEAD~17	0955589 tidy
+    HEAD~18	67f40ce html cleanup
+    HEAD~19	0283629 html cleanup

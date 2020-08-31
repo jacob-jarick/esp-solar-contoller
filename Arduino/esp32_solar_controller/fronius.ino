@@ -45,6 +45,8 @@ bool update_p_grid()
     url = String(config.inverter_push_url);
     bool result = get_url(url, payload);
 
+    // TODO check timestamp
+
     if(!result)
       log_msg(F("Error fetch inverter_push_url"));
     else
@@ -72,6 +74,20 @@ bool update_p_grid()
 
   JsonObject root = doc.as<JsonObject>();
   JsonObject Body_Data_Site;
+
+  // Check timestamp
+  if(fellback)
+  {
+    String tmp = root["Head"]["Timestamp"];
+    uint16_t json_minutes = fronius_time_str_to_min(tmp);
+    uint16_t local_m = local_minutes();
+    uint16_t time_diff = mmaths.mdiff(json_minutes, local_m);
+
+    if(time_diff > 2)
+      log_msg("json time " + String(time_diff) + "+ min out of sync");
+
+    return 0;
+  }
 
   if(fellback)
     Body_Data_Site = root["Body"]["Site"]; // push json body location
@@ -104,7 +120,7 @@ bool update_p_grid_3phase()
 
     if(!check)
     {
-      log_msg("Fronius 3phase Direct URL fetch Error");
+      log_msg("Fronius 3p Direct URL fetch Error");
       fellback = 1;
     }
 
@@ -139,7 +155,7 @@ bool update_p_grid_3phase()
 
     if(!check)
     {
-      log_msg("Fronius 3phase Fallback URL fetch Error");
+      log_msg("Fronius 3p Fallback fetch Error");
       return 0;
     }
 
@@ -169,28 +185,29 @@ bool update_p_grid_3phase()
 
   if(fellback)
   {
-    time_t timetmp = now();
+//     time_t timetmp = now();
     String tmp = root["Head"]["Timestamp"];
 
+    /*
 //  2020-06-25T21:04:11+08:00
     uint8_t json_d = tmp.substring(8, 10).toInt();
     uint8_t json_h = tmp.substring(11, 13).toInt();
     uint16_t json_m = tmp.substring(14, 16).toInt();
+  */
+    uint16_t json_minutes = fronius_time_str_to_min(tmp);
+    uint16_t local_m = local_minutes();
+    uint16_t time_diff = mmaths.mdiff(json_minutes, local_m);
 
 
+//     uint8_t local_d = day(timetmp);
+//     uint16_t local_h = hour(timetmp);
+//     uint16_t local_m = (local_d * 24 * 60) + (local_h * 60) + minute(timetmp);
 
-    uint8_t local_d = day(timetmp);
-    uint16_t local_h = hour(timetmp);
 
-    uint16_t local_m = (local_d * 24 * 60) + (local_h * 60) + minute(timetmp);
-
-    json_m += (json_d * 24 * 60)  + (json_h * 60);
-
-    uint16_t time_diff = mmaths.mdiff(json_m, local_m);
 
     if (time_diff > 2)
     {
-      log_msg("3p: json timestamp " + String(time_diff) + "+ minutes out of sync");
+      log_msg("3p: json time " + String(time_diff) + "+ minutes out of sync");
       return 0;
     }
   }
@@ -243,12 +260,12 @@ bool update_p_grid_3phase()
 
     float tmp_ms = millis() - timers.pgrid_last_update;
 //     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
-    energy_consumed += tmp_phase_sum * tmp_ms / 3600.0; // simplified maths, should catch decimals better too.
+    energy_consumed += tmp_phase_sum * tmp_ms / 3600000.0 / 1000; // simplified maths, should catch decimals better too.
 
-    time_t timetmp = now();
-    uint16_t local_h = hour(timetmp);
-    uint16_t local_m = minute(timetmp);
-    int8_t local_d = day(timetmp);
+//     time_t timetmp = now();
+//     uint16_t local_h = hour(timetmp);
+//     uint16_t local_m = minute(timetmp);
+    int8_t local_d = day(now());
 
     if(fronius_day != local_d) // reset at midnight
     {
@@ -275,3 +292,24 @@ void set_power(const float p)
   if(config.avg_phase)
     phase_sum = phase_avg;
 }
+
+uint16_t fronius_time_str_to_min(String tmp)
+{
+  uint8_t json_d = tmp.substring(8, 10).toInt();
+  uint8_t json_h = tmp.substring(11, 13).toInt();
+  uint16_t json_m = tmp.substring(14, 16).toInt();
+
+  return dhm_to_min(json_d, json_h, json_m);
+}
+
+uint16_t local_minutes()
+{
+  time_t timetmp = now();
+  return dhm_to_min(day(timetmp), hour(timetmp), minute(timetmp));
+}
+
+uint16_t dhm_to_min(uint8_t DD, uint8_t HH, uint8_t mm)
+{
+  return (DD * 24 * 60) + (HH * 60) + mm;
+}
+
