@@ -5,6 +5,7 @@
 Adafruit_ADS1115 _ads(0x48);
 Adafruit_ADS1015 _ads2(0x49);
 
+int8_t addr = 0;
 
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 {
@@ -44,12 +45,14 @@ void Ads1115_mux::setup()
 {
   if(i2c_ping(0x48))
   {
+    addr = 0x48;
     Serial.println("ADS1115 found.");
     adctype = 1;
     _ads.setGain(GAIN_ONE);
   }
   else if(i2c_ping(0x49))
   {
+    addr = 0x49;
     Serial.println("ADS1015 found.");
     adctype = 0;
     _ads2 = Adafruit_ADS1015((uint8_t)  0x49);

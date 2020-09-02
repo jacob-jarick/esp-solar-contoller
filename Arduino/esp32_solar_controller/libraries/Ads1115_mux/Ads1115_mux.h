@@ -24,6 +24,8 @@ class Ads1115_mux
 
     bool i2c_ping(const char address);
 
+    int8_t addr;
+
     int16_t adc_val[32];
     bool adc_enable[32];
 

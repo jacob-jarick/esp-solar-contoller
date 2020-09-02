@@ -307,7 +307,7 @@ void advance_config()
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
 
-  webpage += js_radio_helper(F("avg_phase1"), F("avg_phase0"), config.avg_phase);
+  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "uint8_t (0 to disable)");
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
@@ -420,9 +420,6 @@ void web_config_submit()
       else if (server.argName(i) == F("timer_enable"))
         config.day_is_timer = server.arg(i).toInt();
 
-//       else if (server.argName(i) == F("wifi_highpower_on"))
-//         config.wifi_highpower_on = server.arg(i).toInt();
-
       else if (server.argName(i) == F("ntimer_enable"))
         config.night_is_timer = server.arg(i).toInt();
 
@@ -431,7 +428,6 @@ void web_config_submit()
 
       else if (server.argName(i) == F("avg_phase"))
         config.avg_phase = server.arg(i).toInt();
-
 
       else if (server.argName(i) == F("rotate_oled"))
         config.rotate_oled = server.arg(i).toInt();
@@ -585,14 +581,6 @@ void web_config_submit()
       {
         for(int x = 0; x < count_ntc; x++)
         {
-          /*
-          if (server.argName(i) == String("ntc_temp_mod") + String(x+1) )
-          {
-            config.ntc_temp_mods[x] = server.arg(i).toFloat();
-            skip2next = 1;
-            break;
-          }
-          else */
           if (server.argName(i) == String("ntc_temp_max") + String(x+1) )
           {
             config.ntc_temp_max[x] = server.arg(i).toInt();
@@ -1310,11 +1298,17 @@ void update_menu()
 
 void do_update_web()
 {
-  String pre = check_for_update();
+  String pre;
 
-  if(flags.update_found)
+  if(!flags.update_found)
   {
-    pre += String("\\n\\nSTARTING UPDATE.\\nDEVICE WILL RESTART SOON.");
+    pre = String("No Update Found...");
+  }
+  else
+  {
+    pre = "Updating to " + String(remote_version);
+    pre += String("\\nDEVICE WILL RESTART SOON.");
+
   }
 
   String webpage = get_file(html_mode);

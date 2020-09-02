@@ -68,16 +68,30 @@ bool get_html_and_save(String filepath)
   return get_url_and_save(url, filepath);
 }
 
-int remote_version = 0;
+uint16_t remote_version = 0;
 String check_for_update()
 {
-  String message = "";
-  //   flags.update_found = 0;
-
   if(flags.update_found == 1)
-  {
     return String(F("Update Found (cached)"));
-  }
+
+  get_remote_version();
+
+  if(remote_version <= FW_VERSION)
+    return String("No Updates");
+
+  String message = "";
+  message += F("Current: ");
+  message += FW_VERSION;
+  message += F("\\nLatest: ");
+  message += remote_version;
+
+  return message;
+}
+
+void get_remote_version()
+{
+  if(flags.update_found == 1)
+    return;
 
   String url_tmp = String(config.pub_url) + "/cv.txt";
   String result = "";
@@ -86,26 +100,18 @@ String check_for_update()
   {
     remote_version = result.toInt();
 
-    message += F("Current: ");
-    message += FW_VERSION;
-    message += F("\\nLatest: ");
-    message += remote_version;
-
     if(remote_version > FW_VERSION)
       flags.update_found = 1;
   }
-  else
-  {
-    message += "HTTP ERROR: " + String(get_url_code);
-  }
-
-  return message;
+  return;
 }
 
 uint8_t update_trys = 0;
 void do_update()
 {
-  check_for_update();
+  if(!flags.update_found)
+    get_remote_version();
+
   flags.update_self = 0;
 
   if(!flags.update_found)

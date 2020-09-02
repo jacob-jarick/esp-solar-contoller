@@ -287,7 +287,7 @@ bool update_p_grid_3phase()
 void set_power(const float p)
 {
   phase_sum = p;
-  phase_avg = mmaths.dirty_average(phase_avg, phase_sum, 3);
+  phase_avg = mmaths.dirty_average(phase_avg, phase_sum, config.avg_phase+1);
 
   if(config.avg_phase)
     phase_sum = phase_avg;

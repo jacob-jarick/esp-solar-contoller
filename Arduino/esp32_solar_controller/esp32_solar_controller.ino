@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 162
+#define FW_VERSION 168
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -296,7 +296,7 @@ struct Sconfig
   bool button_timer_mode = 0;
   bool blink_led = 0;
   bool blink_led_default = 0;
-  bool avg_phase = 0;
+
   bool threephase = 0;
   bool monitor_phase_a = 0;
   bool monitor_phase_b = 0;
@@ -328,6 +328,8 @@ struct Sconfig
   uint8_t c_finish_h = 0;
   uint8_t i_start_h = 0;
   uint8_t i_finish_h = 0;
+
+  uint8_t avg_phase = 0;
 
   bool webc_mode = 0;
   bool led_status = 0;
@@ -402,12 +404,23 @@ void setup()
   {
     Serial.println("i2c on default pins.");
     i2c_on = 1;
+
+    // disable internal pullups
+    // https://arduino.stackexchange.com/questions/13448/disabling-i2c-internal-pull-up-resistors
+    digitalWrite(21, LOW);
+    digitalWrite(22, LOW);
+
+
     Wire.begin();
   }
   else
   {
     Serial.println("i2c on custom pins.");
     i2c_on = 1;
+
+    digitalWrite(config.pin_scl, LOW);
+    digitalWrite(config.pin_sda, LOW);
+
     Wire.begin(config.pin_scl, config.pin_sda);
   }
 
@@ -439,6 +452,8 @@ void setup()
 
   both_println(F("Set Idle"));
   modeset(0);
+
+  both_println(F("Set Led"));
   set_led(config.led_status);
 
 
@@ -865,7 +880,6 @@ unsigned long boot_time = millis();
 
 bool check_system_triggers() // returns 1 if a event was triggered
 {
-//   if(flags.sdcard_read_error || !ping_fs())
   if(flags.sdcard_read_error)
   {
     sd_setup(120);
