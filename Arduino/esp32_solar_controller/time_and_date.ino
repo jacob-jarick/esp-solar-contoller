@@ -134,6 +134,9 @@ String next_update_string(const byte len) // ; len = length
 // ts = time seperator :
 String datetime_str(const byte type, const char ds, const char dts, const char ts)
 {
+  if(year() == 1970)
+    return "BOOT";
+
   String res = "";
 
   // -------------------------------------

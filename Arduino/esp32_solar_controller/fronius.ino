@@ -311,10 +311,41 @@ bool update_p_grid_3phase()
   return 1;
 }
 
+
+float power_array[power_array_size];
+int8_t power_array_pos = -1;
+
 void set_power(const float p)
 {
+  // -----------------------------------------------
+  // begin average code
+
+  // populate array on first use
+  if(power_array_pos == -1)
+  {
+    for(uint8_t i = 0; i < power_array_size; i++)
+      power_array[i] = p;
+  }
+  else
+  {
+    power_array[power_array_pos] = p;
+  }
+
+  power_array_pos++;
+  if(power_array_pos >= power_array_size || power_array_pos >= config.avg_phase)
+    power_array_pos = 0;
+
+  phase_avg = 0;
+  for(uint8_t i = 0; i < config.avg_phase; i++)
+    phase_avg += power_array[i];
+
+  phase_avg = phase_avg / config.avg_phase;
+
+  // fin average code
+  // -----------------------------------------------
+
   phase_sum = p;
-  phase_avg = mmaths.dirty_average(phase_avg, phase_sum, config.avg_phase+1);
+//   phase_avg = mmaths.dirty_average(phase_avg, phase_sum, config.avg_phase+1);
 
   if(config.avg_phase)
     phase_sum = phase_avg;

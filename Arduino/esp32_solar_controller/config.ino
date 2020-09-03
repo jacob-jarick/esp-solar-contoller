@@ -423,6 +423,11 @@ void vars_sanity_check()
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
     config.battery_volt_min = config.pack_volt_min = mmaths.mmax(config.battery_volt_min, config.pack_volt_min);
 
+
+  if(config.avg_phase > power_array_size)
+    config.avg_phase = power_array_size;
+
+
   // -------------------------------------
   // enable ADC channels for monitoring.
 

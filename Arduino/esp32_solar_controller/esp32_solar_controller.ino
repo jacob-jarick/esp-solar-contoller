@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 171
+#define FW_VERSION 173
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -202,6 +202,8 @@ uint8_t download_index = 0; // html page download index
 byte system_mode = 0;
 
 uint8_t i2cdevcount = 0;
+
+const int8_t power_array_size = 5;
 
 // =================================================================================================
 
@@ -435,11 +437,35 @@ void setup()
   if(i2c_on)
   {
 
-    Wire.setClock(400000L); // fast mode
-//     Wire.setClock(1000000L); // fast mode plus
-    //     Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
+    // detect boards max speed
+    uint8_t i2c_test_enum1 = 0;
+    uint8_t i2c_test_enum2 = 0;
 
+    Wire.setClock(400000L); // fast mode
     i2cdevcount = i2c_enum();
+
+    Wire.setClock(1000000L); // fast mode plus
+    i2c_test_enum1 = i2c_enum();
+
+    Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
+    i2c_test_enum2 = i2c_enum();
+
+    if(i2c_test_enum1 != i2cdevcount)
+    {
+      log_msg("i2c speed 400000 (fast)");
+      Wire.setClock(400000L);
+    }
+    else if(i2c_test_enum2 != i2cdevcount)
+    {
+      log_msg("i2c speed 1000000 (fast plus)");
+      Wire.setClock(1000000L);
+    }
+    else
+    {
+      log_msg("i2c speed 3400000 (highspeed)");
+    }
+
+    // setup OLED
 
     oled_setup();
     oled_set1X();
@@ -953,7 +979,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
     oled_clear();
     oled_set1X();
     boot_success = 1;
-    String tmp = "Boot FW: " + String(FW_VERSION);
+    String tmp = "FW: " + String(FW_VERSION);
     both_println(tmp);
     log_issue(tmp);
 

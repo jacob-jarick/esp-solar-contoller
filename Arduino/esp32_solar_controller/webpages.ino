@@ -307,7 +307,7 @@ void advance_config()
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
 
-  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "uint8_t (0 to disable)");
+  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "0 - "+ String(power_array_size));
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 

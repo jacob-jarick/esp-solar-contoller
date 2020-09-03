@@ -75,7 +75,7 @@ void log_issue(const String txt)
   }
 
   String tmp = datetime_str(0, '/', ' ', ':') + " - " + txt;
-  log_msg(tmp); // all issues get copied to syslog
+  log_msg(txt); // all issues get copied to syslog
   f.println(tmp);
 
   f.close();
