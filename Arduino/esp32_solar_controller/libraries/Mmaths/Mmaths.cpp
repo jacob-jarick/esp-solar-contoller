@@ -31,15 +31,8 @@ double Mmaths::dirty_average(const double oldv, const double newv, uint8_t count
 // max
 
 // if I understand my C++ right, you can define function names multiple times and it will send to the function matching the arguments...
-double Mmaths::mmax(const double a, const double b)
-{
-  if(a > b)
-    return a;
 
-  return b;
-}
-
-float Mmaths::mmax(const float a, const float b)
+uint8_t Mmaths::mmax(const uint8_t a, const uint8_t b)
 {
   if(a > b)
     return a;
@@ -55,7 +48,23 @@ uint16_t Mmaths::mmax(const uint16_t a, const uint16_t b)
   return b;
 }
 
-uint8_t Mmaths::mmax(const uint8_t a, const uint8_t b)
+unsigned long Mmaths::mmax(const unsigned long a, const unsigned long b)
+{
+  if(a > b)
+    return a;
+
+  return b;
+}
+
+float Mmaths::mmax(const float a, const float b)
+{
+  if(a > b)
+    return a;
+
+  return b;
+}
+
+double Mmaths::mmax(const double a, const double b)
 {
   if(a > b)
     return a;
@@ -81,6 +90,14 @@ uint16_t Mmaths::mmin(const uint16_t a, const uint16_t b)
   return b;
 }
 
+unsigned long Mmaths::mmin(const unsigned long a, const unsigned long b)
+{
+  if(a < b)
+    return a;
+
+  return b;
+}
+
 // difference
 
 uint8_t Mmaths::mdiff(const uint8_t a, const uint8_t b)
@@ -90,6 +107,11 @@ uint8_t Mmaths::mdiff(const uint8_t a, const uint8_t b)
 
 
 uint16_t Mmaths::mdiff(const uint16_t a, const uint16_t b)
+{
+  return mmax(a, b) - mmin(a, b);
+}
+
+unsigned long Mmaths::mdiff(const unsigned long a, const unsigned long b)
 {
   return mmax(a, b) - mmin(a, b);
 }

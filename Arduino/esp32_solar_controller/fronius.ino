@@ -1,8 +1,13 @@
 // #define jsonsize 2500
 
+const uint8_t fronius_min_sync_seconds = 90;
+
 const size_t jsonsize = 1024 * 3;
 
+
 int8_t fronius_day = -1;
+
+unsigned long fronius_last_time = 0;
 
 bool update_p_grid()
 {
@@ -75,19 +80,41 @@ bool update_p_grid()
   JsonObject root = doc.as<JsonObject>();
   JsonObject Body_Data_Site;
 
+
+  // ----------------------------------------------------------------------------------------------
   // Check timestamp
+
   if(fellback)
   {
     String tmp = root["Head"]["Timestamp"];
-    uint16_t json_minutes = fronius_time_str_to_min(tmp);
-    uint16_t local_m = local_minutes();
-    uint16_t time_diff = mmaths.mdiff(json_minutes, local_m);
 
-    if(time_diff > 2)
-      log_msg("json time " + String(time_diff) + "+ min out of sync");
+    unsigned long local_s = local_secs();
+    unsigned long json_secs = fronius_time_str_to_secs(tmp);
+    unsigned long time_diff = mmaths.mdiff(json_secs, local_s);
 
-    return 0;
+    if (time_diff > fronius_min_sync_seconds)
+    {
+      log_msg("1p: json time " + String(time_diff) + "+ seconds out of sync");
+      return 0;
+    }
   }
+
+  // check and update fronius_last_time
+  {
+    String tmp = root["Head"]["Timestamp"];
+
+    unsigned long json_secs = fronius_time_str_to_secs(tmp);
+
+    if(json_secs <= fronius_last_time)
+    {
+//       log_msg("1p: json not updated yet.");
+      return 0;
+    }
+    fronius_last_time = json_secs;
+//     log_msg("1p: updated.");
+  }
+
+  // ----------------------------------------------------------------------------------------------
 
   if(fellback)
     Body_Data_Site = root["Body"]["Site"]; // push json body location
@@ -185,31 +212,34 @@ bool update_p_grid_3phase()
 
   if(fellback)
   {
-//     time_t timetmp = now();
     String tmp = root["Head"]["Timestamp"];
 
-    /*
-//  2020-06-25T21:04:11+08:00
-    uint8_t json_d = tmp.substring(8, 10).toInt();
-    uint8_t json_h = tmp.substring(11, 13).toInt();
-    uint16_t json_m = tmp.substring(14, 16).toInt();
-  */
-    uint16_t json_minutes = fronius_time_str_to_min(tmp);
-    uint16_t local_m = local_minutes();
-    uint16_t time_diff = mmaths.mdiff(json_minutes, local_m);
+    unsigned long local_s = local_secs();
+    unsigned long json_secs = fronius_time_str_to_secs(tmp);
+    unsigned long time_diff = mmaths.mdiff(json_secs, local_s);
 
-
-//     uint8_t local_d = day(timetmp);
-//     uint16_t local_h = hour(timetmp);
-//     uint16_t local_m = (local_d * 24 * 60) + (local_h * 60) + minute(timetmp);
-
-
-
-    if (time_diff > 2)
+    if (time_diff > fronius_min_sync_seconds)
     {
-      log_msg("3p: json time " + String(time_diff) + "+ minutes out of sync");
+//       Serial.println("time check: Local: " + String(local_s) + ", JSON: " + String(json_secs) + ", Diff: " + String(time_diff) );
+
+      log_msg("3p: json time " + String(time_diff) + "+ seconds out of sync");
       return 0;
     }
+  }
+
+  // check and update fronius_last_time
+  {
+    String tmp = root["Head"]["Timestamp"];
+
+    unsigned long json_secs = fronius_time_str_to_secs(tmp);
+
+    if(json_secs <= fronius_last_time)
+    {
+//       log_msg("3p: json not updated yet.");
+      return 0;
+    }
+    fronius_last_time = json_secs;
+//     log_msg("3p: updated.");
   }
 
   // --------------------------------------------------------------------------
@@ -262,9 +292,6 @@ bool update_p_grid_3phase()
 //     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
     energy_consumed += tmp_phase_sum * tmp_ms / 3600000.0 / 1000; // simplified maths, should catch decimals better too.
 
-//     time_t timetmp = now();
-//     uint16_t local_h = hour(timetmp);
-//     uint16_t local_m = minute(timetmp);
     int8_t local_d = day(now());
 
     if(fronius_day != local_d) // reset at midnight
@@ -301,6 +328,64 @@ uint16_t fronius_time_str_to_min(String tmp)
 
   return dhm_to_min(json_d, json_h, json_m);
 }
+
+unsigned long fronius_time_str_to_secs(String tmp)
+{
+  uint16_t json_y = tmp.substring(0, 4).toInt();
+  uint8_t json_month = tmp.substring(5, 7).toInt();
+  uint8_t json_d = tmp.substring(8, 10).toInt();
+
+  uint8_t json_h = tmp.substring(11, 13).toInt();
+  uint8_t json_min = tmp.substring(14, 16).toInt();
+  uint8_t json_s = tmp.substring(17, 19).toInt();
+
+//   Serial.println("\nF:" + String(json_y) + "." + String(json_month) + "." +  String(json_d) + "-" +  String(json_h) + ":" + String(json_min) + ":" + String(json_s) + "\n");
+
+  return ymdhms_to_sec(json_y, json_month, json_d, json_h, json_min, json_s);
+}
+
+unsigned long ymdhms_to_sec(uint16_t YY, uint8_t MM, uint8_t DD, uint8_t HH, uint8_t mm, uint8_t ss)
+{
+  YY -= 2020; // 2020 is this codes epoch
+
+  unsigned long result = 0;
+
+  // years to months
+  result = YY * 12;
+
+  // months to days
+  result += MM;
+  result *= 31; // not correct but results match
+
+  // days to hours
+  result += DD;
+  result *= 24;
+
+  // hours to min
+  result += HH;
+  result *= 60;
+
+  // min to sec
+  result += mm;
+  result *= 60;
+
+  // add seconds
+  result += ss;
+
+//   Serial.println(result);
+
+  return result;
+}
+
+
+unsigned long local_secs()
+{
+  time_t timetmp = now();
+//   Serial.println("\nL " + String(year(timetmp)) + "-" + String(month(timetmp)) + "-" + String(day(timetmp)) + "-" + String(hour(timetmp)) + "-" + String(minute(timetmp)) + "-" + String(second(timetmp)) + "\n");
+  return ymdhms_to_sec(year(timetmp), month(timetmp), day(timetmp), hour(timetmp), minute(timetmp), second(timetmp));
+}
+
+
 
 uint16_t local_minutes()
 {
