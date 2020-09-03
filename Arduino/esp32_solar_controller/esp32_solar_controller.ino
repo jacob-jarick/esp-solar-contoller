@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 169
+#define FW_VERSION 170
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -370,6 +370,8 @@ struct SysFlags
   bool lm75a = 0;
 
   bool f3p_error1 = 0; // Fronius 3p Fallback JSON Decode Error:
+
+  bool adc_config_error = 0;
 };
 
 SysFlags flags;
@@ -594,8 +596,18 @@ void setup()
   }
   else
   {
-    config.monitor_battery = 0; // turn off battery monitoring if we cannot detect ADS chip
-    config.monitor_temp = 0;
+    // check config, if temp / volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
+
+    if(config.monitor_temp)
+    {
+      log_msg("monitor_temp enabled but ADC not found");
+      flags.adc_config_error = 1;
+    }
+    if(config.monitor_battery)
+    {
+      log_msg("monitor_battery enabled but ADC not found");
+      flags.adc_config_error = 1;
+    }
   }
 
   if(config.fwver != FW_VERSION)
@@ -672,6 +684,17 @@ void loop()
   check_system_timers();
   set_daynight();
   check_data_sources();
+
+  // ----------------------------------------------------------------------
+  // ADC Error ?
+
+  if(flags.adc_config_error)
+  {
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "config requires ADC, but ADC not found.";
+
+    modeset(0);
+    return;
+  }
 
   // ----------------------------------------------------------------------
 
