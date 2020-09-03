@@ -62,14 +62,14 @@ bool i2c_ping(const char address)
   return 0;
 }
 
-char i2c_detect(const byte type)
+char oled_detect()
 {
   for (char address = 1; address < 127; address++ )
   {
     Wire.beginTransmission(address);
     byte error = Wire.endTransmission();
 
-    if (error == 0 && type == 0 && ( address == 0x3C || address == 0x3D))
+    if (error == 0 && ( address == 0x3C || address == 0x3D))
     {
       Serial.print(F("oled @ "));
       Serial.println(address, HEX);
@@ -80,9 +80,25 @@ char i2c_detect(const byte type)
   return 0;  // negtive result = not present
 }
 
+
+uint8_t i2c_enum()
+{
+  uint8_t icount = 0;
+  for (char address = 1; address < 127; address++ )
+  {
+    Wire.beginTransmission(address);
+    byte error = Wire.endTransmission();
+
+    if (!error)
+      icount++;
+  }
+
+  return icount;  // negtive result = not present
+}
+
 void oled_setup()
 {
-  config.oled_addr = i2c_detect(0);
+  config.oled_addr = oled_detect();
 
   if (!oled_enabled())
   {

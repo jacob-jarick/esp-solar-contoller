@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 168
+#define FW_VERSION 169
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -118,6 +118,8 @@ struct SysTimers
   unsigned long oled = 0;
 
   unsigned long led = 0;
+
+  unsigned long i2c_check = 0;
 };
 
 SysTimers timers;
@@ -198,6 +200,8 @@ String passwd = "";
 
 uint8_t download_index = 0; // html page download index
 byte system_mode = 0;
+
+uint8_t i2cdevcount = 0;
 
 // =================================================================================================
 
@@ -392,6 +396,8 @@ void setup()
   set_pins();
 
   // --------------------------------------------------------------------------------------
+  // i2c Setup
+
   tone += toneinc; beep_helper(tone, 250);
 
   bool i2c_on = 0;
@@ -430,6 +436,9 @@ void setup()
     Wire.setClock(400000L); // fast mode
 //     Wire.setClock(1000000L); // fast mode plus
     //     Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
+
+    i2cdevcount = i2c_enum();
+
     oled_setup();
     oled_set1X();
     oled_print("FW: ");
@@ -995,6 +1004,17 @@ bool check_system_timers()
 
     result = 1;
     timers.oled = millis() + 1750;
+  }
+
+  if(millis() > timers.i2c_check)
+  {
+    if(i2cdevcount != i2c_enum())
+    {
+      log_issue("i2c error. triggering restart.");
+      flags.restart = 1;
+      result = 1;
+    }
+    timers.i2c_check = millis() + (60 * 1000);
   }
 
   // read button timer
