@@ -95,7 +95,6 @@ void save_config()
 
   doc["monitor_temp"] = (int)config.monitor_temp;
   doc["rotate_oled"] = (int)config.rotate_oled;
-  doc["button_timer_mode"] = (int)config.button_timer_mode;
   doc["display_mode"] = (int)config.display_mode;
 
   doc["blink_led"] = (int)config.blink_led;
@@ -120,14 +119,10 @@ void save_config()
 
   doc["hv_monitor"] = (int)config.hv_monitor;
 
-
-
   // ?
 
   doc["day_watts"] = config.day_watts;
   doc["night_watts"] = config.night_watts;
-  doc["button_timer_secs"] = config.button_timer_secs;
-  doc["button_timer_max"] = config.button_timer_max;
   doc["c_start_h"] = config.c_start_h;
   doc["c_finish_h"] = config.c_finish_h;
   doc["i_start_h"] = config.i_start_h;
@@ -152,9 +147,6 @@ void save_config()
   doc["led_status"] = (int)config.led_status;
 
   doc["m247"] = (int)config.m247;
-//   m247
-
-
 
 
   if(SD.exists(json_config_file.c_str() ) )
@@ -298,9 +290,7 @@ bool load_config()
 
   // bools
 
-
   config.rotate_oled = doc["rotate_oled"] | 0;
-  config.button_timer_mode = doc["button_timer_mode"] | 0;
   config.display_mode = doc["display_mode"] | 0;
 
   config.hv_monitor = doc["hv_monitor"] | 0;
@@ -322,8 +312,6 @@ bool load_config()
   config.day_watts = doc["day_watts"] | 0;
 
   config.night_watts = doc["night_watts"] | 0;
-  config.button_timer_secs = doc["button_timer_secs"] | 5;
-  config.button_timer_max = doc["button_timer_max"] | 360;
   config.c_start_h = doc["c_start_h"] | 8;
   config.c_finish_h = doc["c_finish_h"] | 17;
   config.i_start_h = doc["i_start_h"] | 18;

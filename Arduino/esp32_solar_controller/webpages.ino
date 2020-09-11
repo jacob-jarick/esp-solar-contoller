@@ -307,7 +307,7 @@ void advance_config()
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
 
-  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "0 - "+ String(power_array_size));
+  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "0 - "+ String(power_array_size) + " (0-1 = disabled)");
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
@@ -367,27 +367,6 @@ void battery_config()
   server.send(200, mime_html, webpage); // Send response
 }
 
-void web_timer_config()
-{
-  // ups mode stuff
-
-  String webpage;
-  webpage =  get_file(html_timer);
-
-  webpage += js_header();
-
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
-  webpage += js_radio_helper(F("button_timer_mode1"), F("button_timer_mode0"), config.button_timer_mode);
-  webpage += js_helper(F("button_timer_secs"), String(config.button_timer_secs));
-
-  //
-  webpage += js_helper(F("button_timer_max"), String(config.button_timer_max));
-
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage); // Send response
-}
-
 void web_config_submit()
 {
   String password_sent = "";
@@ -431,15 +410,6 @@ void web_config_submit()
 
       else if (server.argName(i) == F("rotate_oled"))
         config.rotate_oled = server.arg(i).toInt();
-
-      else if (server.argName(i) == F("button_timer_mode"))
-        config.button_timer_mode = server.arg(i).toInt();
-
-      else if (server.argName(i) == F("button_timer_secs"))
-        config.button_timer_secs = server.arg(i).toInt();
-
-      else if (server.argName(i) == F("button_timer_max"))
-        config.button_timer_max = server.arg(i).toInt();
 
       else if (server.argName(i) == F("web_mode"))
         config.webc_mode = server.arg(i).toInt();

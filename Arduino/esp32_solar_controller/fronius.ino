@@ -317,6 +317,12 @@ int8_t power_array_pos = -1;
 
 void set_power(const float p)
 {
+  if(config.avg_phase <= 1)
+  {
+    phase_sum = p;
+    return;
+  }
+
   // -----------------------------------------------
   // begin average code
 
@@ -341,14 +347,7 @@ void set_power(const float p)
 
   phase_avg = phase_avg / config.avg_phase;
 
-  // fin average code
-  // -----------------------------------------------
-
-  phase_sum = p;
-//   phase_avg = mmaths.dirty_average(phase_avg, phase_sum, config.avg_phase+1);
-
-  if(config.avg_phase)
-    phase_sum = phase_avg;
+  phase_sum = phase_avg;
 }
 
 uint16_t fronius_time_str_to_min(String tmp)

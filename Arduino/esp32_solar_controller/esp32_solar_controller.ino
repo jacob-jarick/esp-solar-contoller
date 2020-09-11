@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 173
+#define FW_VERSION 176
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -112,7 +112,6 @@ struct SysTimers
   unsigned long pgrid = 0;
   unsigned long adc_poll = 0;
 
-  unsigned long read_button = 0;
   unsigned long update_check = 0;
   unsigned long ntp_sync = 0;
   unsigned long oled = 0;
@@ -203,7 +202,7 @@ byte system_mode = 0;
 
 uint8_t i2cdevcount = 0;
 
-const int8_t power_array_size = 5;
+const int8_t power_array_size = 10;
 
 // =================================================================================================
 
@@ -299,7 +298,6 @@ struct Sconfig
 
   bool monitor_temp = 0;
   bool rotate_oled = 0;
-  bool button_timer_mode = 0;
   bool blink_led = 0;
   bool blink_led_default = 0;
 
@@ -328,8 +326,6 @@ struct Sconfig
   int day_watts = 0;
   int night_watts = 0;
 
-  uint8_t button_timer_secs = 0;
-  uint8_t button_timer_max = 0;
   uint8_t c_start_h = 0;
   uint8_t c_finish_h = 0;
   uint8_t i_start_h = 0;
@@ -374,6 +370,7 @@ struct SysFlags
   bool f3p_error1 = 0; // Fronius 3p Fallback JSON Decode Error:
 
   bool adc_config_error = 0;
+  bool boot_success = 0;
 };
 
 SysFlags flags;
@@ -474,10 +471,8 @@ void setup()
 
     oled_clear();
 
-
     if(i2c_ping(0x4f))
       flags.lm75a = 1;
-
 
     adsmux.setup();
   }
@@ -575,7 +570,7 @@ void setup()
 
   server.on("/datasrcs", datasrcs);
 
-  server.on("/timer", web_timer_config);
+//   server.on("/timer", web_timer_config);
 
   server.on("/forcentp", force_ntp_sync);
 
@@ -686,7 +681,7 @@ void set_pins()
 // Main Loop
 // =================================================================================================================
 
-bool boot_success = 0;
+
 bool inverter_synced = 0;
 
 String mode_reason = "";
@@ -779,13 +774,6 @@ void loop()
 
   // ----------------------------------------------------------------------
   // update mode
-
-  if(config.button_timer_mode) // if button reaches here. its on timer is up
-  {
-    mode_reason = "Button - IDLE.";
-    modeset(0);
-    return;
-  }
 
   if(!flags.time_synced)
   {
@@ -936,8 +924,12 @@ void loop()
 
 unsigned long boot_time = millis();
 
+const unsigned long ap_time = 15 * 60 * 1000;
+
 bool check_system_triggers() // returns 1 if a event was triggered
 {
+  // all checks should be flags
+
   if(flags.sdcard_read_error)
   {
     sd_setup(120);
@@ -974,11 +966,11 @@ bool check_system_triggers() // returns 1 if a event was triggered
   }
 
   // BOOT OK trigger
-  if(boot_success == 0)
+  if(!flags.boot_success)
   {
     oled_clear();
     oled_set1X();
-    boot_success = 1;
+    flags.boot_success = 1;
     String tmp = "FW: " + String(FW_VERSION);
     both_println(tmp);
     log_issue(tmp);
@@ -1004,31 +996,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
     return 1;
   }
 
-  // data source timeout trigger (time based)
-  if
-  (
-    !flags.access_point &&
-    !config.button_timer_mode &&
-    millis() - timers.pgrid_last_update > check_timeout
-  )
-  {
-    oled_clear();
-    both_print(F("CHECK\nTIMEOUT"));
-    delay(5000);
 
-    flags.restart = 1;
-    return 1;
-  }
-
-  // AP Mode restart trigger (time based)
-  if(!config.button_timer_mode && flags.access_point)
-  {
-    if(millis() - boot_time > 1080000) // ~20 min
-    {
-      flags.restart = 1;
-      return 1;
-    }
-  }
 
   return 0;
 }
@@ -1038,6 +1006,31 @@ bool check_system_triggers() // returns 1 if a event was triggered
 bool check_system_timers()
 {
   bool result = 0;
+
+  // all if statements should be timer based
+
+  // data source timeout trigger (time based)
+  if
+  (
+    !flags.access_point &&
+    millis() - timers.pgrid_last_update > check_timeout
+  )
+  {
+    oled_clear();
+    both_print(F("CHECK\nTIMEOUT"));
+
+    flags.restart = 1;
+    return 1;
+  }
+
+  // AP Mode restart trigger (time based)
+  if(flags.access_point && millis() - boot_time > ap_time)
+  {
+    oled_clear();
+    both_print(F("AP\nTIMEOUT"));
+    flags.restart = 1;
+    return 1;
+  }
 
   if((config.blink_led || config.blink_led_default) && timers.led < millis())
   {
@@ -1064,18 +1057,6 @@ bool check_system_timers()
       result = 1;
     }
     timers.i2c_check = millis() + (60 * 1000);
-  }
-
-  // read button timer
-  if(config.button_timer_mode && millis() > timers.read_button)
-  {
-    if(timers.read_button > 0 && digitalRead(config.pin_flash) == LOW)
-    {
-      modeset(1);
-      result = 1;
-    }
-
-    timers.read_button = millis() + 333; // every 0.3 sec
   }
 
   // auto update timer
@@ -1114,6 +1095,8 @@ bool check_system_timers()
 // ======================================================================================================================
 
 uint8_t cds_pos = 0;
+
+// note barrel setup. because some checks are time intensive.
 bool check_data_sources()
 {
   bool result = 0;
@@ -1122,6 +1105,7 @@ bool check_data_sources()
   if(cds_pos >= 2)
     cds_pos = 0;
 
+  // fronius grid check
   if(cds_pos == 0 && millis() > timers.pgrid)
   {
     check_grid();
@@ -1130,6 +1114,7 @@ bool check_data_sources()
     result = 1;
   }
 
+  // ADC poll
   if(cds_pos == 1 && (config.monitor_battery || config.monitor_temp || flags.lm75a) && millis() > timers.adc_poll)
   {
     if(config.monitor_battery || config.monitor_temp)
@@ -1144,10 +1129,8 @@ bool check_data_sources()
     if(config.monitor_temp)
       ntc_update();
 
-
     if(flags.lm75a)
       board_temp = lm75a.getTemperature();
-
 
     timers.adc_poll = millis() + 50;
     result = 1;
@@ -1247,9 +1230,6 @@ bool check_grid()
   if(flags.access_point)
     return 0;
 
-  if(config.button_timer_mode)
-    return 0;
-
   if(update_p_grid() == 0)
   {
     if(!inverter_synced)
@@ -1307,14 +1287,14 @@ void oled_print_info()
   oled_clear();
   oled_set2X();
 
-  if(flags.access_point && !config.button_timer_mode)
+  if(flags.access_point)
   {
 
     both_println(F("AP Mode"));
     both_print_ip();
     both_println(F("SSID: SolarAP"));
 
-    unsigned long rbtime = millis() - boot_time;
+    unsigned long rbtime = ap_time - (millis() - boot_time);
     rbtime /= 1000;
     rbtime /= 60;
     both_println(String(F("Reboot in:\n")) + String(rbtime) + String(F(" min")));
@@ -1386,16 +1366,6 @@ void oled_print_info()
   // oled print info
 
 
-  if(config.button_timer_mode)
-  {
-    if (system_mode == 0)
-      oled_print(F("OFF "));
-    else
-      oled_print(F("ON  "));
-
-    oled_println(datetime_str(2, ' ', ' ', ':'));
-  }
-  else
   {
     if (system_mode == 0)
       oled_print(F("IDL "));
@@ -1412,20 +1382,7 @@ void oled_print_info()
     oled_println(String(phase_sum / 1000, 2));
   }
 
-  if(config.button_timer_mode)
-  {
-    if(system_mode)
-    {
-      oled_println(F("Time Left"));
-      oled_println(next_update_string(2));
-    }
-    else
-    {
-      oled_println("");
-      oled_println("");
-    }
-  }
-  else if(flags.lm75a)
+  if(flags.lm75a)
   {
     oled_set2X();
     oled_println(String(board_temp, 2) + "c\n" );
@@ -1454,19 +1411,9 @@ void oled_print_info()
 
   oled_set1X();
 
-  if(config.button_timer_mode)
-  {
-    oled_println(String(config.hostn));
-  }
-
   both_print_ip();
 
-  if(config.button_timer_mode)
-  {
-    // do nothing
-  }
-
-  else if(config.monitor_battery)
+  if(config.monitor_battery)
   {
     for(byte i=0; i< config.cell_count; i++)
     {
@@ -1481,30 +1428,11 @@ void calc_next_update()
 {
   int rest_s = 30;
 
-  if(config.button_timer_mode)
-  {
-    if(timers.mode_check < millis())
-      timers.mode_check = millis();
-
-    if(system_mode != 0)  // when charge is enabled, use button_timer_secs. when idling use 1 sec
-    {
-      if(timers.mode_check - millis() < (config.button_timer_max * 60 * 1000) )
-        timers.mode_check += (config.button_timer_secs * 1000);
-    }
-    else
-    {
-      timers.mode_check = millis() + 1000;
-    }
-
-    return;
-  }
-
   if(system_mode == 0 && config.monitor_temp && flags.shutdown_htemp) // High Temp IDLE
   {
 
     rest_s = config.otsdh * 60 * 60 * 1000;
   }
-
 
   else if(system_mode == 0) // IDLE
   {
