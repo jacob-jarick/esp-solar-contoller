@@ -95,6 +95,8 @@ void web_config()
   webpage += js_select_helper(F("c_start_h"), String(config.c_start_h));
   webpage += js_select_helper(F("c_finish_h"), String(config.c_finish_h));
 
+  webpage += js_radio_helper(F("prefer_dc1"), F("prefer_dc0"), config.prefer_dc);
+
   webpage += js_select_helper(F("charger_oot_min"), String(config.charger_oot_min));
   webpage += js_select_helper(F("inverter_oot_min"), String(config.inverter_oot_min));
   webpage += js_select_helper(F("charger_oot_sec"), String(config.charger_oot_sec));
@@ -392,6 +394,9 @@ void web_config_submit()
 
       else if (server.argName(i) == F("c_enable"))
         config.c_enable = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("prefer_dc"))
+        config.prefer_dc = server.arg(i).toInt();
 
       else if (server.argName(i) == F("i_enable"))
         config.i_enable = server.arg(i).toInt();

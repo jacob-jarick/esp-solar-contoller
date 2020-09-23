@@ -232,6 +232,9 @@ void set_daynight()
 
   if (in_time_range(myhour, config.i_start_h, config.i_finish_h) ) // night
     flags.night = 1;
+
+  if(config.prefer_dc)
+    flags.night = 1;
 }
 
 bool in_time_range(const int h, const int t_start, const int t_end)

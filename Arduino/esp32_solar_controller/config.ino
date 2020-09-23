@@ -92,6 +92,7 @@ void save_config()
   doc["oled_addr"] = config.oled_addr;
 
   // bools
+  doc["prefer_dc"] = (int)config.prefer_dc;
 
   doc["monitor_temp"] = (int)config.monitor_temp;
   doc["rotate_oled"] = (int)config.rotate_oled;
@@ -289,6 +290,8 @@ bool load_config()
   config.cpkwh = doc["cpkwh"] | 0.28;
 
   // bools
+
+  config.prefer_dc = doc["prefer_dc"] | 0;
 
   config.rotate_oled = doc["rotate_oled"] | 0;
   config.display_mode = doc["display_mode"] | 0;

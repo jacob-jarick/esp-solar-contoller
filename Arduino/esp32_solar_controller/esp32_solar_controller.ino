@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 176
+#define FW_VERSION 177
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -315,6 +315,8 @@ struct Sconfig
   bool night_is_timer = 0;
   bool cells_in_series = 0;
   bool monitor_battery = 0;
+
+  bool prefer_dc = 0;
 
   bool hv_monitor = 1;
 
@@ -781,15 +783,6 @@ void loop()
     return;
   }
 
-  bool finv = 0; // inverter on flag
-  bool fchg = 0; // charger on flag
-
-  if(system_mode == 2 && config.i_enable && flags.night)
-    finv = 1;
-
-  if(system_mode == 1 && config.c_enable && flags.day)
-    fchg = 1;
-
   // -------------------------------------------------------------------------
   // IDLE checks
 
@@ -806,6 +799,18 @@ void loop()
     modeset(0);
     return;
   }
+
+  // -------------------------------------------------------------------------
+  // set local flags baed on current mode
+
+  bool finv = 0; // inverter on flag
+  bool fchg = 0; // charger on flag
+
+  if((system_mode == 2 || system_mode == 3) && config.i_enable && flags.night)
+    finv = 1;
+
+  if((system_mode == 1  || system_mode == 3) && config.c_enable && flags.day)
+    fchg = 1;
 
   // -------------------------------------------------------------------------
   // Night Device
@@ -825,7 +830,12 @@ void loop()
       mode_reason += "Night: Idle, Inverter Cooldown.\n";
       finv = 0;
     }
-    // DRAIN
+    // Prefer DC (enable if !lv and !cooldown
+    else if (config.prefer_dc)
+    {
+      mode_reason += "Night: Prefer DC\n";
+      finv = 1;
+    }
     else if (phase_sum > config.night_watts)
     {
       mode_reason += "Night: Drain\n";
@@ -915,6 +925,9 @@ void loop()
     tmp_mode = 2;
   if(fchg)
     tmp_mode = 1;
+
+  if(config.prefer_dc && finv && fchg)
+    tmp_mode = 3;
 
   // SET MODE
   modeset(tmp_mode);
@@ -1479,17 +1492,27 @@ void modeset(byte m)
       tmp = "Charge";
     else if(m == 2)
       tmp = "Drain";
+    else if(m == 3)
+      tmp = "Both";
     else
       tmp = String(m)  + "?";
 
     log_msg(String("modeset: ") + tmp );
 
     // update timers IF swapping modes from inverter on OR charger on
-    if(system_mode == 1) // charger turning off
+    if
+    (
+      (system_mode == 1 || system_mode == 3) && // charger is on in modes 1 & 3
+      ( m != 1 && m != 3)  // swapping to a non charging mode
+    ) // charger turning off
     {
       timers.charger_off = millis() + (config.charger_oot_min * 60 * 1000) + (config.charger_oot_sec * 1000);
     }
-    else if(system_mode == 2) // inverter turning off
+    else if
+    (
+      (system_mode == 2 || system_mode == 3) && // inverter is on in modes 2 & 3
+      (m != 2 && m != 3) // mode swapping to a non inverter mode
+    ) // inverter turning off
     {
       timers.inverter_off = millis() + (config.inverter_oot_min * 60 * 1000) + (config.inverter_oot_sec * 1000);
     }
@@ -1514,7 +1537,7 @@ void modeset(byte m)
     i_pinmode = 1;
     c_pinmode = 0;
   }
-  else if (m == 3)  // BOTH SYSTEMS ON (used for monitor_battery)
+  else if (m == 3)  // BOTH SYSTEMS ON (used for prefer DC)
   {
     i_pinmode = 1;
     c_pinmode = 1;
