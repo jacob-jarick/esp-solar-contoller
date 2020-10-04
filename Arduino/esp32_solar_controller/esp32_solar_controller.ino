@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 177
+#define FW_VERSION 179
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -688,6 +688,9 @@ bool inverter_synced = 0;
 
 String mode_reason = "";
 
+String old_day_reason = "idle";
+String old_night_reason = "idle";
+
 unsigned long systick = 0;
 
 void loop()
@@ -818,46 +821,54 @@ void loop()
   // discharger
   if (config.i_enable && flags.night)
   {
+    String new_night_reason = "Night: ";
     // LV check
     if (config.monitor_battery && flags.shutdown_lvolt)
     {
-      mode_reason += "night: IDLE, LV Shutdown\n";
+      new_night_reason += "IDLE, LV Shutdown\n";
       finv = 0;
     }
     // cooldown check
     else if(timers.inverter_off > millis())
     {
-      mode_reason += "Night: Idle, Inverter Cooldown.\n";
+      new_night_reason += "Idle, Inverter Cooldown.\n";
       finv = 0;
     }
     // Prefer DC (enable if !lv and !cooldown
     else if (config.prefer_dc)
     {
-      mode_reason += "Night: Prefer DC\n";
+      new_night_reason += "Prefer DC\n";
       finv = 1;
     }
     else if (phase_sum > config.night_watts)
     {
-      mode_reason += "Night: Drain\n";
+      new_night_reason += "Drain\n";
       finv = 1;
     }
     // IDLE
     else if (config.inv_idle_mode && phase_sum < 0 ) // turn off inverter
     {
-      mode_reason += "Night: IDLE (grid " + String(phase_sum,1) + " < 0)\n";
+      new_night_reason += "IDLE (grid " + String(phase_sum,1) + " < 0)\n";
       finv = 0;
     }
     else if (phase_sum < config.night_watts * -1 ) // turn off inverter
     {
-      mode_reason += "Night: IDLE (grid " + String(phase_sum,1) + " < night_watts)\n";
+      new_night_reason += "IDLE (grid " + String(phase_sum,1) + " < night_watts)\n";
       finv = 0;
     }
     // timer check
     else if (config.night_is_timer)
     {
-      mode_reason += "Night: timer\n";
+      new_night_reason += "timer\n";
       finv = 1;
     }
+    else
+    {
+      new_night_reason = old_night_reason;
+    }
+
+    mode_reason += new_night_reason;
+    old_night_reason = new_night_reason;
   }
 
 
@@ -867,29 +878,42 @@ void loop()
   // charger
   if (config.c_enable && flags.day)
   {
+    String new_day_reason = "Day: ";
     // cooldown
     if(timers.charger_off > millis()) // charger cooldown
     {
-      mode_reason += "Day: charger cooldown\n";
+      new_day_reason += "charger cooldown\n";
       fchg = 0;
     }
     // timer
     else if (config.day_is_timer)
     {
-      mode_reason += "Day: Timer\n";
+      new_day_reason += "Timer\n";
+      fchg = 1;
+    }
+    // CHARGE
+    else if (phase_sum < (config.day_watts * -1.0) )
+    {
+      new_day_reason += "Charge\n";
       fchg = 1;
     }
     // IDLE
     else if (phase_sum > 50.0)
     {
-      mode_reason += "Day: idle\n";
+      new_day_reason += "idle\n";
       fchg = 0;
     }
-    // CHARGE
-    else if (phase_sum < (config.day_watts * -1.0) )
+    else // no change from prior mode
     {
-      mode_reason += "Day: Charge\n";
-      fchg = 1;
+//       if(fchg)
+//         new_day_reason += " chg";
+//       else
+//         new_day_reason += " idl";
+//
+//       new_day_reason += " (no change)\n";
+
+      new_day_reason = old_day_reason;
+
     }
 
     // monitoring voltage charger logic
@@ -899,22 +923,25 @@ void loop()
       // HV Shutdown
       if(flags.shutdown_hvolt)
       {
-        mode_reason += "Day: Idle, HV\n";
+        new_day_reason += "Idle, HV\n";
         fchg = 0;
       }
       // Shutdown
       else if(cell_volt_high > config.battery_volt_max)
       {
-        mode_reason += "Day: Idle, battery full\n";
+        new_day_reason += "Idle, battery full\n";
         fchg = 0;
       }
-      // IDLE
-      else if (phase_sum > 20)
-      {
-        mode_reason += "Day: Idle\n";
-        fchg = 0;
-      }
+//       // IDLE
+//       else if (phase_sum > 20)
+//       {
+//         new_day_reason += "Day: Idle\n";
+//         fchg = 0;
+//       }
     }
+
+    mode_reason += new_day_reason;
+    old_day_reason = new_day_reason;
   }
 
   // -------------------------------------------------------------------------
