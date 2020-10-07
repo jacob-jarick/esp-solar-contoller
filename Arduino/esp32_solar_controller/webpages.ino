@@ -727,7 +727,7 @@ void stats()
   else if (system_mode == 2)
     mymode += F("DRAIN");
   else if (system_mode == 3)
-    mymode += F("Cross Over");
+    mymode += F("Both");
 //   else if (system_mode == 4)
 //     mymode += F("BMS");
 

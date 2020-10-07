@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 179
+#define FW_VERSION 181
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1414,7 +1414,7 @@ void oled_print_info()
     else if (system_mode == 2)
       oled_print(F("DRN "));
     else if (system_mode == 3)
-      oled_print(F("CRS "));
+      oled_print(F("C&D "));
 
     oled_println(datetime_str(2, ' ', ' ', ':'));
 
@@ -1466,7 +1466,10 @@ void oled_print_info()
 
 void calc_next_update()
 {
-  int rest_s = 30;
+  uint32_t i_sec = config.inverter_oot_sec + (config.inverter_oot_min * 60);
+  uint32_t c_sec = config.charger_oot_sec + (config.charger_oot_min * 60);
+
+  uint32_t rest_s = 30;
 
   if(system_mode == 0 && config.monitor_temp && flags.shutdown_htemp) // High Temp IDLE
   {
@@ -1476,22 +1479,22 @@ void calc_next_update()
 
   else if(system_mode == 0) // IDLE
   {
-    rest_s = random(1, 6);
+    rest_s = random(5, 10);
   }
-  else if(system_mode == 3) // cross over (not used atm)
+  else if(system_mode == 3) // use which ever one is greater (inverter / charger)
   {
-    rest_s = config.charger_oot_sec;
+    if(i_sec < c_sec)
+      rest_s = c_sec;
+    else
+      rest_s = i_sec;
   }
   else if(system_mode == 1) // CHARGER
   {
-    rest_s = config.charger_oot_sec;
-    rest_s += config.charger_oot_min * 60;
+    rest_s = c_sec;
   }
   else if (system_mode == 2) // INVERTER
   {
-    rest_s = config.inverter_oot_sec;
-    rest_s += config.inverter_oot_min * 60;
-
+    rest_s = i_sec;
   }
 
   timers.mode_check = millis() + (rest_s * 1000);
