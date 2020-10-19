@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 181
+#define FW_VERSION 183
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -22,13 +22,25 @@ this seems to resolve OTA issues.
 // 10 min
 #define check_timeout 600000
 
+#define OPT_DISABLE -2
+#define OPT_DEFAULT -1
+
+#define stiny 32
+#define ssmall 64
+#define smedium 128
+#define slarge 256
+
+#define count_ntc 16
+#define count_cells 16
+
+// ======================================
 
 #include <Arduino.h>
 #include <SD.h>
 #include <SPI.h>
 
 #include <WiFi.h>
-#include <WiFiMulti.h>
+// #include <WiFiMulti.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h> // todo remove as WiFi is configured via SD card json config
 #include <WiFiUdp.h>
@@ -37,15 +49,14 @@ this seems to resolve OTA issues.
 #include <HTTPClient.h>
 
 #include <ESP32httpUpdate.h>
-// <ESP32httpUpdate.cpp line 172, modify timeout, http.setTimeout(60000);
+
 
 #include <ArduinoJson.h>
 
 #include <WebServer.h>
 WebServer server(80);
 
-WiFiMulti WiFiMulti;
-
+// WiFiMulti WiFiMulti;
 
 // -----------------------------------------------------------------------------------------
 
@@ -126,13 +137,13 @@ SysTimers timers;
 //------------------------------------------------------------------------------
 // cell voltages & ntc
 
-double cells_volts[16]; // = {mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num};
-double cells_volts_real[16]; // = {mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num, mmaths.magic_num};
+double cells_volts[count_cells];
+double cells_volts_real[count_cells];
 float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
 
-float ntc10k_sensors[16];
+float ntc10k_sensors[count_ntc];
 
 //------------------------------------------------------------------------------
 
@@ -193,7 +204,7 @@ float energy_consumed = 0;
 float phase_sum = 0;
 float phase_sum_old = 0;
 
-float phase_avg = mmaths.magic_num;
+float phase_avg = 0;
 
 String passwd = "";
 
@@ -208,17 +219,6 @@ const int8_t power_array_size = 10;
 
 
 //------------------------------------------------------------------------------
-
-#define OPT_DISABLE -2
-#define OPT_DEFAULT -1
-
-#define stiny 32
-#define ssmall 64
-#define smedium 128
-#define slarge 256
-
-#define count_ntc 16
-#define count_cells 16
 
 struct Sconfig
 {
@@ -480,6 +480,7 @@ void setup()
   }
 
   // --------------------------------------------------------------------------------------
+  // System checks
 
   both_println(F("Trim Log"));
   file_limit_size(txt_log_system, 4096);
@@ -500,6 +501,7 @@ void setup()
   }
 
   // --------------------------------------------------------------------------------------
+  // Network Services
 
   oled_clear();
   oled_set1X();
@@ -507,7 +509,7 @@ void setup()
   both_println(F("UDP"));
   udp.begin(localPort);
 
-  oled_clear();
+//   oled_clear();
 
   // --------------------------------------------------------------------------------------
   both_println(F("MDNS"));
@@ -520,86 +522,84 @@ void setup()
   // Setup HTTP Server
 
   both_println(F("HTTP"));
-  server.on("/", stats);
-  server.on("/config", web_config);
-  server.on("/result", web_config_submit);
+  {
+    server.on("/", stats);
+    server.on("/config", web_config);
+    server.on("/result", web_config_submit);
 
-  server.on("/inverter_on", inverter_on);
-  server.on("/idle", idle_on);
-  server.on("/charger_on", charger_on);
+    server.on("/inverter_on", inverter_on);
+    server.on("/idle", idle_on);
+    server.on("/charger_on", charger_on);
 
-  server.on("/config_raw", config_raw);
-  server.on("/whatami", whatami);
-  server.on("/stats", stats);
+    server.on("/config_raw", config_raw);
+    server.on("/whatami", whatami);
+    server.on("/stats", stats);
 
-  server.on("/force_refresh", force_refresh);
+    server.on("/force_refresh", force_refresh);
 
-  server.on("/reset", software_reset);
+    server.on("/reset", software_reset);
 
-  server.on("/update_menu", update_menu);
-  server.on("/advance", advance_config);
+    server.on("/update_menu", update_menu);
+    server.on("/advance", advance_config);
 
-  server.on("/ledon", led_on);
-  server.on("/ledoff", led_off);
-  server.on("/ledtoggle", led_toggle);
-  server.on("/ledblink", led_blink);
+    server.on("/ledon", led_on);
+    server.on("/ledoff", led_off);
+    server.on("/ledtoggle", led_toggle);
+    server.on("/ledblink", led_blink);
 
-  server.on("/style.css", css_raw);
+    server.on("/style.css", css_raw);
 
-  server.on("/do_update", do_update_web);
+    server.on("/do_update", do_update_web);
 
-  server.on("/html_update", web_html_redownload);
+    server.on("/html_update", web_html_redownload);
 
-  server.on("/issue_log", web_issue_log);
-  server.on("/issue_submit", web_issue_submit);
+    server.on("/issue_log", web_issue_log);
+    server.on("/issue_submit", web_issue_submit);
 
-  server.on("/info_raw", info_raw);
-  server.on("/battery_config", battery_config);
+    server.on("/info_raw", info_raw);
+    server.on("/battery_config", battery_config);
 
-//   copy_config_submit
+    server.on("/cpconf", web_copy_config);
+    server.on("/cpconf_submit", copy_config_submit);
 
-  server.on("/cpconf", web_copy_config);
-  server.on("/cpconf_submit", copy_config_submit);
+    server.on("/upload_config", upload_config);
+    server.on("/upload_config_submit", upload_config_submit);
 
-  server.on("/upload_config", upload_config);
-  server.on("/upload_config_submit", upload_config_submit);
+    server.on("/port_config", port_config);
+    server.on("/port_cfg_submit", port_cfg_submit);
 
-  //port_config
-  server.on("/port_config", port_config);
-  server.on("/port_cfg_submit", port_cfg_submit);
+    server.on("/network", net_config);
 
-  server.on("/network", net_config);
+    server.on("/datasrcs", datasrcs);
 
-  server.on("/datasrcs", datasrcs);
+    server.on("/forcentp", force_ntp_sync);
 
-//   server.on("/timer", web_timer_config);
+    server.on("/port_info", port_info);
 
-  server.on("/forcentp", force_ntp_sync);
+    server.on("/ntc10k_config", ntc10k_config);
+    server.on("/ntc10k_info", ntc10k_info);
 
-  server.on("/port_info", port_info);
+    server.on("/i2c_scan", i2c_scan);
 
-  server.on("/ntc10k_config", ntc10k_config);
-  server.on("/ntc10k_info", ntc10k_info);
+    server.on("/sys_info", sys_info);
 
-  server.on("/i2c_scan", i2c_scan);
+    server.on("/battery_info", battery_info);
 
-  server.on("/sys_info", sys_info);
+    server.on("/bms_raw_info", bms_raw_info);
 
-  server.on("/battery_info", battery_info);
+    server.on("/adc_info_raw", adc_info_raw);
 
-  server.on("/bms_raw_info", bms_raw_info);
+    server.on("/batcal", battery_calibrate);
 
-  server.on("/adc_info_raw", adc_info_raw);
+    server.on("/3pinfo", threepase_info);
 
-  server.on("/batcal", battery_calibrate);
-
-  server.on("/3pinfo", threepase_info);
-
-  server.begin();
+    server.begin();
+  }
 
   tone += toneinc; beep_helper(tone, 250);
 
-  //
+  // --------------------------------------------------------------------------------------
+  // Setup ADSMUX
 
   oled_clear();
 
@@ -609,10 +609,10 @@ void setup()
 
     for(uint8_t i = 0; i < 16; i++)
     {
-      cells_volts_real[i] = double(mmaths.magic_num);
-      cells_volts[i] = double(mmaths.magic_num);
+      cells_volts_real[i] = 0;
+      cells_volts[i]      = 0;
 
-      ntc10k_sensors[i] = mmaths.magic_num;
+      ntc10k_sensors[i]   = mmaths.magic_num;
     }
 
     adc_quick_poll();
@@ -632,6 +632,9 @@ void setup()
       flags.adc_config_error = 1;
     }
   }
+
+  // --------------------------------------------------------------------------------------
+  // check if FW was updated
 
   if(config.fwver != FW_VERSION)
   {
@@ -905,15 +908,7 @@ void loop()
     }
     else // no change from prior mode
     {
-//       if(fchg)
-//         new_day_reason += " chg";
-//       else
-//         new_day_reason += " idl";
-//
-//       new_day_reason += " (no change)\n";
-
       new_day_reason = old_day_reason;
-
     }
 
     // monitoring voltage charger logic
@@ -932,12 +927,6 @@ void loop()
         new_day_reason += "Idle, battery full\n";
         fchg = 0;
       }
-//       // IDLE
-//       else if (phase_sum > 20)
-//       {
-//         new_day_reason += "Day: Idle\n";
-//         fchg = 0;
-//       }
     }
 
     mode_reason += new_day_reason;

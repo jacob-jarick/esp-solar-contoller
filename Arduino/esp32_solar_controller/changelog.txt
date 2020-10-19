@@ -1,20 +1,20 @@
-     HEAD~0	815609b strings and mode tracking
-     HEAD~1	8fc5591 prefer DC option added
-     HEAD~2	8d07a52 div by 0 fix
-     HEAD~3	3cfeabc proper averaging for phase sum
-     HEAD~4	755b485 fronius time fix
-     HEAD~5	6a0d14a ADC checks
-     HEAD~6	3cdcc41 i2c_check
-     HEAD~7	2f082cc tidy update code
-     HEAD~8	8320a9e fronius timestap checks
-     HEAD~9	5dfce2f fronius new day tracking
-    HEAD~10	2a3af8e Idle When Export<
-    HEAD~11	6f1586c alarm tweak
-    HEAD~12	99f2cb1 ntc temp, usage tracking
-    HEAD~13	52683bb Cost Per Kwh
-    HEAD~14	15c8f95 led, stats
-    HEAD~15	4284f38 Oled Display Options
-    HEAD~16	6deabb3 f(!adsmux.adc_found)
-    HEAD~17	ae95865 bool adc_found
-    HEAD~18	bbd1553 fw 27
-    HEAD~19	225833f micro board. esp8266 firmware refresh
+     HEAD~0	aafec25 favour DC
+     HEAD~1	815609b strings and mode tracking
+     HEAD~2	8fc5591 prefer DC option added
+     HEAD~3	8d07a52 div by 0 fix
+     HEAD~4	3cfeabc proper averaging for phase sum
+     HEAD~5	755b485 fronius time fix
+     HEAD~6	6a0d14a ADC checks
+     HEAD~7	3cdcc41 i2c_check
+     HEAD~8	2f082cc tidy update code
+     HEAD~9	8320a9e fronius timestap checks
+    HEAD~10	5dfce2f fronius new day tracking
+    HEAD~11	2a3af8e Idle When Export<
+    HEAD~12	6f1586c alarm tweak
+    HEAD~13	99f2cb1 ntc temp, usage tracking
+    HEAD~14	52683bb Cost Per Kwh
+    HEAD~15	15c8f95 led, stats
+    HEAD~16	4284f38 Oled Display Options
+    HEAD~17	6deabb3 f(!adsmux.adc_found)
+    HEAD~18	ae95865 bool adc_found
+    HEAD~19	bbd1553 fw 27
