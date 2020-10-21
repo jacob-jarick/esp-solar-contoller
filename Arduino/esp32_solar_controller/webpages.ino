@@ -1095,6 +1095,8 @@ void force_refresh()
     timers.mode_check = 0;
     timers.pgrid = 0;
     timers.adc_poll = 0;
+    timers.lv_shutdown = 0;
+    timers.hv_shutdown = 0;
     sync_time();
   }
 }
