@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 184
+#define FW_VERSION 185
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -37,7 +37,7 @@ this seems to resolve OTA issues.
 
 #include <Arduino.h>
 #include <SD.h>
-#include <SPI.h>
+// #include <SPI.h>
 
 #include <WiFi.h>
 // #include <WiFiMulti.h>

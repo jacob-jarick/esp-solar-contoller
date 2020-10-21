@@ -54,10 +54,13 @@ double read_cell_volts(const byte cell)
   double v = adsmux.adc_val[cell];
 
   v *= ads_mv;
-  v += config.dcvoltage_offset; // only use 1 offset
   v *= config.battery_volt_mod[cell];
+  v += config.dcvoltage_offset; // only use 1 offset
 
-  cells_volts_real[cell] = mmaths.dirty_average(cells_volts_real[cell], v, 4); // TODO user enabled / disabled
+  if(cells_volts_real[cell] <= 0)
+    cells_volts_real[cell] = v;
+  else
+    cells_volts_real[cell] = mmaths.dirty_average(cells_volts_real[cell], v, 3); // TODO user enabled / disabled
 
   cells_volts[cell] = cells_volts_real[cell]; // copy AFTER avg
 
