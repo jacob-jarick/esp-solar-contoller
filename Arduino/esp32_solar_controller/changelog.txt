@@ -1,20 +1,20 @@
-     HEAD~0	b025cce force_refresh
-     HEAD~1	b077265 fw 183
-     HEAD~2	aafec25 favour DC
-     HEAD~3	815609b strings and mode tracking
-     HEAD~4	8fc5591 prefer DC option added
-     HEAD~5	8d07a52 div by 0 fix
-     HEAD~6	3cfeabc proper averaging for phase sum
-     HEAD~7	755b485 fronius time fix
-     HEAD~8	6a0d14a ADC checks
-     HEAD~9	3cdcc41 i2c_check
-    HEAD~10	2f082cc tidy update code
-    HEAD~11	8320a9e fronius timestap checks
-    HEAD~12	5dfce2f fronius new day tracking
-    HEAD~13	2a3af8e Idle When Export<
-    HEAD~14	6f1586c alarm tweak
-    HEAD~15	99f2cb1 ntc temp, usage tracking
-    HEAD~16	52683bb Cost Per Kwh
-    HEAD~17	15c8f95 led, stats
-    HEAD~18	4284f38 Oled Display Options
-    HEAD~19	6deabb3 f(!adsmux.adc_found)
+     HEAD~0	aaec988 ADC tweak
+     HEAD~1	b025cce force_refresh
+     HEAD~2	b077265 fw 183
+     HEAD~3	aafec25 favour DC
+     HEAD~4	815609b strings and mode tracking
+     HEAD~5	8fc5591 prefer DC option added
+     HEAD~6	8d07a52 div by 0 fix
+     HEAD~7	3cfeabc proper averaging for phase sum
+     HEAD~8	755b485 fronius time fix
+     HEAD~9	6a0d14a ADC checks
+    HEAD~10	3cdcc41 i2c_check
+    HEAD~11	2f082cc tidy update code
+    HEAD~12	8320a9e fronius timestap checks
+    HEAD~13	5dfce2f fronius new day tracking
+    HEAD~14	2a3af8e Idle When Export<
+    HEAD~15	6f1586c alarm tweak
+    HEAD~16	99f2cb1 ntc temp, usage tracking
+    HEAD~17	52683bb Cost Per Kwh
+    HEAD~18	15c8f95 led, stats
+    HEAD~19	4284f38 Oled Display Options

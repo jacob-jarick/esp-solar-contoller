@@ -240,29 +240,31 @@ void battery_info()
 
   webpage += js_header();
 
-//   float vsum = 0;
-
-  for(uint8_t i = 0; i < config.cell_count; i++)
+  if(!config.monitor_battery)
   {
-//     vsum += cells_volts[i];
-
-    String tmp = "";
-
-
-    if(cells_volts[i] < config.battery_volt_min)
-      tmp += " UNDERVOLT";
-
-    if(cells_volts[i] > config.battery_volt_max)
-      tmp += " OVERVOLT";
-
-    webpage += js_table_add_row("battery_table", String(i+1), String(cells_volts[i], 4),  tmp);
+    webpage += js_table_add_row("battery_table", "x", "x",  "disabled");
   }
-
-  webpage += js_table_add_row("battery_table", String("*"), String(cell_volt_diff, 4),  "Cell Difference");
-
-  if(config.cells_in_series)
+  else
   {
-    webpage += js_table_add_row("battery_table", String("*"), String(cells_volts_real[config.cell_count-1], 4),  "SUM");
+    for(uint8_t i = 0; i < config.cell_count; i++)
+    {
+      String tmp = "";
+
+      if(cells_volts[i] < config.battery_volt_min)
+        tmp += " UNDERVOLT";
+
+      if(cells_volts[i] > config.battery_volt_max)
+        tmp += " OVERVOLT";
+
+      webpage += js_table_add_row("battery_table", String(i+1), String(cells_volts[i], 4),  tmp);
+    }
+
+    webpage += js_table_add_row("battery_table", String("*"), String(cell_volt_diff, 4),  "Cell Difference");
+
+    if(config.cells_in_series)
+    {
+      webpage += js_table_add_row("battery_table", String("*"), String(cells_volts_real[config.cell_count-1], 4),  "SUM");
+    }
   }
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " Battery Info");
@@ -836,8 +838,10 @@ void threepase_info()
   webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh\n";
   webpage += "</pre>";
 
-
   webpage += js_header();
+
+  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " 3 Phase Info");
+
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
