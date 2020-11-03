@@ -1017,6 +1017,37 @@ void inverter_on()
   }
 }
 
+
+void both_on() // TODO check charger and inverter are enabled
+{
+  String webpage = get_file(html_mode);
+
+  webpage += js_header();
+
+  if(config.webc_mode)
+  {
+    mode_reason = "Manual Both On";
+    webpage += js_helper_innerhtml(title_str, mode_reason);
+  }
+  else
+    webpage += js_helper_innerhtml(title_str, denied_str);
+
+  webpage += web_footer();
+
+  server.send(200, mime_html, webpage);
+
+  if(config.webc_mode)
+  {
+    flags.shutdown_hvolt = 0;
+    flags.shutdown_lvolt = 0;
+    timers.inverter_off = 0;
+    timers.charger_off = 0;
+
+    modeset(3);
+  }
+}
+
+
 String web_footer()
 {
   String webpage = F("</script>");
