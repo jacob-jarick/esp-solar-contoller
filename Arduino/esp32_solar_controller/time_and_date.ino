@@ -124,6 +124,42 @@ String next_update_string(const byte len) // ; len = length
 }
 
 
+String timer_millis_to_string(unsigned long ms) // ; len = length
+{
+  String nu_string = "";
+
+  unsigned long nowms = millis();
+
+  if(ms <= nowms)
+    return "X";
+  else
+    ms -= nowms;
+
+  if (ms > 1000)
+  {
+    int nu_hours = (ms / (1000 * 60 * 60)) % 24;
+    int nu_minutes = (ms / (1000 * 60)) % 60;
+    int nu_seconds = (ms / 1000) % 60;
+
+//      nu_string = String(nu_minutes) + " minutes " + String(nu_seconds) + " seconds";
+
+    if(nu_hours)
+      nu_string += String(nu_hours) + " Hours ";
+
+    if(nu_minutes)
+      nu_string += String(nu_minutes) + " min ";
+
+    nu_string += String(nu_seconds) + " sec";
+//      nu_string = String(nu_hours) + "h "  +  String(nu_minutes) + "m " + String(nu_seconds) + "s";
+  }
+  else
+  {
+    nu_string = "<1 sec";
+  }
+
+  return nu_string;
+}
+
 // type
 // 0 = date + time
 // 1 = ?

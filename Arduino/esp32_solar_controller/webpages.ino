@@ -102,6 +102,12 @@ void web_config()
   webpage += js_select_helper(F("charger_oot_sec"), String(config.charger_oot_sec));
   webpage += js_select_helper(F("inverter_oot_sec"), String(config.inverter_oot_sec));
 
+  webpage += js_select_helper(F("charger_off_min"), String(config.charger_off_min));
+  webpage += js_select_helper(F("charger_off_sec"), String(config.charger_off_sec));
+  webpage += js_radio_helper(F("c_offd_enable"), F("c_offd_disable"), config.c_offd);
+  webpage += js_radio_helper(F("c_amot_enable"), F("c_amot_disable"), config.c_amot);
+
+
   webpage += js_helper(F("night_watts"), String(config.night_watts));
   webpage += js_select_helper(F("i_start_h"), String(config.i_start_h));
   webpage += js_select_helper(F("i_finish_h"), String(config.i_finish_h));
@@ -397,6 +403,14 @@ void web_config_submit()
       else if (server.argName(i) == F("c_enable"))
         config.c_enable = server.arg(i).toInt();
 
+      else if (server.argName(i) == F("c_offd"))
+        config.c_offd = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("c_amot"))
+        config.c_amot = server.arg(i).toInt();
+
+
+
       else if (server.argName(i) == F("prefer_dc"))
         config.prefer_dc = server.arg(i).toInt();
 
@@ -469,6 +483,8 @@ void web_config_submit()
       else if (server.argName(i) == F("pub_url"))
         strlcpy(config.pub_url, server.arg(i).c_str(), sizeof(config.pub_url));
 
+      // Day Device
+
       else if (server.argName(i) == F("c_start_h"))
         config.c_start_h = server.arg(i).toInt();
 
@@ -483,6 +499,12 @@ void web_config_submit()
 
       else if (server.argName(i) == F("day_watts"))
         config.day_watts = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("charger_off_min"))
+        config.charger_off_min = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("charger_off_sec"))
+        config.charger_off_sec = server.arg(i).toInt();
 
       // Night Device
 
@@ -1390,6 +1412,24 @@ void bms_raw_info()
 
   server.send(200, mime_txt, webpage);
 }
+
+void timers_page()
+{
+  String webpage = datetime_str(0, '-', 'T', ':') + String("\n\n");
+
+  webpage += String("mode_check:\t") + timer_millis_to_string(timers.mode_check) + "\n";
+  webpage += String("lv_shutdown:\t") + timer_millis_to_string(timers.lv_shutdown) + "\n";
+  webpage += String("hv_shutdown:\t") + timer_millis_to_string(timers.hv_shutdown) + "\n";
+  webpage += String("charger_off:\t") + timer_millis_to_string(timers.charger_off) + "\n";
+  webpage += String("inverter_off:\t") + timer_millis_to_string(timers.inverter_off) + "\n";
+  webpage += String("pgrid:\t\t") + timer_millis_to_string(timers.pgrid) + "\n";
+  webpage += String("update_check:\t") + timer_millis_to_string(timers.update_check) + "\n";
+  webpage += String("ntp_sync:\t") + timer_millis_to_string(timers.ntp_sync) + "\n";
+  webpage += String("use_fallback:\t") + timer_millis_to_string(timers.use_fallback) + "\n";
+
+  server.send(200, mime_txt, webpage);
+}
+
 
 
 void port_info()

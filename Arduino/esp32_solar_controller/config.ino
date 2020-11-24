@@ -138,6 +138,8 @@ void save_config()
   doc["charger_oot_sec"] = config.charger_oot_sec;
   doc["inverter_oot_min"] = config.inverter_oot_min;
   doc["inverter_oot_sec"] = config.inverter_oot_sec;
+
+
   doc["cell_count"] = config.cell_count;
   doc["gmt"] = config.gmt;
   doc["dcvoltage_offset"] = config.dcvoltage_offset;
@@ -149,6 +151,12 @@ void save_config()
 
   doc["m247"] = (int)config.m247;
 
+  // charger off delay
+  doc["charger_off_min"] = config.charger_off_min;
+  doc["charger_off_sec"] = config.charger_off_sec;
+  doc["c_offd"] = (int)config.c_offd;
+
+  doc["c_amot"] = (int)config.c_amot;
 
   if(SD.exists(json_config_file.c_str() ) )
     SD.remove(json_config_file.c_str() );
@@ -345,6 +353,15 @@ bool load_config()
   config.led_status = doc["led_status"] | 0;
   config.blink_led = doc["blink_led"] | 1;
   config.blink_led_default = doc["blink_led_default"] | 1;
+
+  // charger off delay
+
+  config.charger_off_min = doc["charger_off_min"] | 1;
+  config.charger_off_sec = doc["charger_off_sec"] | 1;
+
+  config.c_offd = doc["c_offd"] | 0;
+
+  config.c_amot = doc["c_amot"] | 0;
 
   vars_sanity_check();
 

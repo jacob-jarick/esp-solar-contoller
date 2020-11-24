@@ -40,11 +40,35 @@
 </tr>
 
 
-<tr><td>Refresh Every:</td>
+<tr><td>Minimum On Time:</td>
 <td>
 	<input id=charger_oot_min type=text name='charger_oot_min' value=10 size=3> Minutes
 	<input id=charger_oot_sec type=text name='charger_oot_sec' value=0 size=3> Seconds
 </td>
+</tr>
+
+<tr>
+	<td>After Minimum on time:</td>
+	<td>
+		<input id=c_amot_enable type=radio name="c_amot" value=1> Off
+		<input id=c_amot_disable type=radio name="c_amot" value=0> Update (Default)
+	</td>
+</tr>
+
+<tr>
+	<td>Minimum Off Time Selection</td>
+	<td>
+		<input id=c_offd_enable type=radio name="c_offd" value=1> Custom
+		<input id=c_offd_disable type=radio name="c_offd" value=0> Same as On Time
+	</td>
+</tr>
+
+<tr>
+  <td>Custom Min Off Time:</td>
+  <td>
+    <input id=charger_off_min type=text name='charger_off_min' value=10 size=3> Minutes
+    <input id=charger_off_sec type=text name='charger_off_sec' value=0 size=3> Seconds
+  </td>
 </tr>
 
 <tr><td>Size Watts:</td><td><input id=day_watts type=text name='day_watts' value=''></td></tr>
@@ -143,7 +167,7 @@
 </tr>
 
 
-<tr><td>Refresh Every:</td>
+<tr><td>Minimum On/ Off Time:</td>
 <td>
 	<input id=inverter_oot_min type=text name='inverter_oot_min' value=10 size=3> Minutes
 	<input id=inverter_oot_sec type=text name='inverter_oot_sec' value=0 size=3> Seconds

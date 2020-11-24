@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 188
+#define FW_VERSION 196
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -240,6 +240,9 @@ struct Sconfig
   uint8_t charger_oot_min;
   uint8_t charger_oot_sec;
 
+  uint8_t charger_off_min;
+  uint8_t charger_off_sec;
+
   uint8_t inverter_oot_min;
   uint8_t inverter_oot_sec;
   byte cell_count;
@@ -315,6 +318,10 @@ struct Sconfig
   bool night_is_timer = 0;
   bool cells_in_series = 0;
   bool monitor_battery = 0;
+
+  bool c_offd;
+  bool c_amot;
+
 
   bool prefer_dc = 0;
 
@@ -595,6 +602,10 @@ void setup()
 
     server.on("/3pinfo", threepase_info);
 
+    server.on("/timers", timers_page);
+
+
+
     server.begin();
   }
 
@@ -867,9 +878,13 @@ void loop()
       new_night_reason += "timer\n";
       finv = 1;
     }
-    else
+    else if(finv) // no change, inverter still on
     {
       new_night_reason = old_night_reason;
+    }
+    else // no change, inverter still off
+    {
+      new_night_reason = "idling\n";
     }
 
     mode_reason += new_night_reason;
@@ -884,12 +899,21 @@ void loop()
   if (config.c_enable && flags.day)
   {
     String new_day_reason = "Day: ";
-    // cooldown
-    if(timers.charger_off > millis()) // charger cooldown
+
+    // idle after min on time check
+    if(fchg == 1 && config.c_amot) // check behaviour after being on for min on time. 1 = go to off.
+    {
+      new_day_reason += "idle after min on time\n";
+      fchg = 0;
+    }
+
+    // charger cooldown
+    else if(timers.charger_off > millis())
     {
       new_day_reason += "charger cooldown\n";
       fchg = 0;
     }
+
     // timer
     else if (config.day_is_timer)
     {
@@ -908,9 +932,13 @@ void loop()
       new_day_reason += "idle\n";
       fchg = 0;
     }
-    else // no change from prior mode
+    else if(fchg) // no change from prior mode and chg on
     {
       new_day_reason = old_day_reason;
+    }
+    else // no change from prior mode and chg oFF
+    {
+      new_day_reason = "idling\n";
     }
 
     // monitoring voltage charger logic
@@ -1527,7 +1555,10 @@ void modeset(byte m)
       ( m != 1 && m != 3)  // swapping to a non charging mode
     ) // charger turning off
     {
-      timers.charger_off = millis() + (config.charger_oot_min * 60 * 1000) + (config.charger_oot_sec * 1000);
+      if(config.c_offd) // custom off delay set
+        timers.charger_off = millis() + (config.charger_off_min * 60 * 1000) + (config.charger_off_sec * 1000);
+      else
+        timers.charger_off = millis() + (config.charger_oot_min * 60 * 1000) + (config.charger_oot_sec * 1000);
     }
     else if
     (
