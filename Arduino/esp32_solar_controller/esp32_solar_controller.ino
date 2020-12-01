@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 197
+#define FW_VERSION 198
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1529,8 +1529,11 @@ void calc_next_update()
   timers.mode_check = millis() + (rest_s * 1000);
 }
 
-
-void modeset(byte m)
+void modeset(byte m) // overload helper
+{
+  modeset(m, 0);
+}
+void modeset(byte m, bool manual)
 {
   // if swapping direct from one device to another, force a n Second idle in between
   bool idle_forced = 0;
@@ -1555,6 +1558,9 @@ void modeset(byte m)
       tmp = "Both";
     else
       tmp = String(m)  + "?";
+
+    if(manual)
+      tmp += " - Manual";
 
     log_msg(String("modeset: ") + tmp );
 

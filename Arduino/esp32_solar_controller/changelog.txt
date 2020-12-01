@@ -1,20 +1,20 @@
-     HEAD~0	ccbe683 min off time.
-     HEAD~1	9f3720b fw 188 both_on mode set
-     HEAD~2	5e09757 web stuff
-     HEAD~3	aaec988 ADC tweak
-     HEAD~4	b025cce force_refresh
-     HEAD~5	b077265 fw 183
-     HEAD~6	aafec25 favour DC
-     HEAD~7	815609b strings and mode tracking
-     HEAD~8	8fc5591 prefer DC option added
-     HEAD~9	8d07a52 div by 0 fix
-    HEAD~10	3cfeabc proper averaging for phase sum
-    HEAD~11	755b485 fronius time fix
-    HEAD~12	6a0d14a ADC checks
-    HEAD~13	3cdcc41 i2c_check
-    HEAD~14	2f082cc tidy update code
-    HEAD~15	8320a9e fronius timestap checks
-    HEAD~16	5dfce2f fronius new day tracking
-    HEAD~17	2a3af8e Idle When Export<
-    HEAD~18	6f1586c alarm tweak
-    HEAD~19	99f2cb1 ntc temp, usage tracking
+     HEAD~0	78916cd HV/ LV msgs
+     HEAD~1	ccbe683 min off time.
+     HEAD~2	9f3720b fw 188 both_on mode set
+     HEAD~3	5e09757 web stuff
+     HEAD~4	aaec988 ADC tweak
+     HEAD~5	b025cce force_refresh
+     HEAD~6	b077265 fw 183
+     HEAD~7	aafec25 favour DC
+     HEAD~8	815609b strings and mode tracking
+     HEAD~9	8fc5591 prefer DC option added
+    HEAD~10	8d07a52 div by 0 fix
+    HEAD~11	3cfeabc proper averaging for phase sum
+    HEAD~12	755b485 fronius time fix
+    HEAD~13	6a0d14a ADC checks
+    HEAD~14	3cdcc41 i2c_check
+    HEAD~15	2f082cc tidy update code
+    HEAD~16	8320a9e fronius timestap checks
+    HEAD~17	5dfce2f fronius new day tracking
+    HEAD~18	2a3af8e Idle When Export<
+    HEAD~19	6f1586c alarm tweak

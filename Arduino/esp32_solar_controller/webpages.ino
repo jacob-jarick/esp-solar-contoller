@@ -1036,7 +1036,7 @@ void inverter_on()
     flags.shutdown_hvolt = 0;
     flags.shutdown_lvolt = 0;
     timers.inverter_off = 0;
-    modeset(2);
+    modeset(2, 1);
   }
 }
 
@@ -1066,7 +1066,7 @@ void both_on() // TODO check charger and inverter are enabled
     timers.inverter_off = 0;
     timers.charger_off = 0;
 
-    modeset(3);
+    modeset(3, 1);
   }
 }
 
@@ -1090,7 +1090,7 @@ void idle_on()
 
   if(config.webc_mode)
   {
-    modeset(0);
+    modeset(0, 1);
   }
 }
 
@@ -1116,7 +1116,7 @@ void charger_on()
   {
     flags.shutdown_hvolt = 0;
     timers.charger_off = 0;
-    modeset(1);
+    modeset(1, 1);
   }
 }
 
