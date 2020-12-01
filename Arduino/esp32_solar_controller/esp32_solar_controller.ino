@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 196
+#define FW_VERSION 197
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1207,6 +1207,10 @@ void check_cells()
   bool lv_trigger = 0;
   bool hv_trigger = 0;
 
+  uint8_t low_cell = 0;
+  uint8_t high_cell = 0;
+
+
   unsigned long ms = millis();
 
   if((config.cells_in_series || config.cell_count == 1) && cells_volts_real[config.cell_count-1] < config.pack_volt_min)
@@ -1217,9 +1221,15 @@ void check_cells()
   {
     // cell volt difference
     if(cells_volts[i] < cell_volt_low)
+    {
+      low_cell = i;
       cell_volt_low = cells_volts[i];
+    }
     if(cells_volts[i] > cell_volt_high)
+    {
+      high_cell = i;
       cell_volt_high = cells_volts[i];
+    }
 
     // HV check
     if(config.hv_monitor && cells_volts[i] >= config.battery_volt_max)
@@ -1254,14 +1264,14 @@ void check_cells()
     if(!hv_trigger && flags.shutdown_hvolt && millis() > timers.hv_shutdown)
     {
       flags.shutdown_hvolt = 0;
-      log_issue("HV recon");
+      log_issue("HV recon, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
     }
 
     // HV disconnect check
     if(hv_trigger && !flags.shutdown_hvolt)
     {
       flags.shutdown_hvolt = 1;
-      log_issue("HV shutdown");
+      log_issue("HV shutdown, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
     }
   }
 
@@ -1272,7 +1282,7 @@ void check_cells()
   if(lv_recon_trigger && flags.shutdown_lvolt && millis() > timers.lv_shutdown)
   {
     flags.shutdown_lvolt = 0;
-    log_issue("LV reconnect");
+    log_issue("LV reconnect, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
   }
 
   // flags.shutdown_lvolt check
@@ -1280,7 +1290,7 @@ void check_cells()
   {
     flags.shutdown_lvolt = 1;
 
-    log_issue("LV Shutdown");
+    log_issue("LV Shutdown, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
   }
 }
 

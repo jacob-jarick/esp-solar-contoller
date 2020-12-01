@@ -1033,6 +1033,7 @@ void inverter_on()
 
   if(config.webc_mode)
   {
+    flags.shutdown_hvolt = 0;
     flags.shutdown_lvolt = 0;
     timers.inverter_off = 0;
     modeset(2);
@@ -1069,18 +1070,6 @@ void both_on() // TODO check charger and inverter are enabled
   }
 }
 
-
-String web_footer()
-{
-  String webpage = F("</script>");
-
-  webpage += get_file(html_footer);
-
-  webpage += F("</body>\n</html>");
-
-  return webpage;
-}
-
 void idle_on()
 {
   String webpage = get_file(html_mode);
@@ -1101,7 +1090,6 @@ void idle_on()
 
   if(config.webc_mode)
   {
-
     modeset(0);
   }
 }
@@ -1131,6 +1119,19 @@ void charger_on()
     modeset(1);
   }
 }
+
+String web_footer()
+{
+  String webpage = F("</script>");
+
+  webpage += get_file(html_footer);
+
+  webpage += F("</body>\n</html>");
+
+  return webpage;
+}
+
+
 
 void force_refresh()
 {
