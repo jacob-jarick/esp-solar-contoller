@@ -263,30 +263,14 @@ bool update_p_grid_3phase()
 //   energy_consumed =  energy_consumed / 1000;
 
 
-  phase_sum = 0;
-
-  if(config.monitor_phase_a)
-    phase_sum += phase_a_watts;
-  if(config.monitor_phase_b)
-    phase_sum += phase_b_watts;
-  if(config.monitor_phase_c)
-    phase_sum += phase_c_watts;
-
   if(!inverter_synced)
     inverter_synced = 1;
 
   // calculate actual usage here
-
+  // track energy consumed
   if(timers.pgrid_last_update != 0 && flags.time_synced)
   {
-    float tmp_phase_sum = 0;
-
-    if(phase_a_watts > 0)
-      tmp_phase_sum += phase_a_watts;
-    if(phase_b_watts > 0)
-      tmp_phase_sum += phase_b_watts;
-    if(phase_c_watts > 0)
-      tmp_phase_sum += phase_c_watts;
+    float tmp_phase_sum = get_watts(3);
 
     float tmp_ms = millis() - timers.pgrid_last_update;
 //     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
@@ -306,11 +290,70 @@ bool update_p_grid_3phase()
 
   timers.pgrid_last_update = millis();
 
-  set_power(phase_sum);
+  set_power(get_watts(1));
 
   return 1;
 }
 
+// 0 = all summed
+// 1 = only monitored
+// 2 = only monitored and only if above 0
+// 3 = ALL and only if above 0
+float get_watts(uint8_t type)
+{
+  if(!config.threephase)
+  {
+    return phase_sum;
+  }
+
+  float tmp = 0;
+
+  if(type == 0)
+  {
+    tmp += phase_a_watts;
+    tmp += phase_b_watts;
+    tmp += phase_c_watts;
+
+    return tmp;
+  }
+  if(type == 1)
+  {
+    if(config.monitor_phase_a)
+      tmp += phase_a_watts;
+    if(config.monitor_phase_b)
+      tmp += phase_b_watts;
+    if(config.monitor_phase_c)
+      tmp += phase_c_watts;
+
+    return tmp;
+  }
+
+  if(type == 2)
+  {
+    if(config.monitor_phase_a && phase_a_watts > 0)
+      tmp += phase_a_watts;
+    if(config.monitor_phase_b && phase_b_watts > 0)
+      tmp += phase_b_watts;
+    if(config.monitor_phase_c && phase_b_watts > 0)
+      tmp += phase_c_watts;
+
+    return tmp;
+  }
+
+  if(type == 3)
+  {
+    if(phase_a_watts > 0)
+      tmp += phase_a_watts;
+    if(phase_b_watts > 0)
+      tmp += phase_b_watts;
+    if(phase_c_watts > 0)
+      tmp += phase_c_watts;
+
+    return tmp;
+  }
+
+  return -1;
+}
 
 float power_array[power_array_size];
 int8_t power_array_pos = -1;
