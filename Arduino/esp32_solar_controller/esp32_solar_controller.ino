@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 199
+#define FW_VERSION 200
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1407,6 +1407,8 @@ void oled_print_info()
     float tpsum = 0;
 
     // NOTE: Western Power and other cunts bill ignoring exports or charging 7c for export on phase A and 29c for import on B or C.
+
+    /*
     //tpsum = phase_a_watts + phase_b_watts + phase_c_watts;
     if(phase_a_watts > 0)
       tpsum += phase_a_watts;
@@ -1414,6 +1416,8 @@ void oled_print_info()
       tpsum += phase_b_watts;
     if(phase_c_watts > 0)
       tpsum += phase_c_watts;
+    */
+    tpsum = get_watts(3);
 
     if(tpsum >= 1000)
       oled_println("Now " + String(tpsum/1000, 2) + "kW");

@@ -799,8 +799,6 @@ void stats()
     }
     extra_info += "Monitored Sum: " + String(get_watts(1)) + " watts\\n";
 
-
-
     extra_info += "</pre>";
   }
   webpage += js_helper_innerhtml(F("watts"), String(phase_sum) + " Watts" + extra_info);
