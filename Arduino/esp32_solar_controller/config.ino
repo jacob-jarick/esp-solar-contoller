@@ -418,22 +418,37 @@ void vars_sanity_check()
   set_led(config.led_status);
 
   if(config.otsdh < 0.1)
+  {
     config.otsdh = 0.1;
+    log_msg("config fix: otsdh");
+  }
 
   if(config.hv_shutdown_delay < 0)
+  {
     config.hv_shutdown_delay = 1;
+    log_msg("config fix: hv_shutdown_delay");
+  }
 
   if(config.lv_shutdown_delay < 0)
+  {
     config.lv_shutdown_delay = 1;
+    log_msg("config fix: lv_shutdown_delay");
+  }
 
   config.cell_count = constrain(config.cell_count, 1, 16);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
+  {
     config.battery_volt_min = config.pack_volt_min = mmaths.mmax(config.battery_volt_min, config.pack_volt_min);
+    log_msg("config fix: pack_volt_min != battery_volt_min");
+  }
 
 
   if(config.avg_phase > power_array_size)
+  {
     config.avg_phase = power_array_size;
+    log_msg("config fix: avg_phase > power_array_size");
+  }
 
 
   // -------------------------------------
@@ -465,7 +480,10 @@ void vars_sanity_check()
   }
 
   if(config.board_rev > 2)
+  {
     config.board_rev = 1;
+    log_msg("config fix: board_rev > 2");
+  }
 
   // board revisions
   if(config.board_rev == 1) // default
@@ -535,5 +553,7 @@ void get_config_and_save(const String target_ip)
   {
     both_println(F("HTTP code:")); // there may be a file error as well. so dont declare this as an error
     both_println(http.errorToString(get_url_code).c_str());
+
+    log_msg("ERROR: get_config_and_save: " + String(http.errorToString(get_url_code).c_str()));
   }
 }

@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 200
+#define FW_VERSION 201
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1001,6 +1001,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
     vars_sanity_check();
     save_config();
     flags.save_config = 0;
+    log_msg("Saved Config");
     return 1;
   }
 
