@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 201
+#define FW_VERSION 202
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -149,6 +149,9 @@ float ntc10k_sensors[count_ntc];
 
 const String mime_html    = "text/html";
 const String mime_txt     = "text/plain";
+const String mime_json    = "application/json";
+const String mime_css     = "text/css";
+
 const String http_str     = "http://";
 const String denied_str   = "Denied";
 const String title_str    = "title";

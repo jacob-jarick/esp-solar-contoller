@@ -690,7 +690,7 @@ void css_raw()
 {
   String webpage = get_file(css_file);
 
-  server.send(200, mime_txt, webpage);
+  server.send(200, mime_css, webpage);
 }
 
 void whatami()
@@ -714,7 +714,7 @@ void config_raw()
   if(config.webc_mode)
     webpage += get_file(json_config_file);
 
-  server.send(200, mime_txt, webpage);
+  server.send(200, mime_json, webpage);
 }
 
 void info_raw()

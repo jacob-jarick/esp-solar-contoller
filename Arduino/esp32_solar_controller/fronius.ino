@@ -2,7 +2,7 @@
 
 const uint8_t fronius_min_sync_seconds = 90;
 
-const size_t jsonsize = 1024 * 3;
+const size_t jsonsize = 1024 * 4;
 
 
 int8_t fronius_day = -1;

@@ -1,20 +1,20 @@
-     HEAD~0	5680146 fw 200
-     HEAD~1	a5b7b0d Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-     HEAD~2	2128710 fw 199
-     HEAD~3	f42a9e7 docs - diagrams
-     HEAD~4	95f0098 docs - diagram
-     HEAD~5	2f378d7 fw 198 - log manual mode
-     HEAD~6	78916cd HV/ LV msgs
-     HEAD~7	ccbe683 min off time.
-     HEAD~8	9f3720b fw 188 both_on mode set
-     HEAD~9	5e09757 web stuff
-    HEAD~10	aaec988 ADC tweak
-    HEAD~11	b025cce force_refresh
-    HEAD~12	b077265 fw 183
-    HEAD~13	aafec25 favour DC
-    HEAD~14	815609b strings and mode tracking
-    HEAD~15	8fc5591 prefer DC option added
-    HEAD~16	8d07a52 div by 0 fix
-    HEAD~17	3cfeabc proper averaging for phase sum
-    HEAD~18	755b485 fronius time fix
-    HEAD~19	6a0d14a ADC checks
+     HEAD~0	55eb5ed fw 201.
+     HEAD~1	5680146 fw 200
+     HEAD~2	a5b7b0d Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~3	2128710 fw 199
+     HEAD~4	f42a9e7 docs - diagrams
+     HEAD~5	95f0098 docs - diagram
+     HEAD~6	2f378d7 fw 198 - log manual mode
+     HEAD~7	78916cd HV/ LV msgs
+     HEAD~8	ccbe683 min off time.
+     HEAD~9	9f3720b fw 188 both_on mode set
+    HEAD~10	5e09757 web stuff
+    HEAD~11	aaec988 ADC tweak
+    HEAD~12	b025cce force_refresh
+    HEAD~13	b077265 fw 183
+    HEAD~14	aafec25 favour DC
+    HEAD~15	815609b strings and mode tracking
+    HEAD~16	8fc5591 prefer DC option added
+    HEAD~17	8d07a52 div by 0 fix
+    HEAD~18	3cfeabc proper averaging for phase sum
+    HEAD~19	755b485 fronius time fix
