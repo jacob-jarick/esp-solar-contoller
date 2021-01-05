@@ -783,6 +783,7 @@ void stats()
   String webpage =  get_file(html_stats);
   webpage += js_header();
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Info");
+  webpage += js_helper_innerhtml("pdesc", String(config.description));
 
   webpage += js_helper_innerhtml(F("mode"), mymode);
   String extra_info = "";

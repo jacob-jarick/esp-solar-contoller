@@ -248,8 +248,10 @@ bool load_config()
 
   for(uint8_t i = 0; i < count_ntc; i++)
   {
-//     config.ntc_temp_mods[i] = doc["temp_mod" + String(i+1)] | 1;
-    config.ntc_temp_max[i] = doc["mt" + String(i+1)] | 50; // mt = max temp
+    config.ntc_temp_max[i] = doc["mt" + String(i+1)]; // mt = max temp
+
+    if(!config.ntc_temp_max[i])
+      config.ntc_temp_max[i] = 50;
   }
 
   for(int i = 0; i < count_cells; i++)
@@ -268,10 +270,10 @@ bool load_config()
   config.pin_buzzer = doc["pin_buzzer"] | OPT_DEFAULT;
 
   // cell voltage limits
-  config.pack_volt_min = doc["pack_volt_min"] | 0;
-  config.battery_volt_min = doc["battery_volt_min"] | 3;
-  config.battery_volt_rec = doc["battery_volt_rec"] | 3.2;
-  config.battery_volt_max = doc["battery_volt_max"] | 4.2;
+  config.pack_volt_min = doc["pack_volt_min"];
+  config.battery_volt_min = doc["battery_volt_min"];
+  config.battery_volt_rec = doc["battery_volt_rec"];
+  config.battery_volt_max = doc["battery_volt_max"];
 
   // VMON Calibration
 
@@ -421,18 +423,21 @@ void vars_sanity_check()
   {
     config.otsdh = 0.1;
     log_msg("config fix: otsdh");
+    flags.save_config = 1;
   }
 
   if(config.hv_shutdown_delay < 0)
   {
     config.hv_shutdown_delay = 1;
     log_msg("config fix: hv_shutdown_delay");
+    flags.save_config = 1;
   }
 
   if(config.lv_shutdown_delay < 0)
   {
     config.lv_shutdown_delay = 1;
     log_msg("config fix: lv_shutdown_delay");
+    flags.save_config = 1;
   }
 
   config.cell_count = constrain(config.cell_count, 1, 16);
@@ -441,13 +446,35 @@ void vars_sanity_check()
   {
     config.battery_volt_min = config.pack_volt_min = mmaths.mmax(config.battery_volt_min, config.pack_volt_min);
     log_msg("config fix: pack_volt_min != battery_volt_min");
+    flags.save_config = 1;
   }
 
+  if(!config.battery_volt_min)
+  {
+    config.battery_volt_min = 3;
+    log_msg("config fix: !battery_volt_min");
+    flags.save_config = 1;
+  }
+
+  if(!config.battery_volt_rec || config.battery_volt_rec <= config.battery_volt_min)
+  {
+    config.battery_volt_rec = config.battery_volt_min * 1.05;
+    log_msg("config fix: battery_volt_rec");
+    flags.save_config = 1;
+  }
+
+  if(!config.battery_volt_max || config.battery_volt_max <= config.battery_volt_rec)
+  {
+    config.battery_volt_max = 4.2;
+    log_msg("config fix: battery_volt_max");
+    flags.save_config = 1;
+  }
 
   if(config.avg_phase > power_array_size)
   {
     config.avg_phase = power_array_size;
     log_msg("config fix: avg_phase > power_array_size");
+    flags.save_config = 1;
   }
 
 
@@ -483,6 +510,7 @@ void vars_sanity_check()
   {
     config.board_rev = 1;
     log_msg("config fix: board_rev > 2");
+    flags.save_config = 1;
   }
 
   // board revisions
