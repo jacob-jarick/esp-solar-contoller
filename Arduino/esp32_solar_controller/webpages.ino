@@ -136,7 +136,7 @@ void datasrcs()
 
   webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
 
-  webpage += js_helper(F("cpkwh"), String(config.cpkwh, 2));
+  webpage += js_helper(F("cpkwh"), String(config.cpkwh, 3));
 
   webpage += js_helper(F("inverter_url"), String(config.inverter_url));
   webpage += js_helper(F("inverter_push_url"), String(config.inverter_push_url));
@@ -864,8 +864,8 @@ void threepase_info()
   webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
   webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
   webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
-  webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh\n";
-  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh\n";
+  webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
+  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
   webpage += "</pre>";
 
   webpage += js_header();
