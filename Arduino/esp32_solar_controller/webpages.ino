@@ -1577,7 +1577,7 @@ void web_issue_log()
 
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), F("SysLog"));
+  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " SysLog");
   webpage += js_helper_innerhtml(F("log"), get_file(txt_log_system));
 
   webpage += js_radio_helper(F("clear1"), F("clear0"), 0);
