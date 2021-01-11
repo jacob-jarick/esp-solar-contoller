@@ -834,13 +834,9 @@ void stats()
     webpage += js_helper_innerhtml(F("battery_voltage"), cell_string );
   }
 
-  webpage += js_helper_innerhtml(F("system_msgs"), "<pre>" + system_msgs + "</pre>");
-
   webpage += js_helper_innerhtml(F("next_update"), nu_string);
 
-
   webpage += web_footer();
-
   server.send(200, mime_html, webpage);
 }
 
@@ -865,7 +861,7 @@ void threepase_info()
   webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
   webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
-  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
+  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed_old * config.cpkwh, 2) + "\n";
   webpage += "</pre>";
 
   webpage += js_header();
@@ -1130,9 +1126,20 @@ void charger_on()
 
 String web_footer()
 {
-  String webpage = F("</script>");
+  String webpage;
+
+
+
+  webpage += F("</script>");
 
   webpage += get_file(html_footer);
+
+  webpage += js_helper_innerhtml(F("fsystem_msgs"), system_msgs);
+
+  webpage += F("</script>\n");
+
+  for(uint8_t i = 0; i < 16; i++)
+    webpage += F("<br>\n");
 
   webpage += F("</body>\n</html>");
 
