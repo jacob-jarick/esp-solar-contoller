@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 210
+#define FW_VERSION 225
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -143,6 +143,8 @@ float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
 
+uint8_t cell_lh[2] = {0, 0};
+
 float ntc10k_sensors[count_ntc];
 
 //------------------------------------------------------------------------------
@@ -154,11 +156,12 @@ const String mime_css     = "text/css";
 
 const String http_str     = "http://";
 const String denied_str   = "Denied";
-const String title_str    = "title";
+const String title_str    = "title_hostn";
 
 const String dothtml        = ".htm";
 const String dottxt        = ".txt";
 
+const String html_header          = "/header" + dothtml;
 const String html_config          = "/config" + dothtml;
 const String html_battery         = "/batconf" + dothtml;
 const String html_calibrate       = "/batcal" + dothtml;
@@ -1256,6 +1259,8 @@ void check_cells()
     }
   }
   cell_volt_diff = cell_volt_high - cell_volt_low;
+  cell_lh[0] = low_cell;
+  cell_lh[1] = high_cell;
 
   String now_str = datetime_str(0, '/', ' ', ':');
 
@@ -1492,11 +1497,30 @@ void oled_print_info()
 
   if(config.monitor_battery)
   {
-    for(byte i=0; i< config.cell_count; i++)
+    if(config.cell_count < 4)
     {
-      oled_print(String(cells_volts[i]) + F(" "));
+      for(byte i=0; i< config.cell_count; i++)
+      {
+        oled_print(String(cells_volts[i]) + F(" "));
+      }
+      oled_println(F("v"));
     }
-    oled_println(F("v"));
+    else
+    {
+      float tsum = 0;
+      for(byte i=0; i< config.cell_count; i++)
+        tsum += cells_volts[i];
+
+      tsum = tsum / config.cell_count;
+
+      // low_cell
+      oled_print("L " + String(cell_lh[0]) + ": " + String(cells_volts[cell_lh[0]], 2) + " ");
+
+      // high_cell
+      oled_print("H " + String(cell_lh[1]) + ": " + String(cells_volts[cell_lh[1]], 2));
+
+
+    }
   }
   oled_set2X();
 }

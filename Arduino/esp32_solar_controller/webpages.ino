@@ -50,11 +50,12 @@ String js_table_add_row(const String id, const String cell1, const String cell2,
 
 void force_ntp_sync()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   webpage += js_helper_innerhtml(title_str, F("Force NTP Sync"));
+  webpage += "\nredir(\"/\", \"15\");\n";
 
   webpage += web_footer();
 
@@ -65,11 +66,12 @@ void force_ntp_sync()
 
 void web_html_redownload()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   webpage += js_helper_innerhtml(title_str, F("Force Updating HTML"));
+  webpage += "\nredir(\"/\", \"15\");\n";
 
   webpage += web_footer();
 
@@ -82,12 +84,11 @@ void web_html_redownload()
 // config page
 void web_config()
 {
-  String webpage;
-  webpage =  get_file(html_config);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_config);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn));
 
   webpage += js_radio_helper(F("m247-1"), F("m247-0"), config.m247);
 
@@ -129,12 +130,11 @@ void web_config()
 // network config
 void datasrcs()
 {
-  String webpage;
-  webpage =  get_file(html_datasrcs);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_datasrcs);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " configure data sources");
 
   webpage += js_helper(F("cpkwh"), String(config.cpkwh, 3));
 
@@ -162,13 +162,11 @@ void datasrcs()
 // network config
 void net_config()
 {
-  String webpage;
-  webpage =  get_file(html_net_config);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_net_config);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
-//   webpage += js_radio_helper(F("wifi_highpower_on"), F("wifi_highpower_off"), config.wifi_highpower_on);
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Net Config");
 
   webpage += js_helper(F("description"), String(config.description));
 
@@ -192,11 +190,11 @@ void net_config()
 // ntc10k_config page
 void ntc10k_config()
 {
-  String webpage =  get_file(html_ntc10k_config);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_ntc10k_config);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k config");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " ntc10k config");
 
   webpage += html_create_input(F("otsdh"), F("otsdh"), "3", String(config.otsdh, 2), "0-X");
 
@@ -224,8 +222,8 @@ void ntc10k_config()
 // ntc10k_config page
 void ntc10k_info()
 {
-  String webpage =  get_file(html_ntc10k_info);
-
+  String webpage = get_file(html_header);
+  webpage +=  get_file(html_ntc10k_info);
   webpage += js_header();
 
   for(uint8_t i = 0; i < config.ntc10k_count; i++)
@@ -233,7 +231,7 @@ void ntc10k_info()
     webpage += js_table_add_row("temp_table", String(i+1), "", ntc10k_sensors[i] + String("c") );
   }
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " ntc10k Info");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " ntc10k Info");
 
   webpage += web_footer();
 
@@ -242,8 +240,8 @@ void ntc10k_info()
 
 void battery_info()
 {
-  String webpage =  get_file(html_battery_info);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_battery_info);
   webpage += js_header();
 
   if(!config.monitor_battery)
@@ -255,6 +253,12 @@ void battery_info()
     for(uint8_t i = 0; i < config.cell_count; i++)
     {
       String tmp = "";
+
+      if(i == cell_lh[0])
+        tmp += " Lowest";
+
+      if(i == cell_lh[1])
+        tmp += " Highest";
 
       if(cells_volts[i] < config.battery_volt_min)
         tmp += " UNDERVOLT";
@@ -273,7 +277,7 @@ void battery_info()
     }
   }
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " Battery Info");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
 
   webpage += web_footer();
 
@@ -283,20 +287,17 @@ void battery_info()
 
 void battery_calibrate()
 {
-  String webpage =  get_file(html_calibrate);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_calibrate);
   webpage += js_header();
-
-  //   float vsum = 0;
 
   for(uint8_t i = 0; i < config.cell_count; i++)
   {
     String tmp = "";
-//     function batcal_add_row(cell, voltage, modifier)
     webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 7) + ", " + String(config.battery_volt_mod[i], 7) + ");\n";
   }
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " Battery Info");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
 
   webpage += web_footer();
 
@@ -306,12 +307,11 @@ void battery_calibrate()
 // advance config page
 void advance_config()
 {
-  String webpage;
-  webpage =  get_file(html_advance_config);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_advance_config);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " advance config");
 
   webpage += js_radio_helper(F("webc_mode_1"), F("webc_mode_0"), config.webc_mode);
 
@@ -335,12 +335,11 @@ void advance_config()
 void battery_config()
 {
   // ups mode stuff
-
-  String webpage =  get_file(html_battery);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_battery);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + String(F("Battery Config")) );
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F("Battery Config")) );
   webpage += js_radio_helper(F("monitor_battery1"), F("monitor_battery0"), config.monitor_battery);
 
 
@@ -384,7 +383,9 @@ void web_config_submit()
   String confnewpasswd = "";
   bool passchange = 0;
 
-  String webpage = get_file(html_mode);
+  String webpage = get_file(html_header);
+  webpage += get_file(html_mode);
+  webpage += js_header();
 
   if (server.args() > 0 )
   {
@@ -647,8 +648,6 @@ void web_config_submit()
     }
   }
 
-  webpage += js_header();
-
   if(passwd != "")
   {
     if(passwd != password_sent)
@@ -672,6 +671,7 @@ void web_config_submit()
     {
       load_config();
       webpage += js_helper_innerhtml(title_str, F("pass miss match"));
+      webpage += "\nredir(\"/\", \"60\");\n";
       webpage += web_footer();
       server.send(200, mime_html, webpage);
       return;
@@ -679,6 +679,7 @@ void web_config_submit()
   }
 
   webpage += js_helper_innerhtml(title_str, F("Config Saved"));
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -740,6 +741,12 @@ String fssize()
 
 void stats()
 {
+  String webpage =  get_file(html_header);
+  webpage +=  get_file(html_stats);
+  webpage += js_header();
+
+  webpage += "\nrefresh(\"60\");\n";
+
   String tmps;
 
   String mymode = "<pre>";
@@ -780,8 +787,6 @@ void stats()
 
   // ----------------------------------------------------------------------
 
-  String webpage =  get_file(html_stats);
-  webpage += js_header();
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Info");
   webpage += js_helper_innerhtml("pdesc", String(config.description));
 
@@ -842,8 +847,8 @@ void stats()
 
 void threepase_info()
 {
-  String webpage;
-  webpage =  get_file(html_3pinfo);
+  String webpage = get_file(html_header);
+  webpage += get_file(html_3pinfo);
 
   if(!config.threephase)
   {
@@ -862,11 +867,14 @@ void threepase_info()
   webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
   webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed_old * config.cpkwh, 2) + "\n";
-  webpage += "</pre>";
+  webpage += "</pre></center>\n";
 
   webpage += js_header();
+  webpage += "\nrefresh(\"5\");\n";
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " 3 Phase Info");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " 3 Phase Info");
+
+
 
   webpage += web_footer();
 
@@ -875,6 +883,10 @@ void threepase_info()
 
 void sys_info()
 {
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_sys_info);
+  webpage += js_header();
+
   String tmps;
 
   //   description
@@ -909,8 +921,6 @@ void sys_info()
 
   // ----------------------------------------------------------------------
 
-  String webpage =  get_file(html_sys_info);
-  webpage += js_header();
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Sys Info");
   webpage += js_helper_innerhtml(F("description"), String(config.description));
   webpage += js_helper_innerhtml(F("time"), mytime);
@@ -942,14 +952,16 @@ void sys_info()
 
 void led_on()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
     webpage += js_helper_innerhtml(title_str, "LED ON");
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
+
+  webpage += "\nredir(\"/\", \"15\");\n";
 
   webpage += web_footer();
 
@@ -961,8 +973,8 @@ void led_on()
 
 void led_off()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -970,6 +982,7 @@ void led_off()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -980,8 +993,8 @@ void led_off()
 
 void led_toggle()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -989,6 +1002,7 @@ void led_toggle()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -999,8 +1013,8 @@ void led_toggle()
 
 void led_blink()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1008,6 +1022,7 @@ void led_blink()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1018,8 +1033,8 @@ void led_blink()
 
 void inverter_on()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1031,6 +1046,7 @@ void inverter_on()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1047,8 +1063,8 @@ void inverter_on()
 
 void both_on() // TODO check charger and inverter are enabled
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1059,6 +1075,7 @@ void both_on() // TODO check charger and inverter are enabled
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1076,8 +1093,8 @@ void both_on() // TODO check charger and inverter are enabled
 
 void idle_on()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1088,6 +1105,7 @@ void idle_on()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1100,8 +1118,8 @@ void idle_on()
 
 void charger_on()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1112,6 +1130,7 @@ void charger_on()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1150,8 +1169,8 @@ String web_footer()
 
 void force_refresh()
 {
-  String webpage = get_file(html_mode);
-
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1159,6 +1178,7 @@ void force_refresh()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1176,8 +1196,10 @@ void force_refresh()
 
 void software_reset()
 {
-  String webpage = get_file(html_mode);
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
+
 
   // avoid restarts being triggered after boot.
   time_t timetmp = now();
@@ -1193,6 +1215,7 @@ void software_reset()
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
+  webpage += "\nredir(\"/\", \"5\");\n";
   webpage += web_footer();
   server.send(200, mime_html, webpage);
 
@@ -1212,12 +1235,11 @@ void software_reset()
 
 void port_config()
 {
-  String webpage;
-  webpage =  get_file(html_port_config);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_port_config);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn));
 
   webpage += js_select_helper(F("lport"), String(config.pin_led));
 
@@ -1242,6 +1264,7 @@ void port_config()
   webpage += js_radio_helper(F("blink_led_on"), F("blink_led_off"), config.blink_led_default);
   webpage += js_radio_helper(F("led_status_on"), F("led_status_off"), config.led_status);
 
+  webpage += "\nredir(\"/\", \"10\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1250,7 +1273,8 @@ void port_config()
 
 void port_cfg_submit()
 {
-  String webpage = get_file(html_mode);
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
   if (server.args() > 0 )
@@ -1286,6 +1310,7 @@ void port_cfg_submit()
   }
 
 
+  webpage += "\nredir(\"/\", \"10\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1293,10 +1318,11 @@ void port_cfg_submit()
 
 void web_copy_config()
 {
-  String webpage = get_file(html_cpconfig);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_cpconfig);
   webpage += js_header();
 
+  webpage += "\nredir(\"/\", \"10\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1304,9 +1330,13 @@ void web_copy_config()
 
 void copy_config_submit()
 {
-  String webpage = get_file(html_mode);
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
+
   webpage += js_helper_innerhtml(title_str, F("Copying Config"));
+
+  webpage += "\nredir(\"/\", \"10\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1326,14 +1356,12 @@ void copy_config_submit()
 
 void update_menu()
 {
-  String webpage = get_file(html_mode);
-  String pre;
-  String link;
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
 
-  pre = check_for_update();
-  link = F("<a href=/do_update>Upgrade Now</a>");
+  String pre = check_for_update();
+  String link = F("<a href=/do_update>Upgrade Now</a>");
 
   webpage += js_helper_innerhtml(title_str, F("Update Check"));
   webpage += js_helper_innerhtml(F("pre"), pre);
@@ -1348,6 +1376,10 @@ void update_menu()
 
 void do_update_web()
 {
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
+  webpage += js_header();
+
   String pre;
 
   if(!flags.update_found)
@@ -1358,16 +1390,12 @@ void do_update_web()
   {
     pre = "Updating to " + String(remote_version);
     pre += String("\\nDEVICE WILL RESTART SOON.");
-
   }
 
-  String webpage = get_file(html_mode);
-  String link = "";
-
-  webpage += js_header();
   webpage += js_helper_innerhtml(title_str, F("Updating"));
   webpage += js_helper_innerhtml(F("pre"), pre);
-  webpage += js_helper_innerhtml(F("link"), link);
+
+  webpage += "\nredir(\"/\", \"45\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1380,8 +1408,8 @@ void do_update_web()
 
 void upload_config()
 {
-  String webpage = get_file(html_upload_config);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_upload_config);
   webpage += js_header();
 
   if(config.webc_mode)
@@ -1397,9 +1425,13 @@ void upload_config()
 
 void upload_config_submit()
 {
-  String webpage = get_file(html_mode);
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
+
   webpage += js_helper_innerhtml(title_str, F("Saving Uploaded Config"));
+
+  webpage += "\nredir(\"/\", \"10\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1542,10 +1574,9 @@ void i2c_scan()
 
 void web_issue_submit()
 {
-  String webpage = get_file(html_mode);
+  String webpage = get_file(html_header);
+  webpage += get_file(html_mode);
   webpage += js_header();
-
-
 
   if (server.args() > 0 )
   {
@@ -1572,7 +1603,7 @@ void web_issue_submit()
     }
   }
 
-
+  webpage += "\nredir(\"/\", \"10\");\n";
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1580,11 +1611,11 @@ void web_issue_submit()
 
 void web_issue_log()
 {
-  String webpage = get_file(html_issue_log);
-
+  String webpage = get_file(html_header);
+  webpage += get_file(html_issue_log);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(F("title_hostn"), String(config.hostn) + " SysLog");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " SysLog");
   webpage += js_helper_innerhtml(F("log"), get_file(txt_log_system));
 
   webpage += js_radio_helper(F("clear1"), F("clear0"), 0);

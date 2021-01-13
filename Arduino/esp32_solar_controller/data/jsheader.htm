@@ -66,3 +66,17 @@ function table_add_row(id, c1html, c2html, c3html)
     cell.innerHTML = c3html;
   }
 }
+
+function refresh(delay) {
+    setTimeout(function () {
+        location.reload()
+    }, delay*1000);
+}
+
+function redir(path, delay) {
+    setTimeout(function () {
+        document.location.href = path
+    }, delay*1000);
+}
+
+
