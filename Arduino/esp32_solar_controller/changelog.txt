@@ -1,20 +1,20 @@
-     HEAD~0	1c850aa system messages shifted to footer
-     HEAD~1	c35a22a syslog hostname
-     HEAD~2	c70109a cost per kwh
-     HEAD~3	c398c70 config validation
-     HEAD~4	0f07947 mime fixes
-     HEAD~5	55eb5ed fw 201.
-     HEAD~6	5680146 fw 200
-     HEAD~7	a5b7b0d Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-     HEAD~8	2128710 fw 199
-     HEAD~9	f42a9e7 docs - diagrams
-    HEAD~10	95f0098 docs - diagram
-    HEAD~11	2f378d7 fw 198 - log manual mode
-    HEAD~12	78916cd HV/ LV msgs
-    HEAD~13	ccbe683 min off time.
-    HEAD~14	9f3720b fw 188 both_on mode set
-    HEAD~15	5e09757 web stuff
-    HEAD~16	aaec988 ADC tweak
-    HEAD~17	b025cce force_refresh
-    HEAD~18	b077265 fw 183
-    HEAD~19	aafec25 favour DC
+     HEAD~0	a2f1fe8 swapped to common header
+     HEAD~1	1c850aa system messages shifted to footer
+     HEAD~2	c35a22a syslog hostname
+     HEAD~3	c70109a cost per kwh
+     HEAD~4	c398c70 config validation
+     HEAD~5	0f07947 mime fixes
+     HEAD~6	55eb5ed fw 201.
+     HEAD~7	5680146 fw 200
+     HEAD~8	a5b7b0d Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+     HEAD~9	2128710 fw 199
+    HEAD~10	f42a9e7 docs - diagrams
+    HEAD~11	95f0098 docs - diagram
+    HEAD~12	2f378d7 fw 198 - log manual mode
+    HEAD~13	78916cd HV/ LV msgs
+    HEAD~14	ccbe683 min off time.
+    HEAD~15	9f3720b fw 188 both_on mode set
+    HEAD~16	5e09757 web stuff
+    HEAD~17	aaec988 ADC tweak
+    HEAD~18	b025cce force_refresh
+    HEAD~19	b077265 fw 183
