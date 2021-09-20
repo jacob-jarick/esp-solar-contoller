@@ -22,23 +22,21 @@ bool wifi_start()
   }
 
   if (WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println("WL_CONNECTED");
     return 1;
+  }
 
-  WiFi.persistent( false ); // dont save wifi settings
+  Serial.println("wifi init");
+//   WiFi.persistent( false ); // dont save wifi settings
   WiFi.mode(WIFI_STA);
-//   WiFi.setSleepMode(WIFI_NONE_SLEEP);
 
-
-//   if(config.wifi_highpower_on)
-//   {
-//     WiFi.setSleepMode(WIFI_NONE_SLEEP); // enable if wifi is buggy
-//   }
-
-  Serial.println("wifi_start:, " + String(config.wifi_ssid1) );
+  Serial.println("wifi connect " + String(config.wifi_ssid1) );
   if(wifi_connect(config.wifi_ssid1, config.wifi_pass1) )
     return 1;
 
   // fallback
+  Serial.println("fallback connect " + String(config.wifi_ssid2) );
   if(wifi_connect(config.wifi_ssid2, config.wifi_pass2))
     return 1;
 
@@ -48,7 +46,6 @@ bool wifi_start()
     return 1;
 
   return 0;
-
 }
 
 bool wifi_connect(const char s[ssmall], const char p[ssmall])

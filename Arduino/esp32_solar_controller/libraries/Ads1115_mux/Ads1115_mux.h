@@ -6,10 +6,10 @@
 #include "Arduino.h"
 // #include "QuickMedianLib.h"
 
-#include <Adafruit_ADS1015.h>
+#include <Adafruit_ADS1X15.h>
 
-// esp32 adc
-#include <driver/adc.h>
+// // esp32 adc
+// #include <driver/adc.h>
 
 class Ads1115_mux
 {

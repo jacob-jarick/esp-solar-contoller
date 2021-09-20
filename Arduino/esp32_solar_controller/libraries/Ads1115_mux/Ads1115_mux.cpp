@@ -1,9 +1,12 @@
 #include "Arduino.h"
-#include <Adafruit_ADS1015.h>
+#include <Adafruit_ADS1X15.h>
 #include "Ads1115_mux.h"
 
-Adafruit_ADS1115 _ads(0x48);
-Adafruit_ADS1015 _ads2(0x49);
+// Adafruit_ADS1115 _ads(0x48);
+// Adafruit_ADS1015 _ads2(0x49);
+
+Adafruit_ADS1115 _ads();
+Adafruit_ADS1015 _ads2();
 
 int8_t addr = 0;
 
@@ -48,6 +51,7 @@ void Ads1115_mux::setup()
     addr = 0x48;
     Serial.println("ADS1115 found.");
     adctype = 1;
+    _ads.begin();
     _ads.setGain(GAIN_ONE);
   }
   else if(i2c_ping(0x49))
@@ -55,7 +59,7 @@ void Ads1115_mux::setup()
     addr = 0x49;
     Serial.println("ADS1015 found.");
     adctype = 0;
-    _ads2 = Adafruit_ADS1015((uint8_t)  0x49);
+    _ads2.begin((uint8_t)  0x49);
     _ads2.setGain(GAIN_ONE);
   }
   else

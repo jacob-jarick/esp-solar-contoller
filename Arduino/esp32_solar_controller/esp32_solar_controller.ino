@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 226
+#define FW_VERSION 227
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -386,6 +386,8 @@ struct SysFlags
 
   bool adc_config_error = 0;
   bool boot_success = 0;
+
+  bool i2c_on = 1;
 };
 
 SysFlags flags;
@@ -416,8 +418,7 @@ void setup()
 
   tone += toneinc; beep_helper(tone, 250);
 
-  bool i2c_on = 0;
-
+  bool i2c_requested = 0;
   if(config.pin_sda == OPT_DISABLE || config.pin_scl == OPT_DISABLE)
   {
     Serial.println("i2c Disabled.");
@@ -425,7 +426,7 @@ void setup()
   else if(config.pin_scl == OPT_DEFAULT || config.pin_sda == OPT_DEFAULT)
   {
     Serial.println("i2c on default pins.");
-    i2c_on = 1;
+    i2c_requested = 1;
 
     // disable internal pullups
     // https://arduino.stackexchange.com/questions/13448/disabling-i2c-internal-pull-up-resistors
@@ -438,7 +439,7 @@ void setup()
   else
   {
     Serial.println("i2c on custom pins.");
-    i2c_on = 1;
+    i2c_requested = 1;
 
     digitalWrite(config.pin_scl, LOW);
     digitalWrite(config.pin_sda, LOW);
@@ -446,9 +447,9 @@ void setup()
     Wire.begin(config.pin_scl, config.pin_sda);
   }
 
-  if(i2c_on)
+  flags.i2c_on = 1;
+  if(i2c_requested)
   {
-
     // detect boards max speed
     uint8_t i2c_test_enum1 = 0;
     uint8_t i2c_test_enum2 = 0;
@@ -456,25 +457,40 @@ void setup()
     Wire.setClock(400000L); // fast mode
     i2cdevcount = i2c_enum();
 
-    Wire.setClock(1000000L); // fast mode plus
-    i2c_test_enum1 = i2c_enum();
-
-    Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
-    i2c_test_enum2 = i2c_enum();
-
-    if(i2c_test_enum1 != i2cdevcount)
+    if(i2cdevcount)
     {
-      log_msg("i2c speed 400000 (fast)");
-      Wire.setClock(400000L);
-    }
-    else if(i2c_test_enum2 != i2cdevcount)
-    {
-      log_msg("i2c speed 1000000 (fast plus)");
-      Wire.setClock(1000000L);
+      Wire.setClock(1000000L); // fast mode plus
+      i2c_test_enum1 = i2c_enum();
+
+      Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
+      i2c_test_enum2 = i2c_enum();
     }
     else
     {
-      log_msg("i2c speed 3400000 (highspeed)");
+      Serial.println("no i2c devices found, disabling i2c.");
+      flags.i2c_on = 0;
+    }
+
+    if(flags.i2c_on)
+    {
+      if(i2c_test_enum1 != i2cdevcount)
+      {
+        log_msg("i2c speed 400000 (fast)");
+        Wire.setClock(400000L);
+      }
+      else if(i2c_test_enum2 != i2cdevcount)
+      {
+        log_msg("i2c speed 1000000 (fast plus)");
+        Wire.setClock(1000000L);
+      }
+      else
+      {
+        log_msg("i2c speed 3400000 (highspeed)");
+      }
+    }
+    else
+    {
+      Serial.println("i2c disabled");
     }
 
     // setup OLED
@@ -486,10 +502,13 @@ void setup()
 
     oled_clear();
 
-    if(i2c_ping(0x4f))
-      flags.lm75a = 1;
+    if(flags.i2c_on)
+    {
+      if(i2c_ping(0x4f))
+        flags.lm75a = 1;
 
-    adsmux.setup();
+       adsmux.setup();
+    }
   }
 
   // --------------------------------------------------------------------------------------
@@ -506,6 +525,10 @@ void setup()
 
 
   // --------------------------------------------------------------------------------------
+
+
+  oled_clear();
+  both_println(F("WiFI"));
 
   tone += toneinc; beep_helper(tone, 250);
   if (!wifi_start())
@@ -1114,7 +1137,7 @@ bool check_system_timers()
     timers.oled = millis() + 1750;
   }
 
-  if(millis() > timers.i2c_check)
+  if(flags.i2c_on && millis() > timers.i2c_check)
   {
     if(i2cdevcount != i2c_enum())
     {
