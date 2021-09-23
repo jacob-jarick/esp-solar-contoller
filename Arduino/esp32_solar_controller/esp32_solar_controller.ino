@@ -6,7 +6,7 @@ but the arduino IDE settings for this board seem to cause issues.
 so I configure the IDE to use:
 
 * WEMOS LOLIN32
-* Patition Scheme: Minimal SPIFFS, large app with OTA
+* Patition Scheme: Minimal SPIFFS, large app with OTA (testing no OTA)
 * CPU 240Mhz (WiFi/BT)
 * Flash Frequency 80Mhz
 
@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 227
+#define FW_VERSION 228
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -55,8 +55,6 @@ this seems to resolve OTA issues.
 
 #include <WebServer.h>
 WebServer server(80);
-
-// WiFiMulti WiFiMulti;
 
 // -----------------------------------------------------------------------------------------
 
