@@ -9,7 +9,7 @@ int8_t addr = 0;
 
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 {
-  adc_found = 1;
+//   adc_found = 1;
 
   _pins[0] = pina;
   _pins[1] = pinb;
@@ -42,6 +42,7 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 // setup needs i2c and serial started.
 void Ads1115_mux::setup()
 {
+  adc_found = 1;
   if(i2c_ping(0x48))
   {
     addr = 0x48;
