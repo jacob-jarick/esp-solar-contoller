@@ -2,9 +2,6 @@
 #include <Adafruit_ADS1X15.h>
 #include "Ads1115_mux.h"
 
-// Adafruit_ADS1115 _ads(0x48);
-// Adafruit_ADS1015 _ads2(0x49);
-
 Adafruit_ADS1115 _ads();
 Adafruit_ADS1015 _ads2();
 
@@ -39,7 +36,6 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
     digital_write(i, 1);  // set high to clear cache
     digital_write(i, 0);  // set low
   }
-
 }
 
 

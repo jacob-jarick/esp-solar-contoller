@@ -354,7 +354,7 @@ void battery_config()
   webpage += html_create_input(F("pvm"), F("pack_volt_min"), "10", String(config.pack_volt_min, 4), "float");
   webpage += html_create_input(F("voff"), F("ups_volt_ofs"), "10", String(config.dcvoltage_offset, 4), "float");
 
-  for(int i = 0; i < count_cells; i++)
+  for(int i = 0; i < MAX_CELLS; i++)
   {
     String input_name = "battery_volt_mod";
     String id_name = "bvm" + String(i+1);
@@ -594,7 +594,7 @@ void web_config_submit()
 
       else if(server.argName(i).startsWith("battery_volt_mod"))
       {
-        for(uint8_t x = 0; x < count_cells; x++)
+        for(uint8_t x = 0; x < MAX_CELLS; x++)
         {
           if (server.argName(i) == String("battery_volt_mod") + String(x+1))
           {

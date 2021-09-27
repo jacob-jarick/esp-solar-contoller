@@ -48,7 +48,7 @@ void save_config()
     doc["mt" + String(i+1)] = config.ntc_temp_max[i];
   }
 
-  for(uint8_t i = 0; i < count_cells; i++)
+  for(uint8_t i = 0; i < MAX_CELLS; i++)
   {
     doc["volt_mod" + String(i+1)] = config.battery_volt_mod[i];
   }
@@ -189,153 +189,6 @@ void save_config()
   file.close();
 }
 
-/*
-void config_set_defaults()
-{
-  config.fwver = 0;
-
-  // NETWORK
-  strlcpy(config.wifi_ssid1, "", sizeof(config.wifi_ssid1));
-  strlcpy(config.wifi_pass1, "", sizeof(config.wifi_pass1));
-  strlcpy(config.wifi_ssid2, "", sizeof(config.wifi_ssid2));
-  strlcpy(config.wifi_pass2, "", sizeof(config.wifi_pass2));
-
-  strlcpy(config.hostn, "esp32sc", sizeof(config.hostn));
-  strlcpy(config.description, "new", sizeof(config.description));
-
-
-  // URLS
-  strlcpy(config.inverter_url, "", sizeof(config.inverter_url));
-  strlcpy(config.inverter_push_url, "", sizeof(config.inverter_push_url));
-  strlcpy(config.threephase_push_url, "", sizeof(config.threephase_push_url));
-  strlcpy(config.threephase_direct_url, "", sizeof(config.threephase_direct_url));
-
-  strlcpy(config.pub_url, "", sizeof(config.pub_url));
-
-  // HOSTS
-  strlcpy(config.ntp_server, "0.au.pool.ntp.org", sizeof(config.ntp_server));
-  strlcpy(config.update_host, "", sizeof(config.update_host));
-
-  // NTC
-  config.monitor_temp = 0;
-  config.ntc10k_count = 0;
-
-  for(uint8_t i = 0; i < count_ntc; i++)
-    config.ntc_temp_max[i] = 50;
-
-  for(int i = 0; i < count_cells; i++)
-    config.battery_volt_mod[i] = 1;
-
-  config.otsdh = 1; // overtemp shutdown hours
-
-  // PINS
-  config.pin_led = OPT_DEFAULT;
-  config.pin_charger = OPT_DEFAULT;
-  config.pin_inverter = OPT_DEFAULT;
-  config.pin_wd = OPT_DEFAULT;
-  config.pin_flash = OPT_DEFAULT;
-  config.pin_sda = OPT_DEFAULT;
-  config.pin_scl = OPT_DEFAULT;
-  config.pin_buzzer = OPT_DEFAULT;
-
-  // cell voltage limits
-  config.pack_volt_min = 1;
-  config.battery_volt_min = 1;
-  config.battery_volt_rec = 3;
-  config.battery_volt_max = 4.2;
-
-  // VMON Calibration
-
-  config.cells_in_series = 1;
-  config.monitor_battery = 0;
-  config.cell_count = 0;
-  config.dcvoltage_offset = 0;
-
-  // i2c dev addresses
-
-//   config.oled_addr = doc["oled_addr"];
-
-  // Fronius
-
-  config.avg_phase = 0;
-
-  // fronius 3phase options
-  config.threephase = 0;
-  config.monitor_phase_a = 0;
-  config.monitor_phase_b = 0;
-  config.monitor_phase_c = 0;
-
-  config.cpkwh = 0.28;
-
-  // bools
-
-  config.prefer_dc = 0;
-
-  config.rotate_oled = 0;
-  config.display_mode = 0;
-
-  config.hv_monitor = 0;
-
-
-  config.flip_ipin = 0;
-  config.flip_cpin = 0;
-  config.auto_update = 0;
-  config.inv_idle_mode = 0;
-  config.i_enable = 0;
-  config.c_enable = 0;
-  config.day_is_timer = 0;
-  config.night_is_timer = 0;
-
-  // ?
-
-  // Day Device
-  config.day_watts = 0;
-
-  config.night_watts = 0;
-  config.c_start_h = 8;
-  config.c_finish_h = 17;
-  config.i_start_h = 18;
-  config.i_finish_h = 6;
-
-  // sortme
-
-  config.lv_shutdown_delay = 1;
-  config.hv_shutdown_delay = 1;
-  config.charger_oot_min = 5;
-  config.charger_oot_sec = 0;
-
-  config.inverter_oot_min = 0;
-  config.inverter_oot_sec = 30;
-
-  config.gmt = 0;
-
-
-  config.board_rev = 1;
-
-  // FLAGS
-
-  config.webc_mode = 1;
-
-  config.m247 = 0;
-
-  // LED
-  config.led_status = 0;
-  config.blink_led = 1;
-  config.blink_led_default = 1;
-
-  // charger off delay
-
-  config.charger_off_min = 1;
-  config.charger_off_sec = 1;
-
-  config.c_offd = 0;
-
-  config.c_amot = 0;
-
-  vars_sanity_check();
-}
-
-*/
 
 bool load_config()
 {
@@ -408,7 +261,7 @@ bool load_config()
       config.ntc_temp_max[i] = 50;
   }
 
-  for(int i = 0; i < count_cells; i++)
+  for(uint8_t i = 0; i < MAX_CELLS; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
 
   config.otsdh = doc["otsdh"]; // overtemp shutdown hours
@@ -653,7 +506,7 @@ void vars_sanity_check()
   }
   // -------------------------------------
 
-  for(byte i = 0; i < count_cells; i++)
+  for(uint8_t i = 0; i < MAX_CELLS; i++)
   {
     if(config.battery_volt_mod[i] <= 0)
       config.battery_volt_mod[i] = 1;

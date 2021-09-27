@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 228
+#define FW_VERSION 229
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -31,7 +31,7 @@ this seems to resolve OTA issues.
 #define slarge 256
 
 #define count_ntc 16
-#define count_cells 16
+#define MAX_CELLS 32
 
 // ======================================
 
@@ -135,8 +135,8 @@ SysTimers timers;
 //------------------------------------------------------------------------------
 // cell voltages & ntc
 
-double cells_volts[count_cells];
-double cells_volts_real[count_cells];
+double cells_volts[MAX_CELLS];
+double cells_volts_real[MAX_CELLS];
 float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
@@ -263,7 +263,7 @@ struct Sconfig
 
 //   double ntc_temp_mods[count_ntc];
 
-  double battery_volt_mod[count_cells];
+  double battery_volt_mod[MAX_CELLS];
 
   uint8_t ntc_temp_max[count_ntc];
 
