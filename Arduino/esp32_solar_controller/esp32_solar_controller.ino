@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 232
+#define FW_VERSION 234
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -30,7 +30,6 @@ this seems to resolve OTA issues.
 #define smedium 128
 #define slarge 256
 
-#define count_ntc 16
 #define MAX_CELLS 32
 
 // ======================================
@@ -133,7 +132,7 @@ struct SysTimers
 SysTimers timers;
 
 //------------------------------------------------------------------------------
-// cell voltages & ntc
+// cell voltages
 
 double cells_volts[MAX_CELLS];
 double cells_volts_real[MAX_CELLS];
@@ -142,8 +141,6 @@ float cell_volt_high = 0;
 float cell_volt_low = 0;
 
 uint8_t cell_lh[2] = {0, 0};
-
-float ntc10k_sensors[count_ntc];
 
 //------------------------------------------------------------------------------
 
@@ -174,8 +171,6 @@ const String html_js_header       = "/jsheader" + dothtml;
 const String html_issue_log       = "/issue" + dothtml;
 const String html_net_config      = "/network" + dothtml;
 const String html_datasrcs        = "/datasrcs" + dothtml;
-const String html_ntc10k_config   = "/ntc10k" + dothtml;
-const String html_ntc10k_info     = "/ntc10ki" + dothtml;
 const String html_sys_info        = "/system" + dothtml;
 const String html_battery_info    = "/battery" + dothtml;
 const String html_upload_config   = "/up_conf" + dothtml;
@@ -239,8 +234,6 @@ struct Sconfig
   float lv_shutdown_delay; // float because we use fraction of hours eh 0.5h
   float hv_shutdown_delay;
 
-  float otsdh;
-
   uint8_t charger_oot_min;
   uint8_t charger_oot_sec;
 
@@ -261,11 +254,7 @@ struct Sconfig
   char wifi_ssid2[ssmall];
   char wifi_pass2[ssmall];
 
-//   double ntc_temp_mods[count_ntc];
-
   double battery_volt_mod[MAX_CELLS];
-
-  uint8_t ntc_temp_max[count_ntc];
 
   char hostn[stiny];
 
@@ -280,13 +269,9 @@ struct Sconfig
 
   int8_t pin_buzzer;
 
-
-  uint8_t ntc10k_count;
-
   char update_host[ssmall];
 
   char ntp_server[ssmall];
-
 
   float pack_volt_min;
   float battery_volt_min;
@@ -303,7 +288,6 @@ struct Sconfig
 
   // bools
 
-  bool monitor_temp = 0;
   bool rotate_oled = 0;
   bool blink_led = 0;
   bool blink_led_default = 0;
@@ -369,7 +353,6 @@ struct SysFlags
   bool day = 0;
   bool shutdown_lvolt = 0;
   bool shutdown_hvolt = 0;
-  bool shutdown_htemp = 0;
   bool update_found = 0;
 
   bool save_config = 0;
@@ -612,9 +595,6 @@ void setup()
 
     server.on("/port_info", port_info);
 
-    server.on("/ntc10k_config", ntc10k_config);
-    server.on("/ntc10k_info", ntc10k_info);
-
     server.on("/i2c_scan", i2c_scan);
 
     server.on("/sys_info", sys_info);
@@ -651,21 +631,14 @@ void setup()
     {
       cells_volts_real[i] = 0;
       cells_volts[i]      = 0;
-
-      ntc10k_sensors[i]   = mmaths.magic_num;
     }
 
     adc_quick_poll();
   }
   else
   {
-    // check config, if temp / volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
+    // check config, if volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
 
-    if(config.monitor_temp)
-    {
-      log_msg("monitor_temp enabled but ADC not found");
-      flags.adc_config_error = 1;
-    }
     if(config.monitor_battery)
     {
       log_msg("monitor_battery enabled but ADC not found");
@@ -793,26 +766,6 @@ void loop()
     return;
   }
 
-
-  // -------------------------------------------------------------------------
-  // High Temp Check
-
-  if(config.monitor_temp && flags.shutdown_htemp)
-  {
-    if(system_mode != 0)
-    {
-      log_msg("High Temp Shutdown.");
-    }
-
-    unsigned long tmp_sec = (millis() / 1000) % 3;
-    if(tmp_sec)
-      beep_helper(700, 25); // ALARM
-
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " +  "Idle (High Temp)\n";
-    modeset(0);
-
-    return;
-  }
 
   // finish loop unless its time to update
   if (timers.mode_check > millis())
@@ -1202,19 +1155,14 @@ bool check_data_sources()
   }
 
   // ADC poll
-  if(cds_pos == 1 && (config.monitor_battery || config.monitor_temp || flags.lm75a) && millis() > timers.adc_poll)
+  if(cds_pos == 1 && (config.monitor_battery || flags.lm75a) && millis() > timers.adc_poll)
   {
-    if(config.monitor_battery || config.monitor_temp)
-      adsmux.adc_poll();
-
     if(config.monitor_battery)
     {
+      adsmux.adc_poll();
       cells_update();
       check_cells();
     }
-
-    if(config.monitor_temp)
-      ntc_update();
 
     if(flags.lm75a)
       board_temp = lm75a.getTemperature();
@@ -1380,7 +1328,6 @@ void both_print_ip()
   Serial.println("IP: " + WiFi.localIP().toString());
 }
 
-uint8_t oled_temp_pos = 0;
 void oled_print_info()
 {
   oled_clear();
@@ -1490,17 +1437,6 @@ void oled_print_info()
     oled_set2X();
     oled_println(String(board_temp, 2) + "c\n" );
   }
-  else if(config.monitor_temp && config.ntc10k_count > 0)
-  {
-    oled_set2X();
-    oled_println(String(oled_temp_pos + 1) + ": " +  String(ntc10k_sensors[oled_temp_pos], 1) + "c\n" );
-
-    oled_temp_pos++;
-    if(oled_temp_pos >= config.ntc10k_count)
-    {
-      oled_temp_pos = 0;
-    }
-  }
   else
   {
     oled_set1X();
@@ -1553,13 +1489,7 @@ void calc_next_update()
 
   uint32_t rest_s = 30;
 
-  if(system_mode == 0 && config.monitor_temp && flags.shutdown_htemp) // High Temp IDLE
-  {
-
-    rest_s = config.otsdh * 60 * 60 * 1000;
-  }
-
-  else if(system_mode == 0) // IDLE
+  if(system_mode == 0) // IDLE
   {
     rest_s = random(5, 10);
   }

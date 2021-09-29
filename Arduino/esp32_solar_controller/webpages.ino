@@ -187,56 +187,6 @@ void net_config()
 }
 
 
-// ntc10k_config page
-void ntc10k_config()
-{
-  String webpage = get_file(html_header);
-  webpage += get_file(html_ntc10k_config);
-  webpage += js_header();
-
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " ntc10k config");
-
-  webpage += html_create_input(F("otsdh"), F("otsdh"), "3", String(config.otsdh, 2), "0-X");
-
-
-  for(int i = 0; i < count_ntc; i++)
-  {
-    String input_name = "ntc_temp_max";
-    String id_name = "ntc_temp_max" + String(i+1);
-    input_name += String(i + 1);
-
-    webpage += html_create_input(id_name, input_name, "20", String(config.ntc_temp_max[i]), ".");
-  }
-
-  webpage += js_radio_helper(F("monitor_temp_1"), F("monitor_temp_0"), config.monitor_temp);
-
-  // address
-  webpage += js_select_helper(F("ntc10k_count"), String(config.ntc10k_count));
-
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage); // Send response
-}
-
-
-// ntc10k_config page
-void ntc10k_info()
-{
-  String webpage = get_file(html_header);
-  webpage +=  get_file(html_ntc10k_info);
-  webpage += js_header();
-
-  for(uint8_t i = 0; i < config.ntc10k_count; i++)
-  {
-    webpage += js_table_add_row("temp_table", String(i+1), "", ntc10k_sensors[i] + String("c") );
-  }
-
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " ntc10k Info");
-
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage); // Send response
-}
 
 void battery_info()
 {
@@ -572,26 +522,6 @@ void web_config_submit()
       else if (server.argName(i) == F("pack_volt_min"))
         config.pack_volt_min = server.arg(i).toFloat();
 
-
-      else if (server.argName(i) == F("monitor_temp"))
-        config.monitor_temp = server.arg(i).toInt();
-
-
-      else if(server.argName(i).startsWith("ntc_temp"))
-      {
-        for(int x = 0; x < count_ntc; x++)
-        {
-          if (server.argName(i) == String("ntc_temp_max") + String(x+1) )
-          {
-            config.ntc_temp_max[x] = server.arg(i).toInt();
-            skip2next = 1;
-            break;
-          }
-        }
-        if(skip2next)
-          continue;
-      }
-
       else if(server.argName(i).startsWith("battery_volt_mod"))
       {
         for(uint8_t x = 0; x < MAX_CELLS; x++)
@@ -612,13 +542,6 @@ void web_config_submit()
 
       else if (server.argName(i) == F("hv_shutdown_delay"))
         config.hv_shutdown_delay = server.arg(i).toFloat();
-
-      // ntc10k options
-
-      else if (server.argName(i) == F("ntc10k_count"))
-        config.ntc10k_count = server.arg(i).toInt();
-
-      // latest
 
       // System Passwords
 

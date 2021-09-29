@@ -8,28 +8,6 @@ void cells_update()
 }
 
 
-void ntc_update()
-{
-  if(!adsmux.adc_found)
-    return;
-
-  for(uint8_t sensor = 0; sensor < config.ntc10k_count; sensor++)
-  {
-    ntc10k_sensors[sensor] = mmaths.dirty_average(ntc10k_sensors[sensor], adsmux.ntc10k_read_temp(sensor+16), 2);
-  }
-
-  flags.shutdown_htemp = 0;
-
-  for(int i = 0; i < config.ntc10k_count; i++)
-  {
-    if(ntc10k_sensors[i] > config.ntc_temp_max[i])
-    {
-      flags.shutdown_htemp = 1;
-      break;
-    }
-  }
-}
-
 // used on startup
 void adc_quick_poll()
 {

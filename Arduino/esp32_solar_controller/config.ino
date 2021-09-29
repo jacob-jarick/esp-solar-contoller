@@ -40,21 +40,11 @@ void save_config()
 
   doc["pub_url"] = config.pub_url;
 
-//   doc[""] = config.;
-
-  for(uint8_t i = 0; i < count_ntc; i++)
-  {
-//     doc["temp_mod" + String(i+1)] = config.ntc_temp_mods[i];
-    doc["mt" + String(i+1)] = config.ntc_temp_max[i];
-  }
 
   for(uint8_t i = 0; i < MAX_CELLS; i++)
   {
     doc["volt_mod" + String(i+1)] = config.battery_volt_mod[i];
   }
-
-  doc["otsdh"] = config.otsdh;
-
 
   // PINS
 
@@ -80,13 +70,6 @@ void save_config()
   doc["cpkwh"] = config.cpkwh;
 
 
-  // bytes
-
-  doc["ntc10k_count"] = config.ntc10k_count;
-
-  // ints
-
-
   // i2c dev char addresses
 
   doc["oled_addr"] = config.oled_addr;
@@ -94,7 +77,6 @@ void save_config()
   // bools
   doc["prefer_dc"] = (int)config.prefer_dc;
 
-  doc["monitor_temp"] = (int)config.monitor_temp;
   doc["rotate_oled"] = (int)config.rotate_oled;
   doc["display_mode"] = (int)config.display_mode;
 
@@ -249,22 +231,8 @@ bool load_config()
   strlcpy(config.ntp_server, doc["ntp_server"], sizeof(config.ntp_server));
   strlcpy(config.update_host, doc["update_host"], sizeof(config.update_host));
 
-  // NTC
-  config.monitor_temp = doc["monitor_temp"];
-  config.ntc10k_count = doc["ntc10k_count"];
-
-  for(uint8_t i = 0; i < count_ntc; i++)
-  {
-    config.ntc_temp_max[i] = doc["mt" + String(i+1)]; // mt = max temp
-
-    if(!config.ntc_temp_max[i])
-      config.ntc_temp_max[i] = 50;
-  }
-
   for(uint8_t i = 0; i < MAX_CELLS; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
-
-  config.otsdh = doc["otsdh"]; // overtemp shutdown hours
 
   // PINS
   config.pin_led = doc["pin_led"];
@@ -425,13 +393,6 @@ void vars_sanity_check()
 
   set_led(config.led_status);
 
-  if(config.otsdh < 0.1)
-  {
-    config.otsdh = 0.1;
-    log_msg("config fix: otsdh");
-    flags.save_config = 1;
-  }
-
   if(config.hv_shutdown_delay < 0)
   {
     config.hv_shutdown_delay = 1;
@@ -498,12 +459,6 @@ void vars_sanity_check()
       adsmux.adc_enable[i] = 1;
   }
 
-  // enable temp channels
-  if(config.monitor_temp)
-  {
-    for(byte i = 0; i < config.ntc10k_count; i++)
-      adsmux.adc_enable[i+16] = 1;
-  }
   // -------------------------------------
 
   for(uint8_t i = 0; i < MAX_CELLS; i++)
