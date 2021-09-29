@@ -345,7 +345,7 @@ void battery_config()
 
   webpage += js_radio_helper(F("hv_monitor1"), F("hv_monitor0"), config.hv_monitor);
 
-  webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-16");
+  webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-32");
 
   webpage += html_create_input(F("bvmin"), F("battery_volt_min"), "10", String(config.battery_volt_min, 4), "float");
 

@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 231
+#define FW_VERSION 232
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -647,7 +647,7 @@ void setup()
   {
     oled_println("ADC 1st Poll");
 
-    for(uint8_t i = 0; i < 16; i++)
+    for(uint8_t i = 0; i < MAX_CELLS; i++)
     {
       cells_volts_real[i] = 0;
       cells_volts[i]      = 0;

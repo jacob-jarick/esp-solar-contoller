@@ -446,7 +446,7 @@ void vars_sanity_check()
     flags.save_config = 1;
   }
 
-  config.cell_count = constrain(config.cell_count, 1, 16);
+  config.cell_count = constrain(config.cell_count, 1, MAX_CELLS);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
   {
