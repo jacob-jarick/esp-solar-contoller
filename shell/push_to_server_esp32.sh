@@ -14,7 +14,7 @@ latest=`ls -Art \`find /tmp -name esp32_solar_controller.ino.bin 2>/dev/null\` |
 cp -v $latest $HTMLDIR/firmware.bin
 cp -v $latest $FWDIR/esp32-firmware.bin
 
-cp -v $PROJDIR/data/esp32-firmware.bin
+cp -v $latest $PROJDIR/data/esp32-firmware.bin
 
 CV=`grep "#define FW_VERSION" $PROJDIR/esp32_solar_controller.ino | awk '{print $3}'`
 
