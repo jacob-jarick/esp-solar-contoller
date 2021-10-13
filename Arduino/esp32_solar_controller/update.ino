@@ -6,11 +6,10 @@ void download_html_from_remote()
   if(flags.update_self) // shouldnt happen BUUUT - avoid downloading new HTML while trying to do firmware updates (should happen after reboot)
     return;
 
-  const int asize = 21;
+  const int asize = 20;
   String dl_array[asize] =
   {
     html_header,
-    txt_system_messages,
     html_stats,
     html_mode,
     html_advance_config,

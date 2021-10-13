@@ -60,7 +60,7 @@ bool get_url_and_save(String &url, String &filepath)
     }
     else
     {
-      Serial.println("get_url_and_save: HTTP BAD Code:" + String(get_url_code, DEC) );
+      Serial.println("get_url_and_save: HTTP BAD Code:" + String(get_url_code, DEC) + " " + url );
     }
   }
   else

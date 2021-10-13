@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 236
+#define FW_VERSION 237
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -178,7 +178,6 @@ const String html_port_config     = "/portconf" + dothtml;
 
 const String css_file             = "/style.css";
 const String txt_log_system       = "/log" + dottxt;
-const String txt_system_messages  = "/msg" + dottxt;
 const String txt_passwd_file      = "/passwd";
 const String json_config_file     = "/config.jsn";
 
