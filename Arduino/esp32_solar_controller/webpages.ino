@@ -289,7 +289,7 @@ void battery_config()
   webpage += get_file(html_battery);
   webpage += js_header();
 
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F("Battery Config")) );
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F(" Battery Config")) );
   webpage += js_radio_helper(F("monitor_battery1"), F("monitor_battery0"), config.monitor_battery);
 
 
@@ -304,6 +304,7 @@ void battery_config()
   webpage += html_create_input(F("pvm"), F("pack_volt_min"), "10", String(config.pack_volt_min, 4), "float");
   webpage += html_create_input(F("voff"), F("ups_volt_ofs"), "10", String(config.dcvoltage_offset, 4), "float");
 
+  /*
   for(int i = 0; i < MAX_CELLS; i++)
   {
     String input_name = "battery_volt_mod";
@@ -312,14 +313,12 @@ void battery_config()
 
     webpage += html_create_input(id_name, input_name, "20", String(config.battery_volt_mod[i], 7), ".");
   }
+  */
 
   webpage += js_select_helper(F("cells_in_series"), String(config.cells_in_series) );
 
   webpage += html_create_input(F("lvrd"), F("lv_shutdown_delay"), "3", String(config.lv_shutdown_delay, 2), "float");
   webpage += html_create_input(F("hvrd"), F("hv_shutdown_delay"), "3", String(config.hv_shutdown_delay, 2), "float");
-
-
-//   webpage += F("</script>"); // page string to big, footer not attached
 
   webpage += web_footer();
 
@@ -601,7 +600,7 @@ void web_config_submit()
     }
   }
 
-  webpage += js_helper_innerhtml(title_str, F("Config Saved"));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) +  F("Config Saved"));
   webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 
@@ -1286,7 +1285,7 @@ void update_menu()
   String pre = check_for_update();
   String link = F("<a href=/do_update>Upgrade Now</a>");
 
-  webpage += js_helper_innerhtml(title_str, F("Update Check"));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + F("Update Check"));
   webpage += js_helper_innerhtml(F("pre"), pre);
   webpage += js_helper_innerhtml(F("link"), link);
   webpage += js_helper_innerhtml(F("link2"), "<a href=" + String(config.pub_url) + "/changelog.txt>Change Log</a>");
@@ -1315,7 +1314,7 @@ void do_update_web()
     pre += String("\\nDEVICE WILL RESTART SOON.");
   }
 
-  webpage += js_helper_innerhtml(title_str, F("Updating"));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + F("Updating"));
   webpage += js_helper_innerhtml(F("pre"), pre);
 
   webpage += "\nredir(\"/\", \"45\");\n";
@@ -1336,7 +1335,7 @@ void upload_config()
   webpage += js_header();
 
   if(config.webc_mode)
-    webpage += js_helper_innerhtml(title_str, F("Upload Config"));
+    webpage += js_helper_innerhtml(title_str, String(config.hostn) + F("Upload Config"));
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 

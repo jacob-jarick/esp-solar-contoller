@@ -393,6 +393,8 @@ void vars_sanity_check()
 
   set_led(config.led_status);
 
+
+
   if(config.hv_shutdown_delay < 0)
   {
     config.hv_shutdown_delay = 1;

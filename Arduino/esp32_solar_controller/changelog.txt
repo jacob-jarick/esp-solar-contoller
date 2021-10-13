@@ -1,20 +1,20 @@
-     HEAD~0	e91e40b fw 232
-     HEAD~1	87ceec9 fix ads1115 setup
-     HEAD~2	eb27bd1 FW 229
-     HEAD~3	f795f87 fw 228.
-     HEAD~4	e479251 dummy2
-     HEAD~5	f20fe23 dummy
-     HEAD~6	0a15950 working on Lib updates.
-     HEAD~7	fc77516 libs updated
-     HEAD~8	a2f1fe8 swapped to common header
-     HEAD~9	1c850aa system messages shifted to footer
-    HEAD~10	c35a22a syslog hostname
-    HEAD~11	c70109a cost per kwh
-    HEAD~12	c398c70 config validation
-    HEAD~13	0f07947 mime fixes
-    HEAD~14	55eb5ed fw 201.
-    HEAD~15	5680146 fw 200
-    HEAD~16	a5b7b0d Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
-    HEAD~17	2128710 fw 199
-    HEAD~18	f42a9e7 docs - diagrams
-    HEAD~19	95f0098 docs - diagram
+     HEAD~0	e5451bb fw 242
+     HEAD~1	e91e40b fw 232
+     HEAD~2	87ceec9 fix ads1115 setup
+     HEAD~3	eb27bd1 FW 229
+     HEAD~4	f795f87 fw 228.
+     HEAD~5	e479251 dummy2
+     HEAD~6	f20fe23 dummy
+     HEAD~7	0a15950 working on Lib updates.
+     HEAD~8	fc77516 libs updated
+     HEAD~9	a2f1fe8 swapped to common header
+    HEAD~10	1c850aa system messages shifted to footer
+    HEAD~11	c35a22a syslog hostname
+    HEAD~12	c70109a cost per kwh
+    HEAD~13	c398c70 config validation
+    HEAD~14	0f07947 mime fixes
+    HEAD~15	55eb5ed fw 201.
+    HEAD~16	5680146 fw 200
+    HEAD~17	a5b7b0d Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~18	2128710 fw 199
+    HEAD~19	f42a9e7 docs - diagrams

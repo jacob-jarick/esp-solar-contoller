@@ -1,9 +1,18 @@
 
 
 <script type="text/javascript">
+
+var cell_count = 0;
+
 function batcal_add_row(cell, voltage, modifier)
 {
   console.log("batcal_add_row('" +  cell + "', '" + voltage + "', '" + modifier + "')");
+
+  // cheats way to grab max cells since its variable.
+  if(cell_count < cell)
+  {
+    cell_count = cell;
+  }
 
   var table = document.getElementById('battery_table');
   var row = table.insertRow(-1);
@@ -37,7 +46,6 @@ function battery_calc(cell)
 
   var mod_new = (volt_new / volt_old) * mod_old;
   document.getElementById("battery_volt_mod"+cell).value = mod_new;
-
 }
 
 </script>
