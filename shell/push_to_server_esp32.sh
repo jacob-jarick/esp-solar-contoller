@@ -3,16 +3,18 @@
 HTMLDIR=/var/www/html/esp32
 PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp32_solar_controller
 FWDIR=/home/mem/git/esp-solar-contoller/firmwares
+PUBUPDIR=/home/mem/git/esp-solar-contoller/updates/esp32
 
 mkdir -p $HTMLDIR/data
-mkdir -p $FWDIR
+mkdir -p $PUBUPDIR/data
 
 cp -rv $PROJDIR/data/* $HTMLDIR/data
+cp -rv $PROJDIR/data/* $PUBUPDIR/data
 
 latest=`ls -Art \`find /tmp -name esp32_solar_controller.ino.bin 2>/dev/null\` | tail -n1`
 
 cp -v $latest $HTMLDIR/firmware.bin
-cp -v $latest $FWDIR/esp32-firmware.bin
+cp -v $latest $PUBUPDIR/firmware.bin
 
 cp -v $latest $PROJDIR/data/esp32-firmware.bin
 
@@ -22,13 +24,14 @@ echo
 echo Current Version: $CV
 echo $CV > $HTMLDIR/cv.txt
 
-cp -v $HTMLDIR/cv.txt $PROJDIR/data
+cp -v $HTMLDIR/cv.txt $PUBUPDIR/data
 
 echo
 echo updating changelog.
 git log --oneline | nl -v0 | sed 's/^ \+/&HEAD~/' | head -20 > $PROJDIR/changelog.txt
 
-cp -rv $PROJDIR/changelog.txt $HTMLDIR
+cp -v $PROJDIR/changelog.txt $HTMLDIR
+cp -v $PROJDIR/changelog.txt $PUBUPDIR
 
 echo
 echo Done.

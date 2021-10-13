@@ -154,7 +154,7 @@ void save_config()
   }
 
   // Serialize JSON to file
-  else if (serializeJson(doc, file) == 0)
+  else if (serializeJsonPretty(doc, file) == 0)
   {
     Serial.println("Failed to write to " + json_config_file);
     save_error = 1;

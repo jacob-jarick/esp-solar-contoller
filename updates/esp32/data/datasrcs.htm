@@ -1,0 +1,111 @@
+
+<center>
+
+<form action='/result' method='POST'>
+
+<table border=1>
+
+<tr>
+  <td>Cost Per Kwh ($):</td>
+  <td>
+    <input id=cpkwh type=text name='cpkwh' value="" size=5></td>
+</tr>
+
+<tr>
+  <td>Inverter JSON URL:</td><td>
+  <input id=inverter_url type=text name='inverter_url' value='' size=100>
+  </td>
+</tr>
+
+<tr>
+  <td>Push URL (fallback):</td><td>
+  <input id=inverter_push_url type=text name='inverter_push_url' value='' size=100></td>
+</tr>
+
+<tr><td colspan=3><b>Update URLs</b></td></tr>
+
+<tr>
+  <td>Prod:</td>
+  <td><input id=pub_url type=text name='pub_url' value='' size=100></td>
+</tr>
+
+<tr><td colspan=3><b>3 Phase Options</b></td></tr>
+
+<tr>
+  <td>3phase URL:</td>
+  <td>
+    <input id=threephase_direct_url type=text name='threephase_direct_url' value="" size=100></td>
+</tr>
+
+<tr>
+  <td>3phase Push URL:</td>
+  <td><input id=threephase_push_url type=text name='threephase_push_url' value="" size=100></td>
+</tr>
+
+<tr>
+	<td>3 Phase Mode</td>
+	<td>
+		<input id=threephase1 type=radio name="threephase" value=1> Enable
+		<input id=threephase0 type=radio name="threephase" value=0> Disable
+	</td>
+</tr>
+
+<tr>
+	<td>Monitor Phase A</td>
+	<td>
+		<input id=monitor_phase_a1 type=radio name="monitor_phase_a" value=1> Enable
+		<input id=monitor_phase_a0 type=radio name="monitor_phase_a" value=0> Disable
+	</td>
+</tr>
+
+<tr>
+	<td>Monitor Phase B</td>
+	<td>
+		<input id=monitor_phase_b1 type=radio name="monitor_phase_b" value=1> Enable
+		<input id=monitor_phase_b0 type=radio name="monitor_phase_b" value=0> Disable
+	</td>
+</tr>
+
+<tr>
+	<td>Monitor Phase C</td>
+	<td>
+		<input id=monitor_phase_c1 type=radio name="monitor_phase_c" value=1> Enable
+		<input id=monitor_phase_c0 type=radio name="monitor_phase_c" value=0> Disable
+	</td>
+</tr>
+
+<tr><td colspan=3><b>Save</b></td></tr>
+
+<tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr>
+
+</table>
+
+</form>
+
+</center>
+
+<br>
+<h3>Example URLs</h3>
+<pre>
+
+======================
+Fronius Inverter URLs
+
+Inverter JSON URL:    http://INVERTER-IP/solar_api/v1/GetPowerFlowRealtimeData.fcgi
+Push URL (fallback):  http://LOCAL-WEBSERVER-IP/inverter/currpowerflow.json
+
+
+============================
+3phase Fronius Inverter URLs
+
+3phase URL:           http://INVERTER-IP/solar_api/v1/GetMeterRealtimeData.cgi?Scope=System
+3phase Push URL:      http://LOCAL-WEBSERVER-IP/inverter/realtime.json
+
+===========
+Update URLs
+
+Prod:                 http://LOCAL-WEBSERVER-IP/esp32
+
+</pre>
+<br>
+
