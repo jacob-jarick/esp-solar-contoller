@@ -1,20 +1,20 @@
-     HEAD~0	4caf0df JSON config pretty print.
-     HEAD~1	1d2b276 pub URL
-     HEAD~2	eda49b1 pub url on github
-     HEAD~3	e5451bb fw 242
-     HEAD~4	e91e40b fw 232
-     HEAD~5	87ceec9 fix ads1115 setup
-     HEAD~6	eb27bd1 FW 229
-     HEAD~7	f795f87 fw 228.
-     HEAD~8	e479251 dummy2
-     HEAD~9	f20fe23 dummy
-    HEAD~10	0a15950 working on Lib updates.
-    HEAD~11	fc77516 libs updated
-    HEAD~12	a2f1fe8 swapped to common header
-    HEAD~13	1c850aa system messages shifted to footer
-    HEAD~14	c35a22a syslog hostname
-    HEAD~15	c70109a cost per kwh
-    HEAD~16	c398c70 config validation
-    HEAD~17	0f07947 mime fixes
-    HEAD~18	55eb5ed fw 201.
-    HEAD~19	5680146 fw 200
+     HEAD~0	d98ca7a html download debug
+     HEAD~1	2dbaf85 cv.txt
+     HEAD~2	4caf0df JSON config pretty print.
+     HEAD~3	1d2b276 pub URL
+     HEAD~4	eda49b1 pub url on github
+     HEAD~5	e5451bb fw 242
+     HEAD~6	e91e40b fw 232
+     HEAD~7	87ceec9 fix ads1115 setup
+     HEAD~8	eb27bd1 FW 229
+     HEAD~9	f795f87 fw 228.
+    HEAD~10	e479251 dummy2
+    HEAD~11	f20fe23 dummy
+    HEAD~12	0a15950 working on Lib updates.
+    HEAD~13	fc77516 libs updated
+    HEAD~14	a2f1fe8 swapped to common header
+    HEAD~15	1c850aa system messages shifted to footer
+    HEAD~16	c35a22a syslog hostname
+    HEAD~17	c70109a cost per kwh
+    HEAD~18	c398c70 config validation
+    HEAD~19	0f07947 mime fixes

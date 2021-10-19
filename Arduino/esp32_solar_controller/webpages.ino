@@ -1285,7 +1285,7 @@ void update_menu()
   String pre = check_for_update();
   String link = F("<a href=/do_update>Upgrade Now</a>");
 
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) + F("Update Check"));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + F(" Update Check"));
   webpage += js_helper_innerhtml(F("pre"), pre);
   webpage += js_helper_innerhtml(F("link"), link);
   webpage += js_helper_innerhtml(F("link2"), "<a href=" + String(config.pub_url) + "/changelog.txt>Change Log</a>");
@@ -1314,7 +1314,7 @@ void do_update_web()
     pre += String("\\nDEVICE WILL RESTART SOON.");
   }
 
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) + F("Updating"));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + F(" Updating"));
   webpage += js_helper_innerhtml(F("pre"), pre);
 
   webpage += "\nredir(\"/\", \"45\");\n";
@@ -1335,7 +1335,7 @@ void upload_config()
   webpage += js_header();
 
   if(config.webc_mode)
-    webpage += js_helper_innerhtml(title_str, String(config.hostn) + F("Upload Config"));
+    webpage += js_helper_innerhtml(title_str, String(config.hostn) + F(" Upload Config"));
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
 
