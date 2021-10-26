@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 238
+#define FW_VERSION 239
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -39,7 +39,6 @@ this seems to resolve OTA issues.
 // #include <SPI.h>
 
 #include <WiFi.h>
-// #include <WiFiMulti.h>
 #include <WiFiClient.h>
 #include <WiFiAP.h> // todo remove as WiFi is configured via SD card json config
 #include <WiFiUdp.h>
@@ -606,7 +605,7 @@ void setup()
 
     server.on("/batcal", battery_calibrate);
 
-    server.on("/3pinfo", threepase_info);
+    server.on("/3pinfo", ac_info);
 
     server.on("/timers", timers_page);
 
@@ -1289,6 +1288,9 @@ bool check_grid()
     Serial.print(F("x"));
     return 0;
   }
+
+  calc_energy_usage();
+
   Serial.print(F("."));
   return 1;
 }

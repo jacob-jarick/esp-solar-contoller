@@ -767,26 +767,35 @@ void stats()
   server.send(200, mime_html, webpage);
 }
 
-void threepase_info()
+void ac_info()
 {
   String webpage = get_file(html_header);
   webpage += get_file(html_3pinfo);
 
+//   if(!config.threephase)
+//   {
+//     webpage += "three phase mode is disabled</pre>";
+//     webpage += js_header();
+//     webpage += web_footer();
+//
+//     server.send(200, mime_html, webpage);
+//     return;
+//   }
+
+
   if(!config.threephase)
   {
-    webpage += "three phase mode is disabled</pre>";
-    webpage += js_header();
-    webpage += web_footer();
-
-    server.send(200, mime_html, webpage);
-    return;
+//     webpage += "Phase A: " + String(phase_sum) + " watts, " + String(phase_a_voltage) + " volts\n";
+    webpage += String(phase_sum) + " watts\n";
+  }
+  else
+  {
+    webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\n";
+    webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
+    webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
+    webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   }
 
-
-  webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\n";
-  webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
-  webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
-  webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
   webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed_old * config.cpkwh, 2) + "\n";
   webpage += "</pre></center>\n";
@@ -794,7 +803,7 @@ void threepase_info()
   webpage += js_header();
   webpage += "\nrefresh(\"5\");\n";
 
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " 3 Phase Info");
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + " AC Info");
 
 
 

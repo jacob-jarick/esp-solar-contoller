@@ -50,8 +50,6 @@ bool update_p_grid()
     url = String(config.inverter_push_url);
     bool result = get_url(url, payload);
 
-    // TODO check timestamp
-
     if(!result)
       log_msg(F("Error fetch inverter_push_url"));
     else
@@ -259,13 +257,20 @@ bool update_p_grid_3phase()
   phase_c_voltage = Body_0["Voltage_AC_Phase_3"];
 
 
-//   energy_consumed = Body_0["EnergyReal_WAC_Sum_Consumed"];
-//   energy_consumed =  energy_consumed / 1000;
-
-
   if(!inverter_synced)
     inverter_synced = 1;
 
+//   calc_energy_usage();
+
+  timers.pgrid_last_update = millis();
+
+  set_power(get_watts(1));
+
+  return 1;
+}
+
+void calc_energy_usage()
+{
   // calculate actual usage here
   // track energy consumed
   if(timers.pgrid_last_update != 0 && flags.time_synced)
@@ -273,7 +278,7 @@ bool update_p_grid_3phase()
     float tmp_phase_sum = get_watts(3);
 
     float tmp_ms = millis() - timers.pgrid_last_update;
-//     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
+    //     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
     energy_consumed += tmp_phase_sum * tmp_ms / 3600000.0 / 1000; // simplified maths, should catch decimals better too.
 
     int8_t local_d = day(now());
@@ -287,12 +292,6 @@ bool update_p_grid_3phase()
   }
 
   // END calculate actual usage here
-
-  timers.pgrid_last_update = millis();
-
-  set_power(get_watts(1));
-
-  return 1;
 }
 
 // 0 = all summed
