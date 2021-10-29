@@ -394,6 +394,12 @@ void vars_sanity_check()
   set_led(config.led_status);
 
 
+  if(!config.threephase)
+  {
+    config.monitor_phase_a = 1;
+    config.monitor_phase_b = 0;
+    config.monitor_phase_c = 0;
+  }
 
   if(config.hv_shutdown_delay < 0)
   {

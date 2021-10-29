@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 239
+#define FW_VERSION 240
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -126,6 +126,8 @@ struct SysTimers
   unsigned long led = 0;
 
   unsigned long i2c_check = 0;
+
+  unsigned long calc_energy_usage = 0;
 };
 
 SysTimers timers;
@@ -159,7 +161,6 @@ const String html_header          = "/header" + dothtml;
 const String html_config          = "/config" + dothtml;
 const String html_battery         = "/batconf" + dothtml;
 const String html_calibrate       = "/batcal" + dothtml;
-const String html_timer           = "/timer" + dothtml;
 const String html_3pinfo          = "/3pinfo" + dothtml;
 const String html_cpconfig        = "/cpconfig" + dothtml;
 const String html_stats           = "/stats" + dothtml;

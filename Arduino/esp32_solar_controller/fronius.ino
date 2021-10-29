@@ -5,7 +5,7 @@ const uint8_t fronius_min_sync_seconds = 90;
 const size_t jsonsize = 1024 * 4;
 
 
-int8_t fronius_day = -1;
+
 
 unsigned long fronius_last_time = 0;
 
@@ -269,29 +269,31 @@ bool update_p_grid_3phase()
   return 1;
 }
 
+
+int8_t ceu_day = -1; // calc energy usage day
 void calc_energy_usage()
 {
   // calculate actual usage here
   // track energy consumed
-  if(timers.pgrid_last_update != 0 && flags.time_synced)
+  if(timers.calc_energy_usage != 0 && flags.time_synced)
   {
     float tmp_phase_sum = get_watts(3);
 
-    float tmp_ms = millis() - timers.pgrid_last_update;
-    //     energy_consumed += (tmp_phase_sum/1000.0) * (tmp_ms/3600000.0);
+    float tmp_ms = millis() - timers.calc_energy_usage;
+
     energy_consumed += tmp_phase_sum * tmp_ms / 3600000.0 / 1000; // simplified maths, should catch decimals better too.
 
-    int8_t local_d = day(now());
+    int8_t tmp_day = day(now());
 
-    if(fronius_day != local_d) // reset at midnight
+    if(ceu_day != tmp_day) // reset at midnight
     {
-      fronius_day = local_d;
+      ceu_day = tmp_day;
       energy_consumed_old = energy_consumed;
       energy_consumed = 0;
     }
   }
 
-  // END calculate actual usage here
+  timers.calc_energy_usage = millis();
 }
 
 // 0 = all summed
@@ -302,7 +304,19 @@ float get_watts(uint8_t type)
 {
   if(!config.threephase)
   {
-    return phase_sum;
+    if(type == 0)
+      return phase_sum;
+
+    if(type == 1)
+      return phase_sum;
+
+    if(type == 3)
+    {
+      if(phase_sum > 0)
+        return phase_sum;
+      else
+        return 0;
+    }
   }
 
   float tmp = 0;

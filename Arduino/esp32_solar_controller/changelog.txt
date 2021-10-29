@@ -1,20 +1,20 @@
-     HEAD~0	53cca64 web formatting
-     HEAD~1	d98ca7a html download debug
-     HEAD~2	2dbaf85 cv.txt
-     HEAD~3	4caf0df JSON config pretty print.
-     HEAD~4	1d2b276 pub URL
-     HEAD~5	eda49b1 pub url on github
-     HEAD~6	e5451bb fw 242
-     HEAD~7	e91e40b fw 232
-     HEAD~8	87ceec9 fix ads1115 setup
-     HEAD~9	eb27bd1 FW 229
-    HEAD~10	f795f87 fw 228.
-    HEAD~11	e479251 dummy2
-    HEAD~12	f20fe23 dummy
-    HEAD~13	0a15950 working on Lib updates.
-    HEAD~14	fc77516 libs updated
-    HEAD~15	a2f1fe8 swapped to common header
-    HEAD~16	1c850aa system messages shifted to footer
-    HEAD~17	c35a22a syslog hostname
-    HEAD~18	c70109a cost per kwh
-    HEAD~19	c398c70 config validation
+     HEAD~0	01406e4 calc_energy_usage
+     HEAD~1	53cca64 web formatting
+     HEAD~2	d98ca7a html download debug
+     HEAD~3	2dbaf85 cv.txt
+     HEAD~4	4caf0df JSON config pretty print.
+     HEAD~5	1d2b276 pub URL
+     HEAD~6	eda49b1 pub url on github
+     HEAD~7	e5451bb fw 242
+     HEAD~8	e91e40b fw 232
+     HEAD~9	87ceec9 fix ads1115 setup
+    HEAD~10	eb27bd1 FW 229
+    HEAD~11	f795f87 fw 228.
+    HEAD~12	e479251 dummy2
+    HEAD~13	f20fe23 dummy
+    HEAD~14	0a15950 working on Lib updates.
+    HEAD~15	fc77516 libs updated
+    HEAD~16	a2f1fe8 swapped to common header
+    HEAD~17	1c850aa system messages shifted to footer
+    HEAD~18	c35a22a syslog hostname
+    HEAD~19	c70109a cost per kwh
