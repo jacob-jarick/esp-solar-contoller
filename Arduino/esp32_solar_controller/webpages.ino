@@ -785,13 +785,13 @@ void ac_info()
 
   if(!config.threephase)
   {
-    webpage += String(phase_a_watts) + "Watts\n" + String(phase_a_voltage) + " volts\n"+ String(phase_a_watts/phase_a_voltage, 2) + "Amps\n\n";
+    webpage += String(phase_a_watts) + " Watts\n" + String(phase_a_voltage) + " Volts\n"+ String(phase_a_watts/phase_a_voltage, 2) + " Amps\n\n";
   }
   else
   {
-    webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts, "+ String(phase_a_watts/phase_a_voltage, 2) + "Amps \n";
-    webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts, "+ String(phase_b_watts/phase_b_voltage, 2) + "Amps \n";
-    webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts, "+ String(phase_c_watts/phase_c_voltage, 2) + "Amps \n\n";
+    webpage += "Phase A: " + String(phase_a_watts) + " Watts, " + String(phase_a_voltage) + " Volts, "+ String(phase_a_watts/phase_a_voltage, 2) + " Amps \n";
+    webpage += "Phase B: " + String(phase_b_watts) + " Watts, " + String(phase_b_voltage) + " Volts, "+ String(phase_b_watts/phase_b_voltage, 2) + " Amps \n";
+    webpage += "Phase C: " + String(phase_c_watts) + " Watts, " + String(phase_c_voltage) + " Volts, "+ String(phase_c_watts/phase_c_voltage, 2) + " Amps \n\n";
 
     webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   }
