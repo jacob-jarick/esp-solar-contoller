@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 242
+#define FW_VERSION 244
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -222,8 +222,8 @@ struct Sconfig
 {
   uint8_t fwver = 0;
 
-  char inverter_url[smedium];
-  char inverter_push_url[smedium];
+//   char inverter_url[smedium];
+//   char inverter_push_url[smedium];
   char threephase_direct_url[smedium];
   char threephase_push_url[smedium];
   char pub_url[smedium];

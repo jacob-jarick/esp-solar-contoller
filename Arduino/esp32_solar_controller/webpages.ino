@@ -424,11 +424,11 @@ void web_config_submit()
       else if (server.argName(i) == F("cpkwh"))
         config.cpkwh = server.arg(i).toFloat();
 
-      else if (server.argName(i) == F("inverter_url"))
-        strlcpy(config.inverter_url, server.arg(i).c_str(), sizeof(config.inverter_url));
+//       else if (server.argName(i) == F("inverter_url"))
+//         strlcpy(config.inverter_url, server.arg(i).c_str(), sizeof(config.inverter_url));
 
-      else if (server.argName(i) == F("inverter_push_url"))
-        strlcpy(config.inverter_push_url, server.arg(i).c_str(), sizeof(config.inverter_push_url));
+//       else if (server.argName(i) == F("inverter_push_url"))
+//         strlcpy(config.inverter_push_url, server.arg(i).c_str(), sizeof(config.inverter_push_url));
 
       else if (server.argName(i) == F("pub_url"))
         strlcpy(config.pub_url, server.arg(i).c_str(), sizeof(config.pub_url));
@@ -783,10 +783,13 @@ void ac_info()
 //   }
 
 
-  webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts, "+ String(phase_a_watts/phase_a_voltage, 2) + "Amps \n";
-
-  if(config.threephase)
+  if(!config.threephase)
   {
+    webpage += String(phase_a_watts) + "Watts\n" + String(phase_a_voltage) + " volts\n"+ String(phase_a_watts/phase_a_voltage, 2) + "Amps\n\n";
+  }
+  else
+  {
+    webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts, "+ String(phase_a_watts/phase_a_voltage, 2) + "Amps \n";
     webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts, "+ String(phase_b_watts/phase_b_voltage, 2) + "Amps \n";
     webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts, "+ String(phase_c_watts/phase_c_voltage, 2) + "Amps \n\n";
 

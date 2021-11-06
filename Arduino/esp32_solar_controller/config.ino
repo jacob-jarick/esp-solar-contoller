@@ -33,8 +33,8 @@ void save_config()
 
 
 
-  doc["inverter_url"] = config.inverter_url;
-  doc["inverter_push_url"] = config.inverter_push_url;
+//   doc["inverter_url"] = config.inverter_url;
+//   doc["inverter_push_url"] = config.inverter_push_url;
   doc["3p_push_url"] = config.threephase_push_url;
   doc["3p_direct_url"] = config.threephase_direct_url;
 
@@ -220,8 +220,8 @@ bool load_config()
 
 
   // URLS
-  strlcpy(config.inverter_url, doc["inverter_url"], sizeof(config.inverter_url));
-  strlcpy(config.inverter_push_url, doc["inverter_push_url"], sizeof(config.inverter_push_url));
+//   strlcpy(config.inverter_url, doc["inverter_url"], sizeof(config.inverter_url));
+//   strlcpy(config.inverter_push_url, doc["inverter_push_url"], sizeof(config.inverter_push_url));
   strlcpy(config.threephase_push_url, doc["3p_push_url"], sizeof(config.threephase_push_url));
   strlcpy(config.threephase_direct_url, doc["3p_direct_url"], sizeof(config.threephase_direct_url));
 

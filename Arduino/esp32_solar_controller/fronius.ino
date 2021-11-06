@@ -306,15 +306,15 @@ float get_watts(uint8_t type)
   if(!config.threephase)
   {
     if(type == 0)
-      return phase_sum;
+      return phase_a_watts;
 
     if(type == 1)
-      return phase_sum;
+      return phase_a_watts;
 
     if(type == 3)
     {
-      if(phase_sum > 0)
-        return phase_sum;
+      if(phase_a_watts > 0)
+        return phase_a_watts;
       else
         return 0;
     }
