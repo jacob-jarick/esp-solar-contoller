@@ -138,8 +138,8 @@ void datasrcs()
 
   webpage += js_helper(F("cpkwh"), String(config.cpkwh, 3));
 
-  webpage += js_helper(F("inverter_url"), String(config.inverter_url));
-  webpage += js_helper(F("inverter_push_url"), String(config.inverter_push_url));
+//   webpage += js_helper(F("inverter_url"), String(config.inverter_url));
+//   webpage += js_helper(F("inverter_push_url"), String(config.inverter_push_url));
   webpage += js_helper(F("pub_url"), String(config.pub_url));
   webpage += js_helper(F("threephase_push_url"), String(config.threephase_push_url));
 
@@ -783,16 +783,13 @@ void ac_info()
 //   }
 
 
-  if(!config.threephase)
+  webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts, "+ String(phase_a_watts/phase_a_voltage, 2) + "Amps \n";
+
+  if(config.threephase)
   {
-//     webpage += "Phase A: " + String(phase_sum) + " watts, " + String(phase_a_voltage) + " volts\n";
-    webpage += String(phase_sum) + " watts\n";
-  }
-  else
-  {
-    webpage += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\n";
-    webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\n";
-    webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\n\n";
+    webpage += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts, "+ String(phase_b_watts/phase_b_voltage, 2) + "Amps \n";
+    webpage += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts, "+ String(phase_c_watts/phase_c_voltage, 2) + "Amps \n\n";
+
     webpage += "Phase Sum: " + String((phase_a_watts + phase_b_watts + phase_c_watts) ) + " watts\n\n";
   }
 

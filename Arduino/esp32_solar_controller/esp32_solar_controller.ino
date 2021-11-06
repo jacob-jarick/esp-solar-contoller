@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 241
+#define FW_VERSION 242
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1422,6 +1422,32 @@ void oled_print_info()
     oled_set1X();
     oled_println("");
     oled_println(WiFi.localIP().toString());
+
+    return;
+  }
+  if(config.display_mode == 6)
+  {
+    oled_println("V " + String(phase_b_voltage, 2));
+    oled_println("W " + String(phase_b_watts, 2));
+    oled_println("A " + String(phase_b_watts / phase_b_voltage, 2));
+
+    oled_set1X();
+    oled_println("");
+    oled_println(WiFi.localIP().toString());
+
+    return;
+  }
+  if(config.display_mode == 7)
+  {
+    oled_println("V " + String(phase_c_voltage, 2));
+    oled_println("W " + String(phase_c_watts, 2));
+    oled_println("A " + String(phase_c_watts / phase_c_voltage, 2));
+
+    oled_set1X();
+    oled_println("");
+    oled_println(WiFi.localIP().toString());
+
+    return;
   }
 
   // ----------------------------------------------------------------------

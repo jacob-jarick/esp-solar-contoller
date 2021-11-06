@@ -9,6 +9,7 @@ const size_t jsonsize = 1024 * 4;
 
 unsigned long fronius_last_time = 0;
 
+/*
 bool update_p_grid()
 {
   if(config.threephase)
@@ -128,8 +129,10 @@ bool update_p_grid()
 
   return 1;
 }
+*/
 
-bool update_p_grid_3phase()
+// bool update_p_grid_3phase()
+bool update_p_grid()
 {
   bool fellback = 0;
 
@@ -259,8 +262,6 @@ bool update_p_grid_3phase()
 
   if(!inverter_synced)
     inverter_synced = 1;
-
-//   calc_energy_usage();
 
   timers.pgrid_last_update = millis();
 
