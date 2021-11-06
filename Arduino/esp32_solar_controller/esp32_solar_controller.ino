@@ -6,7 +6,7 @@ but the arduino IDE settings for this board seem to cause issues.
 so I configure the IDE to use:
 
 * WEMOS LOLIN32
-* Patition Scheme: Minimal SPIFFS, large app with OTA (testing no OTA)
+* Patition Scheme: Minimal SPIFFS, large app with OTA
 * CPU 240Mhz (WiFi/BT)
 * Flash Frequency 80Mhz
 
@@ -1412,6 +1412,16 @@ void oled_print_info()
     oled_println(WiFi.localIP().toString());
 
     return;
+  }
+  if(config.display_mode == 5) // adams display
+  {
+    oled_println("V " + String(phase_a_voltage, 2));
+    oled_println("W " + String(phase_a_watts, 2));
+    oled_println("A " + String(phase_a_watts / phase_a_voltage, 2));
+
+    oled_set1X();
+    oled_println("");
+    oled_println(WiFi.localIP().toString());
   }
 
   // ----------------------------------------------------------------------
