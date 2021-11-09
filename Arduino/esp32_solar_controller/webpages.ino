@@ -575,7 +575,7 @@ void web_config_submit()
     if(passwd != password_sent)
     {
       load_config();
-      webpage += js_helper_innerhtml(title_str, F("bad pass"));
+      webpage += js_helper_innerhtml(title_str, F(" bad pass"));
       webpage += web_footer();
       server.send(200, mime_html, webpage);
       return;
@@ -592,7 +592,7 @@ void web_config_submit()
     else
     {
       load_config();
-      webpage += js_helper_innerhtml(title_str, F("pass miss match"));
+      webpage += js_helper_innerhtml(title_str, F(" pass miss match"));
       webpage += "\nredir(\"/\", \"60\");\n";
       webpage += web_footer();
       server.send(200, mime_html, webpage);
@@ -600,7 +600,7 @@ void web_config_submit()
     }
   }
 
-  webpage += js_helper_innerhtml(title_str, String(config.hostn) +  F("Config Saved"));
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) +  F(" Config Saved"));
   webpage += "\nredir(\"/\", \"15\");\n";
   webpage += web_footer();
 

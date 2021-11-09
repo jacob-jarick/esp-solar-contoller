@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 246
+#define FW_VERSION 247
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -30,7 +30,7 @@ this seems to resolve OTA issues.
 #define smedium 128
 #define slarge 256
 
-#define MAX_CELLS 32
+#define MAX_CELLS 16
 
 // ======================================
 
