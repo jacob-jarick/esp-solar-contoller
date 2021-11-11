@@ -1,20 +1,20 @@
-     HEAD~0	5e0f767 fw 247
-     HEAD~1	b0f0eb2 fw 247
-     HEAD~2	ea16029 number formatting
-     HEAD~3	852ec10 245
-     HEAD~4	4d4d63e fw 244
-     HEAD~5	8135f07 3phase/single phase updates
-     HEAD~6	4b0892e fw number bump
-     HEAD~7	2457fa2 added new oled display mode
-     HEAD~8	a02e82f fixes, single phase updates.
-     HEAD~9	01406e4 calc_energy_usage
-    HEAD~10	53cca64 web formatting
-    HEAD~11	d98ca7a html download debug
-    HEAD~12	2dbaf85 cv.txt
-    HEAD~13	4caf0df JSON config pretty print.
-    HEAD~14	1d2b276 pub URL
-    HEAD~15	eda49b1 pub url on github
-    HEAD~16	e5451bb fw 242
-    HEAD~17	e91e40b fw 232
-    HEAD~18	87ceec9 fix ads1115 setup
-    HEAD~19	eb27bd1 FW 229
+     HEAD~0	8aa968c voltage tracking
+     HEAD~1	5e0f767 fw 247
+     HEAD~2	b0f0eb2 fw 247
+     HEAD~3	ea16029 number formatting
+     HEAD~4	852ec10 245
+     HEAD~5	4d4d63e fw 244
+     HEAD~6	8135f07 3phase/single phase updates
+     HEAD~7	4b0892e fw number bump
+     HEAD~8	2457fa2 added new oled display mode
+     HEAD~9	a02e82f fixes, single phase updates.
+    HEAD~10	01406e4 calc_energy_usage
+    HEAD~11	53cca64 web formatting
+    HEAD~12	d98ca7a html download debug
+    HEAD~13	2dbaf85 cv.txt
+    HEAD~14	4caf0df JSON config pretty print.
+    HEAD~15	1d2b276 pub URL
+    HEAD~16	eda49b1 pub url on github
+    HEAD~17	e5451bb fw 242
+    HEAD~18	e91e40b fw 232
+    HEAD~19	87ceec9 fix ads1115 setup
