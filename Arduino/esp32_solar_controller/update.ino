@@ -106,10 +106,10 @@ void get_remote_version()
 uint8_t update_trys = 0;
 void do_update()
 {
+  flags.update_self = 0;
+
   if(!flags.update_found)
     get_remote_version();
-
-  flags.update_self = 0;
 
   if(!flags.update_found)
   {
@@ -118,51 +118,29 @@ void do_update()
     return;
   }
 
-  update_trys++;
-
-  const String tmp_str = "Upgrade to " + String(remote_version);
-  log_issue(tmp_str);
+  oled_clear();
+  both_println("Update\nFirmware\ntry " + String(update_trys));
+  log_issue(String("Upgrade to ") + String(remote_version));
 
   modeset(0);
+  update_trys++;
 
-  oled_clear();
+  t_httpUpdate_return ret = ESPhttpUpdate.update(String(config.pub_url) + "/firmware.bin" );
 
-  both_println("Update\nFirmware\n" + String(update_trys));
-
-  const String url = String(config.pub_url) + String("/firmware.bin");
-
-  t_httpUpdate_return ret = ESPhttpUpdate.update(url);
-
-//   flags.download_html = 1;
-  save_config();
+//   save_config();
 
   if(ret == HTTP_UPDATE_FAILED)
   {
     oled_clear();
-    both_println(F("ERROR"));
-//     flags.download_html = 0;
-    log_msg(String("Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
-//     Serial.printf("UPDATE Error (%d): %s",  ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-//     flags.download_html = 0;
+    both_println(F("UPDATE\nERROR"));
+    log_msg(String("OTA Update Error (") + ESPhttpUpdate.getLastError() + String("): ") + ESPhttpUpdate.getLastErrorString().c_str());
 
     if(update_trys < 10)
-    {
       flags.update_self = 1;  // retry
-    }
-    else
-    {
-      flags.update_self = 0;
-//       flags.download_html = 0;
-
-//       save_config();
-    }
   }
   else if(ret == HTTP_UPDATE_NO_UPDATES)
   {
-//     flags.download_html = 0;
-    flags.update_self = 0;
-
-//     save_config();
+    oled_clear();
     both_println(F("NO_UPDATES"));
   }
   else if (ret == HTTP_UPDATE_OK)
