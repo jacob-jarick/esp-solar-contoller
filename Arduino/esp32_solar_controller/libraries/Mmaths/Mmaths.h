@@ -22,6 +22,8 @@ class Mmaths
     uint8_t mmin(const uint8_t a, const uint8_t b);
     uint16_t mmin(const uint16_t a, const uint16_t b);
     unsigned long mmin(const unsigned long  a, const unsigned long  b);
+    float mmin(const float a, const float b);
+    double mmin(const double a, const double b);
 
     uint8_t mdiff(const uint8_t a, const uint8_t b);
     uint16_t mdiff(const uint16_t a, const uint16_t b);

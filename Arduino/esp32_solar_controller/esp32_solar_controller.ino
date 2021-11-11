@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 247
+#define FW_VERSION 249
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -195,6 +195,15 @@ float phase_c_watts = 0;
 float phase_a_voltage = 0;
 float phase_b_voltage = 0;
 float phase_c_voltage = 0;
+
+float phase_a_voltage_high = 0;
+float phase_b_voltage_high = 0;
+float phase_c_voltage_high = 0;
+
+float phase_a_voltage_low = 10000;
+float phase_b_voltage_low = 10000;
+float phase_c_voltage_low = 10000;
+
 
 float energy_consumed_old = 0; // previous day
 float energy_consumed = 0;

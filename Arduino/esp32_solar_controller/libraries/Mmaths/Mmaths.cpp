@@ -90,6 +90,22 @@ uint16_t Mmaths::mmin(const uint16_t a, const uint16_t b)
   return b;
 }
 
+float Mmaths::mmin(const float a, const float b)
+{
+  if(a < b)
+    return a;
+
+  return b;
+}
+
+double Mmaths::mmin(const double a, const double b)
+{
+  if(a < b)
+    return a;
+
+  return b;
+}
+
 unsigned long Mmaths::mmin(const unsigned long a, const unsigned long b)
 {
   if(a < b)

@@ -259,6 +259,13 @@ bool update_p_grid()
   phase_b_voltage = Body_0["Voltage_AC_Phase_2"];
   phase_c_voltage = Body_0["Voltage_AC_Phase_3"];
 
+  phase_a_voltage_high = mmaths.mmax(phase_a_voltage, phase_a_voltage_high);
+  phase_b_voltage_high = mmaths.mmax(phase_b_voltage, phase_b_voltage_high);
+  phase_c_voltage_high = mmaths.mmax(phase_c_voltage, phase_c_voltage_high);
+
+  phase_a_voltage_low = mmaths.mmin(phase_a_voltage, phase_a_voltage_high);
+  phase_b_voltage_low = mmaths.mmin(phase_b_voltage, phase_b_voltage_high);
+  phase_c_voltage_low = mmaths.mmin(phase_c_voltage, phase_c_voltage_high);
 
   if(!inverter_synced)
     inverter_synced = 1;

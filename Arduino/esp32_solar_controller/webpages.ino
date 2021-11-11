@@ -786,8 +786,22 @@ void ac_info()
   }
 
   webpage += "Todays Usage: " + String(energy_consumed, 1) + " Kwh, $" + String(energy_consumed * config.cpkwh, 2) + "\n";
-  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed_old * config.cpkwh, 2) + "\n";
-  webpage += "</pre></center>\n";
+  webpage += "Yesterdays Usage: " + String(energy_consumed_old, 1) + " Kwh, $" + String(energy_consumed_old * config.cpkwh, 2) + "\n\n";
+
+  // --------------------------
+  // voltage high low tracking
+
+  webpage += "Voltage Min and Max since boot.\n\n";
+  webpage += "Phase A) Min: " + String(phase_a_voltage_low ,1) + "v Max: " + String(phase_a_voltage_high ,1) + "v Diff: " + String(phase_a_voltage_high - phase_a_voltage_low ,1) +"v\n";
+  if(config.threephase)
+  {
+    webpage += "Phase B) Min: " + String(phase_b_voltage_low ,1) + "v Max: " + String(phase_b_voltage_high ,1) + "v Diff: " + String(phase_b_voltage_high - phase_b_voltage_low ,1) +"v\n";
+    webpage += "Phase C) Min: " + String(phase_c_voltage_low ,1) + "v Max: " + String(phase_c_voltage_high ,1) + "v Diff: " + String(phase_c_voltage_high - phase_c_voltage_low ,1) +"v\n";
+  }
+  // --------------------------
+
+
+  webpage += "\n</pre></center>\n";
 
   webpage += js_header();
   webpage += "\nrefresh(\"5\");\n";
