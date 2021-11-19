@@ -1497,6 +1497,10 @@ void i2c_scan()
       {
         webpage += "PCA9555PW:\t0x" + String(address, HEX) + "\n";
       }
+      else if (address == 0x4D)
+      {
+        webpage += "MCP3021:\t0x" + String(address, HEX) + "\n";
+      }
       else
         webpage += "Unknown:\t0x" + String(address, HEX) + "\n";
     }

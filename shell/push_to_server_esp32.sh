@@ -1,9 +1,8 @@
 #!/bin/bash
 
-HTMLDIR=/var/www/html/esp32
+HTMLDIR=/var/www/html/esp32v4
 PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp32_solar_controller
-FWDIR=/home/mem/git/esp-solar-contoller/firmwares
-PUBUPDIR=/home/mem/git/esp-solar-contoller/updates/esp32
+PUBUPDIR=/home/mem/git/esp-solar-contoller/updates/esp32v4
 
 mkdir -p $HTMLDIR/data
 mkdir -p $PUBUPDIR/data

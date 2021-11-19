@@ -69,8 +69,6 @@ int get_url_code;
 
 // -----------------------------------------------------------------------------------------
 
-
-// #include <Adafruit_ADS1015.h>
 #include <Ads1115_mux.h>
 const uint8_t pin_asel1 = 27;
 const uint8_t pin_asel2 = 14;

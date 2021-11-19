@@ -7,6 +7,7 @@
 // #include "QuickMedianLib.h"
 
 #include <Adafruit_ADS1X15.h>
+#include "MCP3X21.h"
 
 // // esp32 adc
 // #include <driver/adc.h>
@@ -20,7 +21,7 @@ class Ads1115_mux
 
     void adc_poll();
 
-    bool adctype;
+    uint8_t adctype;
 
     bool i2c_ping(const char address);
 

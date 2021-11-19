@@ -7,6 +7,9 @@ Adafruit_ADS1015 _ads2();
 
 int8_t addr = 0;
 
+// make most of this part of setup function.
+// so pins can be set based on config settings.
+// even so....easier to defunct old board design because of different mux to ADC pins setup (16-1 pin vs 2x8-2).
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc)
 {
 //   adc_found = 1;
@@ -45,7 +48,7 @@ void Ads1115_mux::setup()
   adc_found = 1;
   if(i2c_ping(0x48))
   {
-    addr = 0x48;
+    uint8_t addr = 0x48;
     Serial.println("ADS1115 found.");
     adctype = 1;
     _ads.begin();
@@ -53,11 +56,17 @@ void Ads1115_mux::setup()
   }
   else if(i2c_ping(0x49))
   {
-    addr = 0x49;
+    uint8_t addr = 0x49;
     Serial.println("ADS1015 found.");
     adctype = 0;
-    _ads2.begin((uint8_t)  0x49);
+    _ads2.begin((uint8_t)  addr);
     _ads2.setGain(GAIN_ONE);
+  }
+  else if(i2c_ping(0x4D))
+  {
+    uint8_t addr = 0x4D;
+    Serial.println("MCP3021 found.");
+    adctype = 2;
   }
   else
   {
