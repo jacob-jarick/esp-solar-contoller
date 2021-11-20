@@ -271,6 +271,10 @@ void advance_config()
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
+  webpage += js_radio_helper(F("mcptype1"), F("mcptype0"), config.mcptype);
+  webpage += js_radio_helper(F("ads1x15type1"), F("ads1x15type0"), config.ads1x15type);
+  webpage += js_radio_helper(F("muxtype1"), F("muxtype0"), config.muxtype);
+
 //   webpage += js_radio_helper(F("display_phases1"), F("display_phases0"), config.display_phases);
   webpage += js_select_helper(F("display_mode"), String(config.display_mode));
 
@@ -295,7 +299,7 @@ void battery_config()
 
   webpage += js_radio_helper(F("hv_monitor1"), F("hv_monitor0"), config.hv_monitor);
 
-  webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-32");
+  webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-16");
 
   webpage += html_create_input(F("bvmin"), F("battery_volt_min"), "10", String(config.battery_volt_min, 4), "float");
 
@@ -303,17 +307,6 @@ void battery_config()
   webpage += html_create_input(F("bvmax"), F("battery_volt_max"), "10", String(config.battery_volt_max, 4), "float");
   webpage += html_create_input(F("pvm"), F("pack_volt_min"), "10", String(config.pack_volt_min, 4), "float");
   webpage += html_create_input(F("voff"), F("ups_volt_ofs"), "10", String(config.dcvoltage_offset, 4), "float");
-
-  /*
-  for(int i = 0; i < MAX_CELLS; i++)
-  {
-    String input_name = "battery_volt_mod";
-    String id_name = "bvm" + String(i+1);
-    input_name += String(i + 1);
-
-    webpage += html_create_input(id_name, input_name, "20", String(config.battery_volt_mod[i], 7), ".");
-  }
-  */
 
   webpage += js_select_helper(F("cells_in_series"), String(config.cells_in_series) );
 
@@ -381,6 +374,15 @@ void web_config_submit()
 
       else if (server.argName(i) == F("rotate_oled"))
         config.rotate_oled = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("mcptype"))
+        config.mcptype = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("ads1x15type"))
+        config.ads1x15type = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("muxtype"))
+        config.muxtype = server.arg(i).toInt();
 
       else if (server.argName(i) == F("web_mode"))
         config.webc_mode = server.arg(i).toInt();
@@ -523,7 +525,7 @@ void web_config_submit()
 
       else if(server.argName(i).startsWith("battery_volt_mod"))
       {
-        for(uint8_t x = 0; x < MAX_CELLS; x++)
+        for(uint8_t x = 0; x < adsmux.ain_count; x++)
         {
           if (server.argName(i) == String("battery_volt_mod") + String(x+1))
           {
@@ -1460,7 +1462,7 @@ void adc_info_raw()
 {
   String webpage = "#\tEN\tVal\n";
 
-  for(byte i = 0; i< 32; i++)
+  for(byte i = 0; i< adsmux.ain_count; i++)
     webpage += String(i) + "\t" + String(adsmux.adc_enable[i]) + "\t" + String(adsmux.adc_val[i]) + "\n";
 
 
@@ -1483,7 +1485,7 @@ void i2c_scan()
       }
       else if (address == 0x48)
       {
-        webpage += "ADS1115:\t0x" + String(address, HEX) + "\n";
+        webpage += "ADS1115:\t0x" + String(address, HEX) + " (or ADS1015 if v3 board)\n";
       }
       else if (address == 0x49)
       {
@@ -1499,7 +1501,7 @@ void i2c_scan()
       }
       else if (address == 0x4D)
       {
-        webpage += "MCP3021:\t0x" + String(address, HEX) + "\n";
+        webpage += "MCP3021:\t0x" + String(address, HEX) + " (or MCP3221, check board text)\n";
       }
       else
         webpage += "Unknown:\t0x" + String(address, HEX) + "\n";

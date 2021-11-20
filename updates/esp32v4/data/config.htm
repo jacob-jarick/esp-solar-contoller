@@ -1,0 +1,233 @@
+
+
+<center>
+<form action='/result' method='POST'>
+<table border=1>
+
+<tr>
+	<td>24/7 mode</td>
+	<td>
+		<input id=m247-1 type=radio name="m247" value=1> Enable
+		<input id=m247-0 type=radio name="m247" value=0> Disable
+	</td>
+</tr>
+
+<tr><td colspan=2><b>Day Time Device (Charger)</b></td></tr>
+
+<tr>
+	<td>Enable</td>
+	<td>
+		<input id=c_enable type=radio name="c_enable" value=1> Enable
+		<input id=c_disable type=radio name="c_enable" value=0> Disable
+	</td>
+</tr>
+
+<tr>
+  <td>Timer Mode:</td>
+  <td>
+    <input id=timer_enable type=radio name="timer_enable" value=1> Enable
+    <input id=timer_disable type=radio name="timer_enable" value=0> Disable
+  </td>
+</tr>
+
+
+<tr><td>Minimum On Time:</td>
+<td>
+	<input id=charger_oot_min type=text name='charger_oot_min' value=10 size=3> Minutes
+	<input id=charger_oot_sec type=text name='charger_oot_sec' value=0 size=3> Seconds
+</td>
+</tr>
+
+<tr>
+	<td>After Minimum on time:</td>
+	<td>
+		<input id=c_amot_enable type=radio name="c_amot" value=1> Off
+		<input id=c_amot_disable type=radio name="c_amot" value=0> Update (Default)
+	</td>
+</tr>
+
+<tr>
+	<td>Minimum Off Time Selection</td>
+	<td>
+		<input id=c_offd_enable type=radio name="c_offd" value=1> Custom
+		<input id=c_offd_disable type=radio name="c_offd" value=0> Same as On Time
+	</td>
+</tr>
+
+<tr>
+  <td>Custom Min Off Time:</td>
+  <td>
+    <input id=charger_off_min type=text name='charger_off_min' value=10 size=3> Minutes
+    <input id=charger_off_sec type=text name='charger_off_sec' value=0 size=3> Seconds
+  </td>
+</tr>
+
+<tr><td>Size Watts:</td><td><input id=day_watts type=text name='day_watts' value=''></td></tr>
+
+<tr><td>Start Hour</td>
+<td>
+<select id=c_start_h name='c_start_h'>
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+	<option value=6>6</option>
+	<option value=7>7</option>
+	<option value=8>8</option>
+	<option value=9>9</option>
+	<option value=10>10</option>
+	<option value=11>11</option>
+	<option value=12>12</option>
+	<option value=13>13</option>
+	<option value=14>14</option>
+	<option value=15>15</option>
+	<option value=16>16</option>
+	<option value=17>17</option>
+	<option value=18>18</option>
+	<option value=19>19</option>
+	<option value=20>20</option>
+	<option value=21>21</option>
+	<option value=22>22</option>
+	<option value=23>23</option>
+	<option value=24>24</option>
+</select>
+</td></tr>
+
+<tr><td>Finish Hour</td><td>
+<select id=c_finish_h name='c_finish_h'>
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+	<option value=6>6</option>
+	<option value=7>7</option>
+	<option value=8>8</option>
+	<option value=9>9</option>
+	<option value=10>10</option>
+	<option value=11>11</option>
+	<option value=12>12</option>
+	<option value=13>13</option>
+	<option value=14>14</option>
+	<option value=15>15</option>
+	<option value=16>16</option>
+	<option value=17>17</option>
+	<option value=18>18</option>
+	<option value=19>19</option>
+	<option value=20>20</option>
+	<option value=21>21</option>
+	<option value=22>22</option>
+	<option value=23>23</option>
+	<option value=24>24</option>
+</select>
+</td></tr>
+
+<tr><td colspan=2><b>Night Time Device (Inverter)</b></td></tr>
+
+<tr>
+	<td>Enable Inverter</td>
+	<td>
+		<input id=i_enable type=radio name="i_enable" value=1> Enable
+		<input id=i_disable type=radio name="i_enable" value=0> Disable
+	</td>
+</tr>
+
+<tr>
+  <td>Timer Mode:</td>
+  <td>
+    <input id=ntimer_enable type=radio name="ntimer_enable" value=1> Enable
+    <input id=ntimer_disable type=radio name="ntimer_enable" value=0> Disable
+  </td>
+</tr>
+
+<tr>
+	<td>Prefer DC</td>
+	<td>
+		<input id=prefer_dc1 type=radio name="prefer_dc" value=1> Yes
+		<input id=prefer_dc0 type=radio name="prefer_dc" value=0> No
+	</td>
+</tr>
+
+<tr>
+	<td>Idle When Export</td>
+	<td>
+		<input id=inv_idle_mode_on type=radio name="inv_idle_mode" value=1> > 0
+		<input id=inv_idle_mode_off type=radio name="inv_idle_mode" value=0> > Night Time Watts
+	</td>
+</tr>
+
+
+<tr><td>Minimum On/ Off Time:</td>
+<td>
+	<input id=inverter_oot_min type=text name='inverter_oot_min' value=10 size=3> Minutes
+	<input id=inverter_oot_sec type=text name='inverter_oot_sec' value=0 size=3> Seconds
+</td>
+</tr>
+
+<tr><td>Size Watts:</td><td><input id=night_watts type=text name='night_watts'></td></tr>
+
+<tr><td>Start Hour</td><td>
+<select id=i_start_h name='i_start_h'>
+	<option value=24>0</option>
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+	<option value=6>6</option>
+	<option value=7>7</option>
+	<option value=8>8</option>
+	<option value=9>9</option>
+	<option value=10>10</option>
+	<option value=11>11</option>
+	<option value=12>12</option>
+	<option value=13>13</option>
+	<option value=14>14</option>
+	<option value=15>15</option>
+	<option value=16>16</option>
+	<option value=17>17</option>
+	<option value=18>18</option>
+	<option value=19>19</option>
+	<option value=20>20</option>
+	<option value=21>21</option>
+	<option value=22>22</option>
+	<option value=23>23</option>
+
+</select></td></tr>
+
+<tr><td>Finish Hour</td><td>
+<select id=i_finish_h name='i_finish_h'>
+	<option value=24>0</option>
+	<option value=1>1</option>
+	<option value=2>2</option>
+	<option value=3>3</option>
+	<option value=4>4</option>
+	<option value=5>5</option>
+	<option value=6>6</option>
+	<option value=7>7</option>
+	<option value=8>8</option>
+	<option value=9>9</option>
+	<option value=10>10</option>
+	<option value=11>11</option>
+	<option value=12>12</option>
+	<option value=13>13</option>
+	<option value=14>14</option>
+	<option value=15>15</option>
+	<option value=16>16</option>
+	<option value=17>17</option>
+	<option value=18>18</option>
+	<option value=19>19</option>
+	<option value=20>20</option>
+	<option value=21>21</option>
+	<option value=22>22</option>
+	<option value=23>23</option>
+</select>
+</td></tr>
+
+<tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr>
+
+</table>
+</form>
+</center>
+

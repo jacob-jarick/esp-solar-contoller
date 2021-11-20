@@ -41,7 +41,7 @@ void save_config()
   doc["pub_url"] = config.pub_url;
 
 
-  for(uint8_t i = 0; i < MAX_CELLS; i++)
+  for(uint8_t i = 0; i < adsmux.ain_count; i++)
   {
     doc["volt_mod" + String(i+1)] = config.battery_volt_mod[i];
   }
@@ -78,6 +78,11 @@ void save_config()
   doc["prefer_dc"] = (int)config.prefer_dc;
 
   doc["rotate_oled"] = (int)config.rotate_oled;
+  doc["mcptype"] = (int)config.mcptype;
+  doc["ads1x15type"] = (int)config.ads1x15type;
+  doc["muxtype"] = (int)config.muxtype;
+
+
   doc["display_mode"] = (int)config.display_mode;
 
   doc["blink_led"] = (int)config.blink_led;
@@ -231,7 +236,7 @@ bool load_config()
   strlcpy(config.ntp_server, doc["ntp_server"], sizeof(config.ntp_server));
   strlcpy(config.update_host, doc["update_host"], sizeof(config.update_host));
 
-  for(uint8_t i = 0; i < MAX_CELLS; i++)
+  for(uint8_t i = 0; i < adsmux.ain_count; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
 
   // PINS
@@ -279,6 +284,10 @@ bool load_config()
   config.prefer_dc = doc["prefer_dc"];
 
   config.rotate_oled = doc["rotate_oled"];
+  config.mcptype = doc["mcptype"];
+  config.ads1x15type = doc["ads1x15type"];
+  config.muxtype = doc["muxtype"];
+
   config.display_mode = doc["display_mode"];
 
   config.hv_monitor = doc["hv_monitor"];
@@ -415,7 +424,7 @@ void vars_sanity_check()
     flags.save_config = 1;
   }
 
-  config.cell_count = constrain(config.cell_count, 1, MAX_CELLS);
+  config.cell_count = constrain(config.cell_count, 1, adsmux.ain_count);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
   {
@@ -457,7 +466,7 @@ void vars_sanity_check()
   // enable ADC channels for monitoring.
 
   // disable all
-  for(byte i = 0; i < 32; i++)
+  for(byte i = 0; i < adsmux.ain_count; i++)
     adsmux.adc_enable[i] = 0;
 
   // enable battery channels
@@ -469,7 +478,7 @@ void vars_sanity_check()
 
   // -------------------------------------
 
-  for(uint8_t i = 0; i < MAX_CELLS; i++)
+  for(uint8_t i = 0; i < adsmux.ain_count; i++)
   {
     if(config.battery_volt_mod[i] <= 0)
       config.battery_volt_mod[i] = 1;

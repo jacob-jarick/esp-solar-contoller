@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 251
+#define FW_VERSION 272
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -70,11 +70,12 @@ int get_url_code;
 // -----------------------------------------------------------------------------------------
 
 #include <Ads1115_mux.h>
-const uint8_t pin_asel1 = 27;
-const uint8_t pin_asel2 = 14;
-const uint8_t pin_asel3 = 26;
+const uint8_t pin_asel1 = 26;
+const uint8_t pin_asel2 = 17;
+const uint8_t pin_asel3 = 14;
+const uint8_t pin_asel4 = 27;
 
-Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3);
+Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3, pin_asel4);
 
 // -----------------------------------------------------------------------------------------
 // lm75a
@@ -227,7 +228,7 @@ const int8_t power_array_size = 10;
 
 struct Sconfig
 {
-  uint8_t fwver = 0;
+  uint16_t fwver = 0;
 
 //   char inverter_url[smedium];
 //   char inverter_push_url[smedium];
@@ -338,6 +339,10 @@ struct Sconfig
 
   bool webc_mode = 0;
   bool led_status = 0;
+
+  bool mcptype = 0; // 0 = MCP3021, 1 = MCP3221
+  bool ads1x15type = 0; // 0 = ADS1015, 1 = ADS1115
+  bool muxtype = 0; // 0 = old board (2* 8-1), 1 = new boards (16-1)
 };
 
 Sconfig config;
@@ -375,6 +380,8 @@ struct SysFlags
   bool boot_success = 0;
 
   bool i2c_on = 1;
+
+  bool cells_checked = 0;
 };
 
 SysFlags flags;
@@ -494,7 +501,10 @@ void setup()
       if(i2c_ping(0x4f))
         flags.lm75a = 1;
 
-       adsmux.setup();
+      adsmux.mcptype = config.mcptype;
+      adsmux.ads1x15type = config.ads1x15type;
+      adsmux.muxtype = config.muxtype;
+      adsmux.setup();
     }
   }
 
@@ -657,7 +667,10 @@ void setup()
 
   if(config.fwver != FW_VERSION)
   {
+    log_msg("Config FW version " + String(config.fwver) + " != FW version " + String(FW_VERSION) + ". Downloading HTML.");
     flags.download_html = 1;
+
+    config.fwver = FW_VERSION;
     save_config();
   }
 }
@@ -722,7 +735,7 @@ void loop()
   if(systick > millis())
     return;
 
-  systick = millis() + 30;
+  systick = millis() + 10;
 
   if(check_system_triggers())
     return;
@@ -743,6 +756,18 @@ void loop()
     modeset(0);
     return;
   }
+
+
+  if(config.monitor_battery && !flags.cells_checked)
+  {
+    mode_reason = "waiting on cells first check. force IDLE.";
+//     log_msg(mode_reason  + "\n");
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
+    modeset(0);
+
+    return;
+  }
+
 
   // ----------------------------------------------------------------------
 
@@ -1167,13 +1192,19 @@ bool check_data_sources()
     {
       adsmux.adc_poll();
       cells_update();
-      check_cells();
+
+      // wait a little for voltages to smooth.
+      if(millis() > 10000 && adsmux.polling_complete)
+      {
+        cells_update();
+        check_cells();
+      }
     }
 
     if(flags.lm75a)
       board_temp = lm75a.getTemperature();
 
-    timers.adc_poll = millis() + 50;
+    timers.adc_poll = millis() + 20;
     result = 1;
   }
 
@@ -1182,6 +1213,8 @@ bool check_data_sources()
 
 void check_cells()
 {
+  flags.cells_checked = 1;
+
   cell_volt_low = 10000;
   cell_volt_high = 0;
 

@@ -21,7 +21,3 @@ The library is designed to constantly poll the Analog channels and record their 
 
 Only enabled channels are polled, this is controlled by the adc_enable (bool array)
 
-## ntc10k_read_temp(const byte sensor);
-
-treat adc channel sensor as a NTC10k temp sensor and return value in celcius
-

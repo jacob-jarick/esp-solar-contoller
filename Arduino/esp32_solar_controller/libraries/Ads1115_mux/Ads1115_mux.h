@@ -15,7 +15,7 @@
 class Ads1115_mux
 {
   public:
-    Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc);
+    Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc, uint8_t pind);
 
     void setup();
 
@@ -25,16 +25,18 @@ class Ads1115_mux
 
     bool i2c_ping(const char address);
 
-    int8_t addr;
+    bool mcptype = 0;
+    bool ads1x15type = 0;
+    bool muxtype = 0; // 0 = 8-2 (old style), 1 = 16-1 (new style)
 
-    int16_t adc_val[32];
-    bool adc_enable[32];
+    bool polling_complete = 0; // 0 until last AIN checked (AIN15) then 0 again when starting from AIN0
+
+    const static uint8_t ain_count = 16; // todo reduce to 16
+
+    int16_t adc_val[ain_count];
+    bool adc_enable[ain_count];
 
     bool adc_found;
-
-    float ntc10k_read_temp(const byte sensor);
-    float resistance(const int16_t adc);
-    float steinhart(const float R);
 
   private:
     void bubbleSort(int16_t a[], const uint8_t size);
@@ -42,11 +44,18 @@ class Ads1115_mux
 
     uint8_t _adc_poll_pos;
 
-    uint8_t _pins[3];
-    bool _pin_mode[3];
+    bool _adc_poll_bool = 0;
+
+    const static uint8_t _pin_count = 4;
+
+    uint8_t _pins[_pin_count];
+    bool _pin_mode[_pin_count];
 
     Adafruit_ADS1115 _ads;
     Adafruit_ADS1015 _ads2;
+
+    MCP3021 mcp3021;
+    MCP3221 mcp3221;
 };
 
 #endif
