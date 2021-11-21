@@ -152,6 +152,7 @@ void datasrcs()
   webpage += js_radio_helper(F("monitor_phase_b1"), F("monitor_phase_b0"), config.monitor_phase_b);
   webpage += js_radio_helper(F("monitor_phase_c1"), F("monitor_phase_c0"), config.monitor_phase_c);
 
+  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "0 - "+ String(power_array_size) + " (0-1 = disabled)");
 
   webpage += web_footer();
 
@@ -267,7 +268,7 @@ void advance_config()
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
 
-  webpage += html_create_input(F("avgp"), F("avg_phase"), "10", String(config.avg_phase), "0 - "+ String(power_array_size) + " (0-1 = disabled)");
+
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
@@ -772,7 +773,7 @@ void stats()
 void ac_info()
 {
   String webpage = get_file(html_header);
-  webpage += get_file(html_3pinfo);
+  webpage += get_file(html_acinfo);
 
   if(!config.threephase)
   {

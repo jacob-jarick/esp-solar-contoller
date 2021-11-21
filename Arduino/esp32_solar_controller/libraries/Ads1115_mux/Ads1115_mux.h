@@ -42,6 +42,8 @@ class Ads1115_mux
     void bubbleSort(int16_t a[], const uint8_t size);
     void digital_write(const uint8_t pin, const bool status);
 
+    const static uint8_t _sample_count = 11; // how many times a ADC value is read for the median array
+
     uint8_t _adc_poll_pos;
 
     bool _adc_poll_bool = 0;

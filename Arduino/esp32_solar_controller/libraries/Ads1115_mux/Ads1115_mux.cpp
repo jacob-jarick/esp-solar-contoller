@@ -42,6 +42,8 @@ void Ads1115_mux::setup()
 {
   adc_found = 0;
 
+  // ADS1015 or ADS1115. On new board can be either, determinted by config setting.
+  // old board only ADS1115 unless jumper is wrong
   uint8_t addr = 0x48;
   if(i2c_ping(addr))
   {
@@ -80,6 +82,7 @@ void Ads1115_mux::setup()
     return;
   }
 
+  // MCP3021 or MCP3221, determinted by config setting
   addr = 0x4D;
   if(i2c_ping(addr))
   {
@@ -121,7 +124,6 @@ void Ads1115_mux::digital_write(const uint8_t pin, const bool status)
   digitalWrite(_pins[pin], status);
 }
 
-// _adc_poll_bool = 0;
 void Ads1115_mux::adc_poll()
 {
   if(!adc_found)
@@ -130,7 +132,6 @@ void Ads1115_mux::adc_poll()
   // _adc_poll_pos wrap to zero check
   if
   (
-
     (muxtype == 0 && _adc_poll_pos > 7) || // 7 for old boards (8-2)
     (_adc_poll_pos > 15) // 16 is mux's max inputs. (16-1)
   )
@@ -173,15 +174,11 @@ void Ads1115_mux::adc_poll()
       digital_write(2, value_c);
       digital_write(3, value_d);
     }
-    else
+    else // old board
     {
       digital_write(0, value_a);
       digital_write(2, value_b);
       digital_write(3, value_c);
-
-      // 3 0 2 - 0 correct, 1s reading goes to 2
-      // 3 2 0 - 0 correct, 1s reading goes to 4
-      // 0 2 3 -
     }
 
     _adc_poll_bool = 1;
@@ -189,18 +186,18 @@ void Ads1115_mux::adc_poll()
   }
 
   // sample X times and bubble sort to get median value.
-  const uint8_t read_count = 16;
-  int16_t areads[read_count];
-  int16_t areads2[read_count]; // for muxtype 0
+//   const uint8_t read_count = 11;
+  int16_t areads[_sample_count];
+  int16_t areads2[_sample_count]; // for muxtype 0
 
-  for(uint8_t r = 0; r < read_count; r++)
+  for(uint8_t r = 0; r < _sample_count; r++)
   {
     // ADS1105
     if (adctype == 0)
     {
       areads[r] = _ads2.readADC_SingleEnded(0);
 
-      if(muxtype == 0) // old boards mux (8-2)
+      if(muxtype == 0 && adc_enable[_adc_poll_pos+8]) // old boards mux (8-2)
         areads2[r] = _ads2.readADC_SingleEnded(1);
     }
 
@@ -209,7 +206,7 @@ void Ads1115_mux::adc_poll()
     {
       areads[r] = _ads.readADC_SingleEnded(0); // always channel 0 on new boards
 
-      if(muxtype == 0) // old boards mux (8-2)
+      if(muxtype == 0 && adc_enable[_adc_poll_pos+8]) // old boards mux (8-2)
         areads2[r] = _ads.readADC_SingleEnded(1); // always channel 0 on new boards
     }
 
@@ -222,13 +219,14 @@ void Ads1115_mux::adc_poll()
       areads[r] = mcp3221.read(); // new ADS
   }
 
-  bubbleSort(areads,read_count);
-  adc_val[_adc_poll_pos] = areads[read_count/2];
+  bubbleSort(areads,_sample_count);
+  adc_val[_adc_poll_pos] = areads[_sample_count/2];
 
-  if((adctype == 0 || adctype == 1) && muxtype == 0)
+  // muxtype 0 support
+  if(muxtype == 0 && (adctype == 0 || adctype == 1) && adc_enable[_adc_poll_pos+8])
   {
-    bubbleSort(areads2,read_count);
-    adc_val[_adc_poll_pos+8] = areads2[read_count/2];
+    bubbleSort(areads2,_sample_count);
+    adc_val[_adc_poll_pos+8] = areads2[_sample_count/2];
   }
 
 

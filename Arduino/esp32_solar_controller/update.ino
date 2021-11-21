@@ -26,7 +26,7 @@ void download_html_from_remote()
     html_upload_config,
     html_battery_info,
     html_calibrate,
-    html_3pinfo,
+    html_acinfo,
     html_config
   };
 

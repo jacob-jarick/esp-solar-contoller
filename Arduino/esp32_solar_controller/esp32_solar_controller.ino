@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 272
+#define FW_VERSION 278
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -36,7 +36,6 @@ this seems to resolve OTA issues.
 
 #include <Arduino.h>
 #include <SD.h>
-// #include <SPI.h>
 
 #include <WiFi.h>
 #include <WiFiClient.h>
@@ -61,11 +60,6 @@ WebServer server(80);
 #include "SSD1306AsciiWire.h"
 
 SSD1306AsciiWire oled;
-
-// -----------------------------------------------------------------------------------------
-// web.ino
-
-int get_url_code;
 
 // -----------------------------------------------------------------------------------------
 
@@ -117,6 +111,7 @@ struct SysTimers
 
   unsigned long pgrid = 0;
   unsigned long adc_poll = 0;
+  unsigned long lm75a_poll = 0;
 
   unsigned long update_check = 0;
   unsigned long ntp_sync = 0;
@@ -160,7 +155,7 @@ const String html_header          = "/header" + dothtml;
 const String html_config          = "/config" + dothtml;
 const String html_battery         = "/batconf" + dothtml;
 const String html_calibrate       = "/batcal" + dothtml;
-const String html_3pinfo          = "/3pinfo" + dothtml;
+const String html_acinfo          = "/acinfo" + dothtml;
 const String html_cpconfig        = "/cpconfig" + dothtml;
 const String html_stats           = "/stats" + dothtml;
 const String html_mode            = "/mode" + dothtml;
@@ -217,9 +212,11 @@ String passwd = "";
 uint8_t download_index = 0; // html page download index
 byte system_mode = 0;
 
-uint8_t i2cdevcount = 0;
+uint8_t i2cdevcount = 0; // used on startup and then for system i2c ping
 
 const int8_t power_array_size = 10;
+
+int get_url_code; // global url fetch code, eg 404, 401, 200
 
 // =================================================================================================
 
@@ -230,8 +227,6 @@ struct Sconfig
 {
   uint16_t fwver = 0;
 
-//   char inverter_url[smedium];
-//   char inverter_push_url[smedium];
   char threephase_direct_url[smedium];
   char threephase_push_url[smedium];
   char pub_url[smedium];
@@ -355,7 +350,6 @@ Sconfig config;
 // group system flags into 1 structure for easy naming.
 struct SysFlags
 {
-
   bool restart = 0;
   bool access_point = 0;
   bool update_self = 0;
@@ -623,7 +617,7 @@ void setup()
 
     server.on("/batcal", battery_calibrate);
 
-    server.on("/3pinfo", ac_info);
+    server.on("/ac_info", ac_info);
 
     server.on("/timers", timers_page);
 
@@ -650,6 +644,7 @@ void setup()
     }
 
     adc_quick_poll();
+    cells_update();
   }
   else
   {
@@ -992,8 +987,6 @@ void loop()
 
 // ======================================================================================================================
 
-unsigned long boot_time = millis();
-
 const unsigned long ap_time = 15 * 60 * 1000;
 
 bool check_system_triggers() // returns 1 if a event was triggered
@@ -1095,7 +1088,7 @@ bool check_system_timers()
   }
 
   // AP Mode restart trigger (time based)
-  if(flags.access_point && millis() - boot_time > ap_time)
+  if(flags.access_point && millis() > ap_time)
   {
     oled_clear();
     both_print(F("AP\nTIMEOUT"));
@@ -1165,19 +1158,12 @@ bool check_system_timers()
 
 // ======================================================================================================================
 
-uint8_t cds_pos = 0;
-
-// note barrel setup. because some checks are time intensive.
 bool check_data_sources()
 {
   bool result = 0;
 
-  cds_pos++;
-  if(cds_pos >= 2)
-    cds_pos = 0;
-
   // fronius grid check
-  if(cds_pos == 0 && millis() > timers.pgrid)
+  if(millis() > timers.pgrid)
   {
     check_grid();
 
@@ -1186,25 +1172,26 @@ bool check_data_sources()
   }
 
   // ADC poll
-  if(cds_pos == 1 && (config.monitor_battery || flags.lm75a) && millis() > timers.adc_poll)
+  if(config.monitor_battery && millis() > timers.adc_poll)
   {
-    if(config.monitor_battery)
-    {
-      adsmux.adc_poll();
-      cells_update();
+    adsmux.adc_poll();
+    cells_update();
 
-      // wait a little for voltages to smooth.
-      if(millis() > 10000 && adsmux.polling_complete)
-      {
-        cells_update();
-        check_cells();
-      }
+    // wait a little for voltages to smooth.
+    if(millis() > 10000 && adsmux.polling_complete)
+    {
+      cells_update();
+      check_cells();
     }
 
-    if(flags.lm75a)
-      board_temp = lm75a.getTemperature();
+    result = 1;
+  }
 
-    timers.adc_poll = millis() + 20;
+  if(flags.lm75a && millis() > timers.lm75a_poll)
+  {
+    board_temp = lm75a.getTemperature();
+    timers.lm75a_poll = millis() + 666;
+
     result = 1;
   }
 
@@ -1382,7 +1369,11 @@ void oled_print_info()
     both_print_ip();
     both_println(F("SSID: SolarAP"));
 
-    unsigned long rbtime = ap_time - (millis() - boot_time);
+    const unsigned long ms = millis();
+    unsigned long rbtime = 0;
+    if(ap_time > ms)
+      rbtime = ap_time - ms;
+
     rbtime /= 1000;
     rbtime /= 60;
     both_println(String(F("Reboot in:\n")) + String(rbtime) + String(F(" min")));

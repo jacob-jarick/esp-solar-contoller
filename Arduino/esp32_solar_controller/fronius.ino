@@ -1,137 +1,7 @@
-// #define jsonsize 2500
-
 const uint8_t fronius_min_sync_seconds = 90;
-
 const size_t jsonsize = 1024 * 4;
-
-
-
-
 unsigned long fronius_last_time = 0;
 
-/*
-bool update_p_grid()
-{
-  if(config.threephase)
-    return update_p_grid_3phase();
-
-  bool check = 0;
-  bool fellback = 0;
-  String payload = "";
-  DynamicJsonDocument doc(jsonsize);
-  String url;
-
-  // main url - inverter_url
-  if(timers.use_fallback < millis() && strlen(config.inverter_url))
-  {
-    url = String(config.inverter_url);
-
-    bool result = get_url(url, payload);
-
-    if(!result)
-    {
-      log_msg("fetch inverter_url failed");
-      fellback = 1;
-      timers.use_fallback = millis() + (10 * 1000);
-    }
-    else
-    {
-      check = 1;
-    }
-  }
-  else
-  {
-    fellback = 1;
-    Serial.println("fallback timer active." ); // or blank URL`
-  }
-
-  // push url (fallback)
-  if(fellback && strlen(config.inverter_push_url))
-  {
-    url = String(config.inverter_push_url);
-    bool result = get_url(url, payload);
-
-    if(!result)
-      log_msg(F("Error fetch inverter_push_url"));
-    else
-      check = 1;
-  }
-
-  if(!check)
-    return 0; // failed to get datasource.
-
-  // --------------------------------------------------------------------------
-  // decode json
-
-  DeserializationError error2 = deserializeJson(doc, payload.c_str());
-
-  if (error2)
-  {
-    log_msg(String("update_p_grid JSON Decode ERROR") + error2.c_str());
-    timers.use_fallback = millis() + (10 * 1000);
-
-    return 0;
-  }
-
-  // --------------------------------------------------------------------------
-  // get P_Grid value from JSON
-
-  JsonObject root = doc.as<JsonObject>();
-  JsonObject Body_Data_Site;
-
-
-  // ----------------------------------------------------------------------------------------------
-  // Check timestamp
-
-  if(fellback)
-  {
-    String tmp = root["Head"]["Timestamp"];
-
-    unsigned long local_s = local_secs();
-    unsigned long json_secs = fronius_time_str_to_secs(tmp);
-    unsigned long time_diff = mmaths.mdiff(json_secs, local_s);
-
-    if (time_diff > fronius_min_sync_seconds)
-    {
-      log_msg("1p: json time " + String(time_diff) + "+ seconds out of sync");
-      return 0;
-    }
-  }
-
-  // check and update fronius_last_time
-  {
-    String tmp = root["Head"]["Timestamp"];
-
-    unsigned long json_secs = fronius_time_str_to_secs(tmp);
-
-    if(json_secs <= fronius_last_time)
-    {
-//       log_msg("1p: json not updated yet.");
-      return 0;
-    }
-    fronius_last_time = json_secs;
-//     log_msg("1p: updated.");
-  }
-
-  // ----------------------------------------------------------------------------------------------
-
-  if(fellback)
-    Body_Data_Site = root["Body"]["Site"]; // push json body location
-  else
-    Body_Data_Site = root["Body"]["Data"]["Site"]; // fetch (direct) json body location
-
-  set_power(Body_Data_Site["P_Grid"]);
-
-  if(!inverter_synced)
-    inverter_synced = 1;
-
-  timers.pgrid_last_update = millis();
-
-  return 1;
-}
-*/
-
-// bool update_p_grid_3phase()
 bool update_p_grid()
 {
   bool fellback = 0;
@@ -438,6 +308,7 @@ unsigned long fronius_time_str_to_secs(String tmp)
   return ymdhms_to_sec(json_y, json_month, json_d, json_h, json_min, json_s);
 }
 
+// move to Mmaths.  handy routine.
 unsigned long ymdhms_to_sec(uint16_t YY, uint8_t MM, uint8_t DD, uint8_t HH, uint8_t mm, uint8_t ss)
 {
   YY -= 2020; // 2020 is this codes epoch

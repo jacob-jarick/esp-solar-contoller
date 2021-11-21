@@ -1,20 +1,20 @@
-     HEAD~0	e422dba about to break adsmux for mcp3021
-     HEAD~1	26fb7c0 update code cleaned up
-     HEAD~2	3e77f1f fix min AC voltage tracking
-     HEAD~3	8aa968c voltage tracking
-     HEAD~4	5e0f767 fw 247
-     HEAD~5	b0f0eb2 fw 247
-     HEAD~6	ea16029 number formatting
-     HEAD~7	852ec10 245
-     HEAD~8	4d4d63e fw 244
-     HEAD~9	8135f07 3phase/single phase updates
-    HEAD~10	4b0892e fw number bump
-    HEAD~11	2457fa2 added new oled display mode
-    HEAD~12	a02e82f fixes, single phase updates.
-    HEAD~13	01406e4 calc_energy_usage
-    HEAD~14	53cca64 web formatting
-    HEAD~15	d98ca7a html download debug
-    HEAD~16	2dbaf85 cv.txt
-    HEAD~17	4caf0df JSON config pretty print.
-    HEAD~18	1d2b276 pub URL
-    HEAD~19	eda49b1 pub url on github
+     HEAD~0	585dfdd adc mux code update complete..
+     HEAD~1	e422dba about to break adsmux for mcp3021
+     HEAD~2	26fb7c0 update code cleaned up
+     HEAD~3	3e77f1f fix min AC voltage tracking
+     HEAD~4	8aa968c voltage tracking
+     HEAD~5	5e0f767 fw 247
+     HEAD~6	b0f0eb2 fw 247
+     HEAD~7	ea16029 number formatting
+     HEAD~8	852ec10 245
+     HEAD~9	4d4d63e fw 244
+    HEAD~10	8135f07 3phase/single phase updates
+    HEAD~11	4b0892e fw number bump
+    HEAD~12	2457fa2 added new oled display mode
+    HEAD~13	a02e82f fixes, single phase updates.
+    HEAD~14	01406e4 calc_energy_usage
+    HEAD~15	53cca64 web formatting
+    HEAD~16	d98ca7a html download debug
+    HEAD~17	2dbaf85 cv.txt
+    HEAD~18	4caf0df JSON config pretty print.
+    HEAD~19	1d2b276 pub URL

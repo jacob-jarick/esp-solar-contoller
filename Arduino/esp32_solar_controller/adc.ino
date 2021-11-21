@@ -14,10 +14,9 @@ void adc_quick_poll()
   if(!adsmux.adc_found)
     return;
 
-  for(uint8_t i = 0; i < adsmux.ain_count; i++)
+  while(adsmux.polling_complete == 0)
   {
     oled_print(".");
-    adsmux.adc_poll();
     adsmux.adc_poll();
   }
 }
