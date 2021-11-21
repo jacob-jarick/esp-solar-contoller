@@ -282,6 +282,10 @@ void advance_config()
   // BOARD Revision
   webpage += js_select_helper(F("board_rev"), String(config.board_rev));
 
+  webpage += js_select_helper(F("i2cmaxspeed"), String(config.i2cmaxspeed));
+
+
+
   webpage += web_footer();
 
   server.send(200, mime_html, webpage); // Send response
@@ -339,6 +343,9 @@ void web_config_submit()
 
       if (server.argName(i) == F("board_rev"))
         config.board_rev = server.arg(i).toInt();
+
+      if (server.argName(i) == F("i2cmaxspeed"))
+        config.i2cmaxspeed = server.arg(i).toInt();
 
 
       else if (server.argName(i) == F("m247"))

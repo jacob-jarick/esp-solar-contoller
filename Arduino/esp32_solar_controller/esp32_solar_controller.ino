@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 278
+#define FW_VERSION 282
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -249,6 +249,8 @@ struct Sconfig
   float dcvoltage_offset;
   uint8_t board_rev;
 
+  uint8_t i2cmaxspeed;
+
   // wifi
 
   char wifi_ssid1[ssmall];
@@ -447,11 +449,17 @@ void setup()
 
     if(i2cdevcount)
     {
-      Wire.setClock(1000000L); // fast mode plus
-      i2c_test_enum1 = i2c_enum();
+      if(config.i2cmaxspeed >= 1)
+      {
+        Wire.setClock(1000000L); // fast mode plus
+        i2c_test_enum1 = i2c_enum();
+      }
 
-      Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
-      i2c_test_enum2 = i2c_enum();
+      if(config.i2cmaxspeed == 2)
+      {
+        Wire.setClock(3400000L); // high speed mode (buggy on latest esp32 board)
+        i2c_test_enum2 = i2c_enum();
+      }
     }
     else
     {
@@ -1178,12 +1186,13 @@ bool check_data_sources()
     cells_update();
 
     // wait a little for voltages to smooth.
-    if(millis() > 10000 && adsmux.polling_complete)
+    if(millis() > 20000 && adsmux.polling_complete)
     {
       cells_update();
       check_cells();
     }
 
+    timers.adc_poll = millis() + 25;
     result = 1;
   }
 

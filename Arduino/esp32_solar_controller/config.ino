@@ -131,6 +131,8 @@ void save_config()
   doc["gmt"] = config.gmt;
   doc["dcvoltage_offset"] = config.dcvoltage_offset;
   doc["board_rev"] = config.board_rev;
+  doc["i2cmaxspeed"] = config.i2cmaxspeed;
+
 
 
   doc["webc_mode"] = (int)config.webc_mode;
@@ -327,6 +329,9 @@ bool load_config()
 
 
   config.board_rev = doc["board_rev"];
+
+  config.i2cmaxspeed = doc["i2cmaxspeed"];
+
 
   // FLAGS
 

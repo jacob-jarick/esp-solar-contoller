@@ -31,25 +31,27 @@ double read_cell_volts(const byte cell)
 
   double v = adsmux.adc_val[cell];
 
+  // avoid weirdness
+  if(v<0)
+    v=0;
 
   // ads1015 - 12-bit
   if(adsmux.adctype == 0)
-    v = v/4096;
+    v = v/4096.0;
 
   // ADS1115 16-bit
   else if(adsmux.adctype == 1)
-    v = v/65536;
+    v = v/65536.0;
 
   //mcp3021 - 10bit
   else if(adsmux.adctype == 2)
-    v = v/1024;
+    v = v/1024.0;
 
   //mcp3221 - 12bit
   else if(adsmux.adctype == 3)
-    v = v/4096;
+    v = v/4096.0;
 
 
-//   v *= ads_mv;
   v *= config.battery_volt_mod[cell];
   v += config.dcvoltage_offset; // only use 1 offset
 
@@ -61,7 +63,9 @@ double read_cell_volts(const byte cell)
   cells_volts[cell] = cells_volts_real[cell]; // copy AFTER avg
 
   if(config.cells_in_series && cell > 0)
+  {
     cells_volts[cell] -= cells_volts_real[cell-1];
+  }
 
   return cells_volts[cell];
 }
