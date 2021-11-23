@@ -24,6 +24,9 @@ Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc, uint8_t pind)
   {
     adc_val[i] = 0;
     adc_enable[i] = 0;
+
+    for(uint8_t ii = 0; ii < ain_history_size; ii++)
+      adc_val_history[i][ii] = 0;
   }
 
   // setup pin
@@ -220,13 +223,15 @@ void Ads1115_mux::adc_poll()
   }
 
   bubbleSort(areads,_sample_count);
-  adc_val[_adc_poll_pos] = areads[_sample_count/2];
+//   adc_val[_adc_poll_pos] = areads[_sample_count/2];
+  update_adc_val(_adc_poll_pos, areads[_sample_count/2]);
 
   // muxtype 0 support
   if(muxtype == 0 && (adctype == 0 || adctype == 1) && adc_enable[_adc_poll_pos+8])
   {
     bubbleSort(areads2,_sample_count);
-    adc_val[_adc_poll_pos+8] = areads2[_sample_count/2];
+//     adc_val[_adc_poll_pos+8] = areads2[_sample_count/2];
+    update_adc_val(_adc_poll_pos+8, areads2[_sample_count/2]);
   }
 
 
@@ -262,4 +267,37 @@ bool Ads1115_mux::i2c_ping(const char address)
     return 1;
 
   return 0;
+}
+
+void Ads1115_mux::update_adc_val(uint8_t index, uint16_t value)
+{
+  if(!avg_ain)
+  {
+    adc_val[index] = value;
+    return;
+  }
+
+  // if empty (0) assume start up and prepopulate
+  if(!adc_val_history[index][0])
+  {
+    for(uint8_t i = 0; i < ain_history_size; i++)
+      adc_val_history[index][i] = value;
+  }
+
+  // shuffle array values forward
+  for(uint8_t i = ain_history_size -1; i > 0; i--)
+    adc_val_history[index][i] = adc_val_history[index][i-1];
+
+  // set 0 as new value
+  adc_val_history[index][0] = value;
+
+  // calculate average
+  float tmp_avg = 0;
+  for(uint8_t i = 0; i < ain_history_size; i++)
+    tmp_avg += adc_val_history[index][i];
+
+  tmp_avg = tmp_avg / ain_history_size;
+
+  // set adc_val;
+  adc_val[index] = (uint16_t) tmp_avg;
 }

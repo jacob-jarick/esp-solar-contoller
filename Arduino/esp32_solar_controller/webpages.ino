@@ -304,6 +304,8 @@ void battery_config()
 
   webpage += js_radio_helper(F("hv_monitor1"), F("hv_monitor0"), config.hv_monitor);
 
+  webpage += js_radio_helper(F("avg_ain1"), F("avg_ain0"), config.avg_ain);
+
   webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-16");
 
   webpage += html_create_input(F("bvmin"), F("battery_volt_min"), "10", String(config.battery_volt_min, 4), "float");
@@ -512,6 +514,8 @@ void web_config_submit()
       else if (server.argName(i) == F("hv_monitor"))
         config.hv_monitor = server.arg(i).toInt();
 
+      else if (server.argName(i) == F("avg_ain"))
+        config.avg_ain = server.arg(i).toInt();
 
       else if (server.argName(i) == F("cells_in_series"))
         config.cells_in_series = server.arg(i).toInt();
@@ -616,6 +620,7 @@ void web_config_submit()
 
   server.send(200, mime_html, webpage);
 
+  adsmux.avg_ain = config.avg_ain;
   flags.save_config = 1;
 }
 

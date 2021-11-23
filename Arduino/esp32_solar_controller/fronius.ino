@@ -284,15 +284,6 @@ void set_power(const float p)
   phase_sum = phase_avg;
 }
 
-uint16_t fronius_time_str_to_min(String tmp)
-{
-  uint8_t json_d = tmp.substring(8, 10).toInt();
-  uint8_t json_h = tmp.substring(11, 13).toInt();
-  uint16_t json_m = tmp.substring(14, 16).toInt();
-
-  return dhm_to_min(json_d, json_h, json_m);
-}
-
 unsigned long fronius_time_str_to_secs(String tmp)
 {
   uint16_t json_y = tmp.substring(0, 4).toInt();
@@ -305,61 +296,16 @@ unsigned long fronius_time_str_to_secs(String tmp)
 
 //   Serial.println("\nF:" + String(json_y) + "." + String(json_month) + "." +  String(json_d) + "-" +  String(json_h) + ":" + String(json_min) + ":" + String(json_s) + "\n");
 
-  return ymdhms_to_sec(json_y, json_month, json_d, json_h, json_min, json_s);
+  return mmaths.ymdhms_to_sec(json_y, json_month, json_d, json_h, json_min, json_s);
 }
 
-// move to Mmaths.  handy routine.
-unsigned long ymdhms_to_sec(uint16_t YY, uint8_t MM, uint8_t DD, uint8_t HH, uint8_t mm, uint8_t ss)
-{
-  YY -= 2020; // 2020 is this codes epoch
-
-  unsigned long result = 0;
-
-  // years to months
-  result = YY * 12;
-
-  // months to days
-  result += MM;
-  result *= 31; // not correct but results match
-
-  // days to hours
-  result += DD;
-  result *= 24;
-
-  // hours to min
-  result += HH;
-  result *= 60;
-
-  // min to sec
-  result += mm;
-  result *= 60;
-
-  // add seconds
-  result += ss;
-
-//   Serial.println(result);
-
-  return result;
-}
 
 
 unsigned long local_secs()
 {
   time_t timetmp = now();
 //   Serial.println("\nL " + String(year(timetmp)) + "-" + String(month(timetmp)) + "-" + String(day(timetmp)) + "-" + String(hour(timetmp)) + "-" + String(minute(timetmp)) + "-" + String(second(timetmp)) + "\n");
-  return ymdhms_to_sec(year(timetmp), month(timetmp), day(timetmp), hour(timetmp), minute(timetmp), second(timetmp));
+  return mmaths.ymdhms_to_sec(year(timetmp), month(timetmp), day(timetmp), hour(timetmp), minute(timetmp), second(timetmp));
 }
 
-
-
-uint16_t local_minutes()
-{
-  time_t timetmp = now();
-  return dhm_to_min(day(timetmp), hour(timetmp), minute(timetmp));
-}
-
-uint16_t dhm_to_min(uint8_t DD, uint8_t HH, uint8_t mm)
-{
-  return (DD * 24 * 60) + (HH * 60) + mm;
-}
 

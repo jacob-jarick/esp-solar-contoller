@@ -8,18 +8,18 @@ void cells_update()
 }
 
 
-// used on startup
-void adc_quick_poll()
-{
-  if(!adsmux.adc_found)
-    return;
-
-  while(adsmux.polling_complete == 0)
-  {
-    oled_print(".");
-    adsmux.adc_poll();
-  }
-}
+// // used on startup
+// void adc_quick_poll()
+// {
+//   if(!adsmux.adc_found)
+//     return;
+//
+//   while(adsmux.polling_complete == 0)
+//   {
+//     oled_print(".");
+//     adsmux.adc_poll();
+//   }
+// }
 
 
 double read_cell_volts(const byte cell)
@@ -55,12 +55,7 @@ double read_cell_volts(const byte cell)
   v *= config.battery_volt_mod[cell];
   v += config.dcvoltage_offset; // only use 1 offset
 
-  if(cells_volts_real[cell] <= 0)
-    cells_volts_real[cell] = v;
-  else
-    cells_volts_real[cell] = mmaths.dirty_average(cells_volts_real[cell], v, 3); // TODO user enabled / disabled
-
-  cells_volts[cell] = cells_volts_real[cell]; // copy AFTER avg
+  cells_volts_real[cell] = cells_volts[cell] = v;
 
   if(config.cells_in_series && cell > 0)
   {

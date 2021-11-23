@@ -107,6 +107,9 @@ void save_config()
 
   doc["hv_monitor"] = (int)config.hv_monitor;
 
+
+  doc["avg_ain"] = (int)config.avg_ain;
+
   // ?
 
   doc["day_watts"] = config.day_watts;
@@ -303,6 +306,9 @@ bool load_config()
   config.c_enable = doc["c_enable"];
   config.day_is_timer = doc["day_is_timer"];
   config.night_is_timer = doc["night_is_timer"];
+
+  config.avg_ain = doc["avg_ain"];
+
 
   // ?
 

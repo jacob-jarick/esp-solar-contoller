@@ -29,12 +29,18 @@ class Ads1115_mux
     bool ads1x15type = 0;
     bool muxtype = 0; // 0 = 8-2 (old style), 1 = 16-1 (new style)
 
+    bool avg_ain = 0;
+
     bool polling_complete = 0; // 0 until last AIN checked (AIN15) then 0 again when starting from AIN0
 
     const static uint8_t ain_count = 16; // todo reduce to 16
 
-    int16_t adc_val[ain_count];
+    uint16_t adc_val[ain_count];
     bool adc_enable[ain_count];
+
+    const static uint8_t ain_history_size = 3;
+
+    uint16_t adc_val_history[ain_count][ain_history_size];
 
     bool adc_found;
 
@@ -42,7 +48,9 @@ class Ads1115_mux
     void bubbleSort(int16_t a[], const uint8_t size);
     void digital_write(const uint8_t pin, const bool status);
 
-    const static uint8_t _sample_count = 11; // how many times a ADC value is read for the median array
+    void update_adc_val(uint8_t index, uint16_t value);
+
+    const static uint8_t _sample_count = 15; // how many times a ADC value is read for the median array
 
     uint8_t _adc_poll_pos;
 

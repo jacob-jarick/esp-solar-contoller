@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 282
+#define FW_VERSION 293
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -28,7 +28,7 @@ this seems to resolve OTA issues.
 #define stiny 32
 #define ssmall 64
 #define smedium 128
-#define slarge 256
+#define slarge 257
 
 #define MAX_CELLS 16
 
@@ -296,6 +296,8 @@ struct Sconfig
   bool blink_led = 0;
   bool blink_led_default = 0;
 
+  bool avg_ain = 0;
+
   bool threephase = 0;
   bool monitor_phase_a = 0;
   bool monitor_phase_b = 0;
@@ -506,6 +508,7 @@ void setup()
       adsmux.mcptype = config.mcptype;
       adsmux.ads1x15type = config.ads1x15type;
       adsmux.muxtype = config.muxtype;
+      adsmux.avg_ain = config.avg_ain;
       adsmux.setup();
     }
   }
@@ -650,9 +653,6 @@ void setup()
       cells_volts_real[i] = 0;
       cells_volts[i]      = 0;
     }
-
-    adc_quick_poll();
-    cells_update();
   }
   else
   {
@@ -1166,6 +1166,8 @@ bool check_system_timers()
 
 // ======================================================================================================================
 
+
+uint8_t cds_pcount = 0;
 bool check_data_sources()
 {
   bool result = 0;
@@ -1183,16 +1185,23 @@ bool check_data_sources()
   if(config.monitor_battery && millis() > timers.adc_poll)
   {
     adsmux.adc_poll();
-    cells_update();
 
-    // wait a little for voltages to smooth.
-    if(millis() > 20000 && adsmux.polling_complete)
+    // wait N (10) full polls a little for voltages to smooth.
+    if(adsmux.polling_complete)
     {
-      cells_update();
-      check_cells();
+      if(cds_pcount > 10)
+      {
+        cells_update();
+        check_cells();
+      }
+      else
+      {
+        cds_pcount++;
+      }
+
     }
 
-    timers.adc_poll = millis() + 25;
+    timers.adc_poll = millis() + 10;
     result = 1;
   }
 

@@ -131,3 +131,40 @@ unsigned long Mmaths::mdiff(const unsigned long a, const unsigned long b)
 {
   return mmax(a, b) - mmin(a, b);
 }
+
+
+// time stuff
+
+// move to Mmaths.  handy routine.
+unsigned long Mmaths::ymdhms_to_sec(uint16_t YY, uint8_t MM, uint8_t DD, uint8_t HH, uint8_t mm, uint8_t ss)
+{
+  YY -= 2020; // 2020 is this codes epoch
+
+  unsigned long result = 0;
+
+  // years to months
+  result = YY * 12;
+
+  // months to days
+  result += MM;
+  result *= 31; // not correct but results match
+
+  // days to hours
+  result += DD;
+  result *= 24;
+
+  // hours to min
+  result += HH;
+  result *= 60;
+
+  // min to sec
+  result += mm;
+  result *= 60;
+
+  // add seconds
+  result += ss;
+
+  //   Serial.println(result);
+
+  return result;
+}
