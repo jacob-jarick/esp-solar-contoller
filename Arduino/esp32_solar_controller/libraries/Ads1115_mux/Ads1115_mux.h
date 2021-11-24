@@ -54,7 +54,7 @@ class Ads1115_mux
 
     uint8_t _adc_poll_pos;
 
-    bool _adc_poll_bool = 0;
+    bool _adc_mpins_set = 0;
 
     const static uint8_t _pin_count = 4;
 

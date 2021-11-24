@@ -144,6 +144,7 @@ void Ads1115_mux::adc_poll()
     // pol reset check 1. polled all AINs, 1-16
     if(_adc_poll_pos > mpcount-1)
     {
+      _adc_mpins_set = 0;
       _adc_poll_pos = 0;
       polling_complete = 1;
       return;
@@ -158,14 +159,22 @@ void Ads1115_mux::adc_poll()
       // check if any remaing are enabled, if true, increment _adc_poll_pos and return.
       for(uint8_t i = _adc_poll_pos; i< mpcount; i++)
       {
-        if(adc_enable[i]) // if any remaining are enabled, increment pol position and return
+        // if any remaining are enabled, increment pol position and return
+        if
+        (
+          (muxtype == 0 && (adc_enable[i] || adc_enable[i+8])) || // muxtype 0, check both
+          (muxtype == 1 && adc_enable[i])
+        )
         {
+          _adc_mpins_set = 0;
           _adc_poll_pos++;
           return;
         }
       }
 
       // for loop passed, rest are disabled. reset loop
+
+      _adc_mpins_set = 0;
       _adc_poll_pos = 0; // check 0 next round.
       polling_complete = 1;
       return;
@@ -176,7 +185,7 @@ void Ads1115_mux::adc_poll()
   // acts as a non halting delay to get a stable voltage.
   // adc_pol gets called twice for each AIN, 1 to setup pins, 2 to read AIN.
   // Ive tried disabling this and regretted it each time...
-  if(!_adc_poll_bool)
+  if(!_adc_mpins_set)
   {
     const bool value_a = bitRead(_adc_poll_pos, 0);
     const bool value_b = bitRead(_adc_poll_pos, 1);
@@ -197,7 +206,7 @@ void Ads1115_mux::adc_poll()
       digital_write(3, value_c);
     }
 
-    _adc_poll_bool = 1;
+    _adc_mpins_set = 1;
     return; // return without shifting _adc_poll_pos
   }
 
@@ -249,7 +258,7 @@ void Ads1115_mux::adc_poll()
 
 
   _adc_poll_pos++;
-  _adc_poll_bool = 0;
+  _adc_mpins_set = 0;
   return;
 }
 
