@@ -1,20 +1,20 @@
-     HEAD~0	a25cef4 fw 282
-     HEAD~1	a2355c1 fw 278
-     HEAD~2	585dfdd adc mux code update complete..
-     HEAD~3	e422dba about to break adsmux for mcp3021
-     HEAD~4	26fb7c0 update code cleaned up
-     HEAD~5	3e77f1f fix min AC voltage tracking
-     HEAD~6	8aa968c voltage tracking
-     HEAD~7	5e0f767 fw 247
-     HEAD~8	b0f0eb2 fw 247
-     HEAD~9	ea16029 number formatting
-    HEAD~10	852ec10 245
-    HEAD~11	4d4d63e fw 244
-    HEAD~12	8135f07 3phase/single phase updates
-    HEAD~13	4b0892e fw number bump
-    HEAD~14	2457fa2 added new oled display mode
-    HEAD~15	a02e82f fixes, single phase updates.
-    HEAD~16	01406e4 calc_energy_usage
-    HEAD~17	53cca64 web formatting
-    HEAD~18	d98ca7a html download debug
-    HEAD~19	2dbaf85 cv.txt
+     HEAD~0	2c00d69 user can toggle ain averaging
+     HEAD~1	a25cef4 fw 282
+     HEAD~2	a2355c1 fw 278
+     HEAD~3	585dfdd adc mux code update complete..
+     HEAD~4	e422dba about to break adsmux for mcp3021
+     HEAD~5	26fb7c0 update code cleaned up
+     HEAD~6	3e77f1f fix min AC voltage tracking
+     HEAD~7	8aa968c voltage tracking
+     HEAD~8	5e0f767 fw 247
+     HEAD~9	b0f0eb2 fw 247
+    HEAD~10	ea16029 number formatting
+    HEAD~11	852ec10 245
+    HEAD~12	4d4d63e fw 244
+    HEAD~13	8135f07 3phase/single phase updates
+    HEAD~14	4b0892e fw number bump
+    HEAD~15	2457fa2 added new oled display mode
+    HEAD~16	a02e82f fixes, single phase updates.
+    HEAD~17	01406e4 calc_energy_usage
+    HEAD~18	53cca64 web formatting
+    HEAD~19	d98ca7a html download debug

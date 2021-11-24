@@ -132,37 +132,50 @@ void Ads1115_mux::adc_poll()
   if(!adc_found)
     return;
 
-  // _adc_poll_pos wrap to zero check
-  if
-  (
-    (muxtype == 0 && _adc_poll_pos > 7) || // 7 for old boards (8-2)
-    (_adc_poll_pos > 15) // 16 is mux's max inputs. (16-1)
-  )
-  {
-    _adc_poll_pos = 0;
-  }
-
-  // is this last poll for this round ?
   polling_complete = 0;
-  if
-  (
-    (muxtype == 0 && _adc_poll_pos == 7) || // 7 for old boards (8-2)
-    (_adc_poll_pos == 15) // 16 is mux's max inputs. (16-1)
-  )
-  {
-    polling_complete = 1;
-  }
 
-  if(!adc_enable[_adc_poll_pos])
+  // polling reset checks
+  /// will reset polling loop and mark polling complete IF all inputs have been polled.
   {
-    _adc_poll_pos++;
-    return;
-  }
+    uint8_t mpcount = 16; // 16 for new boards (v4+), 8 for old boards
+    if(muxtype == 0)
+      mpcount = 8;
 
+    // pol reset check 1. polled all AINs, 1-16
+    if(_adc_poll_pos > mpcount-1)
+    {
+      _adc_poll_pos = 0;
+      polling_complete = 1;
+      return;
+    }
+
+    // pol reset check 2
+
+    // if current AIN to be checked is disabled return
+    // if all remaining AINs are disabled reset polling position and return.
+    if(!adc_enable[_adc_poll_pos])
+    {
+      // check if any remaing are enabled, if true, increment _adc_poll_pos and return.
+      for(uint8_t i = _adc_poll_pos; i< mpcount; i++)
+      {
+        if(adc_enable[i]) // if any remaining are enabled, increment pol position and return
+        {
+          _adc_poll_pos++;
+          return;
+        }
+      }
+
+      // for loop passed, rest are disabled. reset loop
+      _adc_poll_pos = 0; // check 0 next round.
+      polling_complete = 1;
+      return;
+    }
+  }
 
   // when 0, set mux pos, when 1 read mux.
   // acts as a non halting delay to get a stable voltage.
   // adc_pol gets called twice for each AIN, 1 to setup pins, 2 to read AIN.
+  // Ive tried disabling this and regretted it each time...
   if(!_adc_poll_bool)
   {
     const bool value_a = bitRead(_adc_poll_pos, 0);
