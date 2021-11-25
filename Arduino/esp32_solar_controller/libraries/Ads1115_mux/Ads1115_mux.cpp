@@ -8,9 +8,6 @@ Adafruit_ADS1015 _ads2();
 MCP3021 mcp3021(0x4D);
 MCP3221 mcp3221(0x4D);
 
-// make most of this part of setup function.
-// so pins can be set based on config settings.
-// even so....easier to defunct old board design because of different mux to ADC pins setup (16-1 pin vs 2x8-2).
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc, uint8_t pind)
 {
   _pins[0] = pina;
@@ -134,7 +131,9 @@ void Ads1115_mux::adc_poll()
 
   polling_complete = 0;
 
-  // polling reset checks
+  // ------------------------------------------------------------------------
+  // CHECK 1 (reset)
+
   /// will reset polling loop and mark polling complete IF all inputs have been polled.
   {
     uint8_t mpcount = 16; // 16 for new boards (v4+), 8 for old boards
@@ -150,35 +149,45 @@ void Ads1115_mux::adc_poll()
       return;
     }
 
-    // pol reset check 2
+    // ------------------------------------------------------------------------
+    // CHECK 2 (reset)
 
-    // if current AIN to be checked is disabled return
     // if all remaining AINs are disabled reset polling position and return.
-    if(!adc_enable[_adc_poll_pos])
+
+    bool remaining = 0;
+    for(uint8_t i = _adc_poll_pos; i< mpcount; i++)
     {
-      // check if any remaing are enabled, if true, increment _adc_poll_pos and return.
-      for(uint8_t i = _adc_poll_pos; i< mpcount; i++)
+      // if any remaining are enabled set bool remaining to 1
+      if
+      (
+        (muxtype == 0 && (adc_enable[i] || adc_enable[i+8])) || // muxtype 0, check both
+        (muxtype == 1 && adc_enable[i])
+      )
       {
-        // if any remaining are enabled, increment pol position and return
-        if
-        (
-          (muxtype == 0 && (adc_enable[i] || adc_enable[i+8])) || // muxtype 0, check both
-          (muxtype == 1 && adc_enable[i])
-        )
-        {
-          _adc_mpins_set = 0;
-          _adc_poll_pos++;
-          return;
-        }
+        remaining = 1;
+        break;
       }
+    }
 
-      // for loop passed, rest are disabled. reset loop
-
+    if(!remaining)
+    {
       _adc_mpins_set = 0;
       _adc_poll_pos = 0; // check 0 next round.
       polling_complete = 1;
       return;
     }
+
+    // ------------------------------------------------------------------------
+    // CHECK 3 (skip to next)
+
+    // skip to next pol pos check
+    if(!adc_enable[_adc_poll_pos])
+    {
+      _adc_mpins_set = 0;
+      _adc_poll_pos++;
+      return;
+    }
+
   }
 
   // when 0, set mux pos, when 1 read mux.

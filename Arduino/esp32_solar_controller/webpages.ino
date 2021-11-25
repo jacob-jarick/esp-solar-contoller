@@ -245,7 +245,7 @@ void battery_calibrate()
   for(uint8_t i = 0; i < config.cell_count; i++)
   {
     String tmp = "";
-    webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 7) + ", " + String(config.battery_volt_mod[i], 7) + ");\n";
+    webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 24) + ", " + String(config.battery_volt_mod[i], 24) + ");\n";
   }
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
@@ -541,7 +541,7 @@ void web_config_submit()
         {
           if (server.argName(i) == String("battery_volt_mod") + String(x+1))
           {
-            config.battery_volt_mod[x] = server.arg(i).toFloat();
+            config.battery_volt_mod[x] = server.arg(i).toDouble();
             skip2next = 1;
             break;
           }
