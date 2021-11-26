@@ -6,6 +6,9 @@ var cell_count = 0;
 
 function batcal_add_row(cell, voltage, modifier)
 {
+  if(!modifier) // catch NaN
+    modifier = 1;
+
   console.log("batcal_add_row('" +  cell + "', '" + voltage + "', '" + modifier + "')");
 
   // cheats way to grab max cells since its variable.
@@ -60,11 +63,30 @@ function vsavg(v, cells)
   }
 }
 
+function vsavg_submit()
+{
+  cells = document.getElementById("ccount").value;
+  v = document.getElementById("cavg").value;
+  vsavg(Number(v), cells);
+}
+
 </script>
 <center>
 
+<h2>Set Cells Using Average Cell Value</h2>
+<table border=1>
+  <tr>
+    <td>Cell Count: <input id=ccount type=text value="" size=8></td>
+    <td>Cell Average: <input id=cavg type=text value="" size=8></td>
+    <td> <button onclick="vsavg_submit()">Set</button> </td>
+  </tr>
+</table>
+
+
 <form action='/result' method='POST'>
 
+<h2>Manual Cell Calibration</h2>
+measure from GND to CELL N.
 <table border=1 id=battery_table>
 
 <tr>

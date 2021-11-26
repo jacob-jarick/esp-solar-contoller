@@ -250,6 +250,8 @@ void battery_calibrate()
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
 
+  webpage += js_helper(F("ccount"), String(config.cell_count));
+
   webpage += web_footer();
 
   server.send(200, mime_html, webpage); // Send response
