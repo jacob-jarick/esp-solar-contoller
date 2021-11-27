@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 301
+#define FW_VERSION 306
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -792,7 +792,10 @@ void loop()
   if(config.monitor_battery && system_mode == 2 && cell_volt_low <= config.battery_volt_min)
   {
     mode_reason = "Cell under volt (" + String(cell_volt_low, 3) + "v), force IDLE";
-    log_msg(mode_reason  + "\n");
+//     log_msg(mode_reason  + "\n");
+
+
+
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
 
     modeset(0);
@@ -1189,7 +1192,7 @@ bool check_data_sources()
     // wait N (10) full polls a little for voltages to smooth.
     if(adsmux.polling_complete)
     {
-      if(cds_pcount > 10)
+      if(cds_pcount > adsmux.ain_history_size)
       {
         cells_update();
         check_cells();
@@ -1198,7 +1201,6 @@ bool check_data_sources()
       {
         cds_pcount++;
       }
-
     }
 
     timers.adc_poll = millis() + 10;
@@ -1312,7 +1314,19 @@ void check_cells()
   {
     flags.shutdown_lvolt = 1;
 
-    log_issue("LV Shutdown, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
+//     log_issue("LV Shutdown, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
+    String tmsg = "LV Shutdown.\n";
+    for(uint8_t i = 0; i < config.cell_count; i++)
+    {
+      String tspacer = ":\t";
+
+      if(cells_volts[i] < config.battery_volt_min) // if below min volts, highlight with an *
+        tspacer = ":*\t";
+
+      tmsg += "\t" + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+    }
+
+    log_issue(tmsg);
   }
 }
 
