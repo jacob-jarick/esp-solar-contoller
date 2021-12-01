@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 308
+#define FW_VERSION 309
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1288,14 +1288,38 @@ void check_cells()
     if(!hv_trigger && flags.shutdown_hvolt && millis() > timers.hv_shutdown)
     {
       flags.shutdown_hvolt = 0;
-      log_issue("HV recon, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
+//       log_issue("HV recon, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
+
+      String tmsg = "HV Reconnect.\n";
+      for(uint8_t i = 0; i < config.cell_count; i++)
+      {
+        String tspacer = ":\t";
+
+        if(i == high_cell) // highlight highest cell
+          tspacer = ":*\t";
+
+        tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+      }
+
+      log_issue(tmsg);
     }
 
     // HV disconnect check
     if(hv_trigger && !flags.shutdown_hvolt)
     {
       flags.shutdown_hvolt = 1;
-      log_issue("HV shutdown, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
+//       log_issue("HV shutdown, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
+
+      String tmsg = "HV Disconnect.\n";
+      for(uint8_t i = 0; i < config.cell_count; i++)
+      {
+        String tspacer = ":\t";
+
+        if(cells_volts[i] >= config.battery_volt_max) // highlight cells over volt
+          tspacer = ":*\t";
+
+        tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+      }
     }
   }
 
@@ -1313,7 +1337,7 @@ void check_cells()
     {
       String tspacer = ":\t";
 
-      if(cells_volts[i] == cell_volt_low) // if below min volts, highlight with an *
+      if(i == low_cell) // highlight lowest cell
         tspacer = ":*\t";
 
       tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
@@ -1333,7 +1357,7 @@ void check_cells()
     {
       String tspacer = ":\t";
 
-      if(cells_volts[i] < config.battery_volt_min) // if below min volts, highlight with an *
+      if(cells_volts[i] <= config.battery_volt_min) // if below min volts, highlight with an *
         tspacer = ":*\t";
 
       tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
