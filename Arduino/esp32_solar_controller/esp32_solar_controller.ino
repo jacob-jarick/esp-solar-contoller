@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 309
+#define FW_VERSION 310
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1298,7 +1298,7 @@ void check_cells()
         if(i == high_cell) // highlight highest cell
           tspacer = ":*\t";
 
-        tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+        tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
       }
 
       log_issue(tmsg);
@@ -1318,7 +1318,7 @@ void check_cells()
         if(cells_volts[i] >= config.battery_volt_max) // highlight cells over volt
           tspacer = ":*\t";
 
-        tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+        tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
       }
     }
   }
@@ -1340,7 +1340,7 @@ void check_cells()
       if(i == low_cell) // highlight lowest cell
         tspacer = ":*\t";
 
-      tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+      tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
     }
 
     log_issue(tmsg);
@@ -1360,7 +1360,7 @@ void check_cells()
       if(cells_volts[i] <= config.battery_volt_min) // if below min volts, highlight with an *
         tspacer = ":*\t";
 
-      tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+      tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
     }
 
     log_issue(tmsg);
