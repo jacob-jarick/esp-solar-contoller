@@ -1,20 +1,20 @@
-     HEAD~0	646d3ac roll back to 1.0.6 of esp32 board libs
-     HEAD~1	a6311b8 adc code tweaks. esp board libs 2.0.1
-     HEAD~2	3d8ef03 BUGFIX - pin select in adc poll was wonky
-     HEAD~3	f21534a optimize adc mux polling code
-     HEAD~4	2c00d69 user can toggle ain averaging
-     HEAD~5	a25cef4 fw 282
-     HEAD~6	a2355c1 fw 278
-     HEAD~7	585dfdd adc mux code update complete..
-     HEAD~8	e422dba about to break adsmux for mcp3021
-     HEAD~9	26fb7c0 update code cleaned up
-    HEAD~10	3e77f1f fix min AC voltage tracking
-    HEAD~11	8aa968c voltage tracking
-    HEAD~12	5e0f767 fw 247
-    HEAD~13	b0f0eb2 fw 247
-    HEAD~14	ea16029 number formatting
-    HEAD~15	852ec10 245
-    HEAD~16	4d4d63e fw 244
-    HEAD~17	8135f07 3phase/single phase updates
-    HEAD~18	4b0892e fw number bump
-    HEAD~19	2457fa2 added new oled display mode
+     HEAD~0	8204a5c LV disconnect message formatting
+     HEAD~1	646d3ac roll back to 1.0.6 of esp32 board libs
+     HEAD~2	a6311b8 adc code tweaks. esp board libs 2.0.1
+     HEAD~3	3d8ef03 BUGFIX - pin select in adc poll was wonky
+     HEAD~4	f21534a optimize adc mux polling code
+     HEAD~5	2c00d69 user can toggle ain averaging
+     HEAD~6	a25cef4 fw 282
+     HEAD~7	a2355c1 fw 278
+     HEAD~8	585dfdd adc mux code update complete..
+     HEAD~9	e422dba about to break adsmux for mcp3021
+    HEAD~10	26fb7c0 update code cleaned up
+    HEAD~11	3e77f1f fix min AC voltage tracking
+    HEAD~12	8aa968c voltage tracking
+    HEAD~13	5e0f767 fw 247
+    HEAD~14	b0f0eb2 fw 247
+    HEAD~15	ea16029 number formatting
+    HEAD~16	852ec10 245
+    HEAD~17	4d4d63e fw 244
+    HEAD~18	8135f07 3phase/single phase updates
+    HEAD~19	4b0892e fw number bump

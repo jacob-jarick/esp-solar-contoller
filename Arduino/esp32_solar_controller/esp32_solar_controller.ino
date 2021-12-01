@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 306
+#define FW_VERSION 308
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1306,7 +1306,20 @@ void check_cells()
   if(lv_recon_trigger && flags.shutdown_lvolt && millis() > timers.lv_shutdown)
   {
     flags.shutdown_lvolt = 0;
-    log_issue("LV reconnect, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
+//     log_issue("LV reconnect, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
+
+    String tmsg = "LV Reconnect.\n";
+    for(uint8_t i = 0; i < config.cell_count; i++)
+    {
+      String tspacer = ":\t";
+
+      if(cells_volts[i] == cell_volt_low) // if below min volts, highlight with an *
+        tspacer = ":*\t";
+
+      tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+    }
+
+    log_issue(tmsg);
   }
 
   // flags.shutdown_lvolt check
@@ -1323,7 +1336,7 @@ void check_cells()
       if(cells_volts[i] < config.battery_volt_min) // if below min volts, highlight with an *
         tspacer = ":*\t";
 
-      tmsg += "\t" + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
+      tmsg += "   " + String(i) + tspacer + String(cells_volts[i], 3) + "\n";
     }
 
     log_issue(tmsg);

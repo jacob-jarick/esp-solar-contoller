@@ -439,29 +439,29 @@ void vars_sanity_check()
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
   {
-    config.battery_volt_min = config.pack_volt_min = mmaths.mmax(config.battery_volt_min, config.pack_volt_min);
+    config.battery_volt_min = config.pack_volt_min = config.battery_volt_min;
     log_msg("config fix: pack_volt_min != battery_volt_min");
     flags.save_config = 1;
   }
 
-  if(!config.battery_volt_min)
+
+  if(config.battery_volt_min <= 0)
   {
     config.battery_volt_min = 3;
-    log_msg("config fix: !battery_volt_min");
+    log_msg("config fix: battery_volt_min <= 0");
     flags.save_config = 1;
   }
 
-  if(!config.battery_volt_rec || config.battery_volt_rec <= config.battery_volt_min)
-  {
-    config.battery_volt_rec = config.battery_volt_min * 1.05;
-    log_msg("config fix: battery_volt_rec");
-    flags.save_config = 1;
-  }
-
-  if(!config.battery_volt_max || config.battery_volt_max <= config.battery_volt_rec)
+  if(config.battery_volt_max <= 0)
   {
     config.battery_volt_max = 4.2;
-    log_msg("config fix: battery_volt_max");
+    log_msg("config fix: battery_volt_max <= 0");
+    flags.save_config = 1;
+  }
+  if(config.battery_volt_rec >= config.battery_volt_max)
+  {
+    config.battery_volt_rec = config.battery_volt_min + mmaths.mdiff(config.battery_volt_min, config.battery_volt_max) / 2;
+    log_msg("config fix: battery_volt_rec >= battery_volt_max");
     flags.save_config = 1;
   }
 

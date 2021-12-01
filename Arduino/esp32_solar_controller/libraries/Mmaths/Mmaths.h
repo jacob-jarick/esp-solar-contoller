@@ -28,6 +28,7 @@ class Mmaths
     uint8_t mdiff(const uint8_t a, const uint8_t b);
     uint16_t mdiff(const uint16_t a, const uint16_t b);
     unsigned long mdiff(const unsigned long a, const unsigned long b);
+    float mdiff(const float a, const float b);
 
     unsigned long ymdhms_to_sec(uint16_t YY, uint8_t MM, uint8_t DD, uint8_t HH, uint8_t mm, uint8_t ss);
 

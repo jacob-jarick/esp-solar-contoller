@@ -132,6 +132,11 @@ unsigned long Mmaths::mdiff(const unsigned long a, const unsigned long b)
   return mmax(a, b) - mmin(a, b);
 }
 
+float Mmaths::mdiff(const float a, const float b)
+{
+  return mmax(a, b) - mmin(a, b);
+}
+
 
 // time stuff
 
