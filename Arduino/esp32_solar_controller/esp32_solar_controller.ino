@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 310
+#define FW_VERSION 311
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -738,7 +738,7 @@ void loop()
   if(systick > millis())
     return;
 
-  systick = millis() + 10;
+  systick = millis() + 5;
 
   if(check_system_triggers())
     return;
