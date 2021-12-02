@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 321
+#define FW_VERSION 322
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1193,8 +1193,9 @@ bool check_data_sources()
   // ADC poll
   if(config.monitor_battery && millis() > timers.adc_poll)
   {
-    adsmux.adc_poll();
+    timers.adc_poll = millis() + 3; // optimistic but whatever.
 
+    adsmux.adc_poll();
 
     // if polling complete, check cells etc
     if(adsmux.polling_complete)
@@ -1215,7 +1216,6 @@ bool check_data_sources()
       }
     }
 
-    timers.adc_poll = millis() + 4;
     result = 1;
   }
 
