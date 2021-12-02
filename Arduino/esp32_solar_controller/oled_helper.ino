@@ -40,11 +40,8 @@ void oled_print(String str)
     oled.print(str);
   else
   {
-//     if(serial_on)
-    {
-      Serial.print(F("oled: "));
-      Serial.println(str);
-    }
+    Serial.print(F("oled: "));
+    Serial.println(str);
   }
 }
 

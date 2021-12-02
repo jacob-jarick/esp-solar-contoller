@@ -222,6 +222,9 @@ void battery_info()
 
     webpage += js_table_add_row("battery_table", String("*"), String(cell_volt_diff, 4),  "Cell Difference");
 
+    // add complete adc poll time
+    webpage += js_table_add_row("battery_table", String("*"), String(adc_poll_time, 3) + String(" sec"),  "ADC Complete poll time duration");
+
     if(config.cells_in_series)
     {
       webpage += js_table_add_row("battery_table", String("*"), String(cells_volts_real[config.cell_count-1], 4),  "SUM");
@@ -269,6 +272,8 @@ void advance_config()
   webpage += js_radio_helper(F("webc_mode_1"), F("webc_mode_0"), config.webc_mode);
 
   webpage += js_radio_helper(F("auto_update_on"), F("auto_update_off"), config.auto_update);
+
+  webpage += js_radio_helper(F("serial_off1"), F("serial_off0"), config.serial_off);
 
 
 
@@ -380,6 +385,9 @@ void web_config_submit()
 
       else if (server.argName(i) == F("auto_update"))
         config.auto_update = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("serial_off"))
+        config.serial_off = server.arg(i).toInt();
 
       else if (server.argName(i) == F("avg_phase"))
         config.avg_phase = server.arg(i).toInt();
@@ -1552,8 +1560,7 @@ void web_issue_submit()
       }
       else
       {
-//         if(serial_on)
-//           Serial.println(F("Unknown arg"));
+//         Serial.println(F("Unknown arg"));
       }
     }
   }

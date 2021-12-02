@@ -54,6 +54,7 @@ void Ads1115_mux::setup()
 
       _ads2.begin();
       _ads2.setGain(GAIN_ONE);
+      _ads2.setDataRate(RATE_ADS1015_3300SPS); // default: RATE_ADS1015_1600SPS
     }
     else
     {
@@ -62,6 +63,7 @@ void Ads1115_mux::setup()
 
       _ads.begin();
       _ads.setGain(GAIN_ONE);
+      _ads.setDataRate(RATE_ADS1115_860SPS); // default: RATE_ADS1115_128SPS
     }
 
     adc_found = 1;

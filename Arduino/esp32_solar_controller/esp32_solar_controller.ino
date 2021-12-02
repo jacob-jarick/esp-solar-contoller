@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 311
+#define FW_VERSION 321
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -312,6 +312,8 @@ struct Sconfig
   bool night_is_timer = 0;
   bool cells_in_series = 0;
   bool monitor_battery = 0;
+
+  bool serial_off = 0;
 
   bool c_offd;
   bool c_amot;
@@ -676,6 +678,13 @@ void setup()
     config.fwver = FW_VERSION;
     save_config();
   }
+
+  // turn off serial if set in config.
+
+  if(config.serial_off)
+  {
+    Serial.end();
+  }
 }
 
 void set_pins()
@@ -729,16 +738,9 @@ String mode_reason = "";
 String old_day_reason = "idle";
 String old_night_reason = "idle";
 
-unsigned long systick = 0;
-
 void loop()
 {
   server.handleClient();
-
-  if(systick > millis())
-    return;
-
-  systick = millis() + 5;
 
   if(check_system_triggers())
     return;
@@ -1170,7 +1172,11 @@ bool check_system_timers()
 // ======================================================================================================================
 
 
-uint8_t cds_pcount = 0;
+uint8_t adc_pcount = 0; // check data sources position count. - min poll count before running check_cells
+
+unsigned long adc_pps_ms = millis(); // time of last complete poll
+float adc_poll_time = 0;
+
 bool check_data_sources()
 {
   bool result = 0;
@@ -1189,21 +1195,27 @@ bool check_data_sources()
   {
     adsmux.adc_poll();
 
-    // wait N (10) full polls a little for voltages to smooth.
+
+    // if polling complete, check cells etc
     if(adsmux.polling_complete)
     {
-      if(cds_pcount > adsmux.ain_history_size)
+      unsigned long tmp_ms = millis() - adc_pps_ms;
+      adc_pps_ms = millis();
+      adc_poll_time = tmp_ms / 1000.0;
+
+      // wait (adsmux.ain_history_size) full polls a little for voltages to smooth.
+      if(adc_pcount > adsmux.ain_history_size)
       {
         cells_update();
         check_cells();
       }
       else
       {
-        cds_pcount++;
+        adc_pcount++;
       }
     }
 
-    timers.adc_poll = millis() + 10;
+    timers.adc_poll = millis() + 4;
     result = 1;
   }
 

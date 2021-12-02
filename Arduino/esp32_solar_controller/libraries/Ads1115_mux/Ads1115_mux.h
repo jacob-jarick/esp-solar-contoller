@@ -33,7 +33,7 @@ class Ads1115_mux
 
     bool polling_complete = 0; // 0 until last AIN checked (AIN15) then 0 again when starting from AIN0
 
-    const static uint8_t ain_count = 16; // todo reduce to 16
+    const static uint8_t ain_count = 16;
 
     uint16_t adc_val[ain_count];
     bool adc_enable[ain_count];
@@ -50,7 +50,7 @@ class Ads1115_mux
 
     void update_adc_val(uint8_t index, uint16_t value);
 
-    const static uint8_t _sample_count = 15; // how many times a ADC value is read for the median array
+    const static uint8_t _sample_count = 9; // how many times a ADC value is read for the median array
 
     uint8_t _adc_poll_pos;
 

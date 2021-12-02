@@ -95,6 +95,7 @@ void save_config()
   doc["flip_ipin"] = (int)config.flip_ipin;
   doc["flip_cpin"] = (int)config.flip_cpin;
   doc["auto_update"] = (int)config.auto_update;
+  doc["serial_off"] = (int)config.serial_off;
   doc["inv_idle_mode"] = (int)config.inv_idle_mode;
 
   doc["i_enable"] = (int)config.i_enable;
@@ -282,7 +283,7 @@ bool load_config()
   config.monitor_phase_b = doc["monitor_phase_b"];
   config.monitor_phase_c = doc["monitor_phase_c"];
 
-  config.cpkwh = doc["cpkwh"];
+  config.cpkwh = doc["cpkwh"]; // cost per kwh
 
   // bools
 
@@ -301,6 +302,8 @@ bool load_config()
   config.flip_ipin = doc["flip_ipin"];
   config.flip_cpin = doc["flip_cpin"];
   config.auto_update = doc["auto_update"];
+  config.serial_off = doc["serial_off"];
+
   config.inv_idle_mode = doc["inv_idle_mode"];
   config.i_enable = doc["i_enable"];
   config.c_enable = doc["c_enable"];
