@@ -1315,12 +1315,24 @@ void update_menu()
   webpage += get_file(html_mode);
   webpage += js_header();
 
-  String pre = check_for_update();
-  String link = F("<a href=/do_update>Upgrade Now</a>");
+  String pre = "";
+  check_for_update();
+
+  pre += F("Current: ");
+  pre += FW_VERSION;
+  pre += F("\\nLatest: ");
+  pre += remote_version;
+
+  String link_html = "";
+
+  if(remote_version <= FW_VERSION)
+    link_html = F("No update found.");
+  else
+    link_html = F("<a href=/do_update>Upgrade Now</a>");
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + F(" Update Check"));
   webpage += js_helper_innerhtml(F("pre"), pre);
-  webpage += js_helper_innerhtml(F("link"), link);
+  webpage += js_helper_innerhtml(F("link"), link_html);
   webpage += js_helper_innerhtml(F("link2"), "<a href=" + String(config.pub_url) + "/changelog.txt>Change Log</a>");
 
   webpage += web_footer();

@@ -66,41 +66,29 @@ bool get_html_and_save(String filepath)
 }
 
 uint16_t remote_version = 0;
-String check_for_update()
+uint16_t check_for_update()
 {
-  if(flags.update_found == 1)
-    return String(F("Update Found (cached)"));
+  if(flags.update_found)
+    return remote_version;
 
-  get_remote_version();
+  if(get_remote_version() > FW_VERSION)
+    flags.update_found = 1;
 
-  if(remote_version <= FW_VERSION)
-    return String("No Updates");
-
-  String message = "";
-  message += F("Current: ");
-  message += FW_VERSION;
-  message += F("\\nLatest: ");
-  message += remote_version;
-
-  return message;
+  return remote_version;
 }
 
-void get_remote_version()
+uint16_t get_remote_version()
 {
-  if(flags.update_found == 1)
-    return;
+  if(remote_version > FW_VERSION)
+    return remote_version;
 
   String url_tmp = String(config.pub_url) + "/cv.txt";
   String result = "";
 
   if(get_url(url_tmp, result))
-  {
     remote_version = result.toInt();
 
-    if(remote_version > FW_VERSION)
-      flags.update_found = 1;
-  }
-  return;
+  return remote_version;
 }
 
 uint8_t update_trys = 0;
@@ -108,10 +96,7 @@ void do_update()
 {
   flags.update_self = 0;
 
-  if(!flags.update_found)
-    get_remote_version();
-
-  if(!flags.update_found)
+  if(get_remote_version() <= FW_VERSION)
   {
     oled_clear();
     both_println(F("No update"));
