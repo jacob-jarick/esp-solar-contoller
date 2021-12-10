@@ -205,10 +205,10 @@ void battery_info()
     {
       String tmp = "";
 
-      if(i == cell_lh[0])
+      if(i == low_cell)
         tmp += " Lowest";
 
-      if(i == cell_lh[1])
+      if(i == high_cell)
         tmp += " Highest";
 
       if(cells_volts[i] < config.battery_volt_min)
@@ -225,10 +225,9 @@ void battery_info()
     // add complete adc poll time
     webpage += js_table_add_row("battery_table", String("*"), String(adc_poll_time, 3) + String(" sec"),  "ADC Complete poll time duration");
 
-    if(config.cells_in_series)
-    {
-      webpage += js_table_add_row("battery_table", String("*"), String(cells_volts_real[config.cell_count-1], 4),  "SUM");
-    }
+    webpage += js_table_add_row("battery_table", String("*"), String(cells_volts_real[config.cell_count-1], 4),  "SUM");
+
+
   }
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
@@ -321,8 +320,6 @@ void battery_config()
   webpage += html_create_input(F("bvmax"), F("battery_volt_max"), "10", String(config.battery_volt_max, 4), "float");
   webpage += html_create_input(F("pvm"), F("pack_volt_min"), "10", String(config.pack_volt_min, 4), "float");
   webpage += html_create_input(F("voff"), F("ups_volt_ofs"), "10", String(config.dcvoltage_offset, 4), "float");
-
-  webpage += js_select_helper(F("cells_in_series"), String(config.cells_in_series) );
 
   webpage += html_create_input(F("lvrd"), F("lv_shutdown_delay"), "3", String(config.lv_shutdown_delay, 2), "float");
   webpage += html_create_input(F("hvrd"), F("hv_shutdown_delay"), "3", String(config.hv_shutdown_delay, 2), "float");
@@ -526,9 +523,6 @@ void web_config_submit()
 
       else if (server.argName(i) == F("avg_ain"))
         config.avg_ain = server.arg(i).toInt();
-
-      else if (server.argName(i) == F("cells_in_series"))
-        config.cells_in_series = server.arg(i).toInt();
 
       else if (server.argName(i) == F("battery_volt_min"))
         config.battery_volt_min = server.arg(i).toFloat();
@@ -771,11 +765,9 @@ void stats()
         cell_string += String(cells_volts[i]);
         cell_string += "v\n";
       }
-      if(config.cells_in_series)
-      {
-        cell_string += "Diff: " + String(cell_volt_diff, 4) + "v</pre>\n";
-        cell_string += "Pack Total: " + String(cells_volts_real[config.cell_count-1]) + "v\n";
-      }
+
+      cell_string += "Diff: " + String(cell_volt_diff, 4) + "v</pre>\n";
+      cell_string += "Pack Total: " + String(cells_volts_real[config.cell_count-1]) + "v\n";
     }
     // single cell
     else
@@ -1146,9 +1138,13 @@ void force_refresh()
   {
     timers.mode_check = 0;
     timers.pgrid = 0;
-    timers.adc_poll = 0;
     timers.lv_shutdown = 0;
     timers.hv_shutdown = 0;
+
+    timers.charger_off = 0;
+    timers.inverter_off = 0;
+
+
     sync_time();
   }
 }

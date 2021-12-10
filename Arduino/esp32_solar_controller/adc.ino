@@ -57,10 +57,8 @@ double read_cell_volts(const byte cell)
 
   cells_volts_real[cell] = cells_volts[cell] = v;
 
-  if(config.cells_in_series && cell > 0)
-  {
+  if(cell > 0)
     cells_volts[cell] -= cells_volts_real[cell-1];
-  }
 
   return cells_volts[cell];
 }

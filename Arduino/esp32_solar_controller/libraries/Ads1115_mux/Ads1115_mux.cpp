@@ -257,14 +257,12 @@ void Ads1115_mux::adc_poll()
   }
 
   bubbleSort(areads,_sample_count);
-//   adc_val[_adc_poll_pos] = areads[_sample_count/2];
   update_adc_val(_adc_poll_pos, areads[_sample_count/2]);
 
   // muxtype 0 support
   if(muxtype == 0 && (adctype == 0 || adctype == 1) && adc_enable[_adc_poll_pos+8])
   {
     bubbleSort(areads2,_sample_count);
-//     adc_val[_adc_poll_pos+8] = areads2[_sample_count/2];
     update_adc_val(_adc_poll_pos+8, areads2[_sample_count/2]);
   }
 

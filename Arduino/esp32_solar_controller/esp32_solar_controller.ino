@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 322
+#define FW_VERSION 327
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -135,7 +135,9 @@ float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
 
-uint8_t cell_lh[2] = {0, 0};
+// uint8_t cell_lh[2] = {0, 0};
+uint8_t low_cell = 0;
+uint8_t high_cell = 0;
 
 //------------------------------------------------------------------------------
 
@@ -310,7 +312,6 @@ struct Sconfig
   bool c_enable = 0;
   bool day_is_timer = 0;
   bool night_is_timer = 0;
-  bool cells_in_series = 0;
   bool monitor_battery = 0;
 
   bool serial_off = 0;
@@ -756,7 +757,7 @@ void loop()
 
   if(flags.adc_config_error)
   {
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "config requires ADC, but ADC not found.";
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "Config ERROR.\nconfig requires ADC, but ADC not found.";
 
     modeset(0);
     return;
@@ -765,7 +766,7 @@ void loop()
 
   if(config.monitor_battery && !flags.cells_checked)
   {
-    mode_reason = "waiting on cells first check. force IDLE.";
+    mode_reason = "waiting on cells first check";
 //     log_msg(mode_reason  + "\n");
     mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
     modeset(0);
@@ -810,7 +811,7 @@ void loop()
   if (timers.mode_check > millis())
     return;
 
-  mode_reason = datetime_str(0, '/', ' ', ':') + " ";
+  mode_reason = datetime_str(0, '/', ' ', ':') + "\n";
 
   // ----------------------------------------------------------------------
   // update mode
@@ -856,7 +857,7 @@ void loop()
   // discharger
   if (config.i_enable && flags.night)
   {
-    String new_night_reason = "Night: ";
+    String new_night_reason = "";
     // LV check
     if (config.monitor_battery && flags.shutdown_lvolt)
     {
@@ -906,7 +907,7 @@ void loop()
       new_night_reason = "idling\n";
     }
 
-    mode_reason += new_night_reason;
+    mode_reason += "Night: " + new_night_reason;
     old_night_reason = new_night_reason;
   }
 
@@ -917,7 +918,7 @@ void loop()
   // charger
   if (config.c_enable && flags.day)
   {
-    String new_day_reason = "Day: ";
+    String new_day_reason = "";
 
     // idle after min on time check
     if(fchg == 1 && config.c_amot) // check behaviour after being on for min on time. 1 = go to off.
@@ -953,11 +954,11 @@ void loop()
     }
     else if(fchg) // no change from prior mode and chg on
     {
-      new_day_reason = old_day_reason;
+      new_day_reason += old_day_reason;
     }
     else // no change from prior mode and chg oFF
     {
-      new_day_reason = "idling\n";
+      new_day_reason += "idling\n";
     }
 
     // monitoring voltage charger logic
@@ -977,8 +978,7 @@ void loop()
         fchg = 0;
       }
     }
-
-    mode_reason += new_day_reason;
+    mode_reason += "Day: " + new_day_reason;
     old_day_reason = new_day_reason;
   }
 
@@ -1237,23 +1237,23 @@ void check_cells()
   cell_volt_low = 10000;
   cell_volt_high = 0;
 
-  bool lv_recon_trigger = 1; // reconnect if all cells are above battery_volt_rec
+//   bool lv_recon_trigger = 1; // reconnect if all cells are above battery_volt_rec
   bool lv_trigger = 0;
   bool hv_trigger = 0;
 
-  uint8_t low_cell = 0;
-  uint8_t high_cell = 0;
+//   uint8_t low_cell = 0;
+//   uint8_t high_cell = 0;
 
 
   unsigned long ms = millis();
 
-  if((config.cells_in_series || config.cell_count == 1) && cells_volts_real[config.cell_count-1] < config.pack_volt_min)
+  // single cell check
+  if(config.cell_count == 1 && cells_volts_real[0] < config.pack_volt_min)
     lv_trigger = 1;
 
   // cell checks
   for(byte i = 0; i < config.cell_count; i++)
   {
-    // cell volt difference
     if(cells_volts[i] < cell_volt_low)
     {
       low_cell = i;
@@ -1264,30 +1264,25 @@ void check_cells()
       high_cell = i;
       cell_volt_high = cells_volts[i];
     }
-
-    // HV check
-    if(config.hv_monitor && cells_volts[i] >= config.battery_volt_max)
-    {
-      hv_trigger = 1;
-      timers.hv_shutdown = ms + (config.hv_shutdown_delay * 3600000.0);
-    }
-
-    // LV Check
-    if(cells_volts[i] <= config.battery_volt_min)
-    {
-      lv_trigger = 1;
-      timers.lv_shutdown = ms + (config.lv_shutdown_delay * 3600000.0);
-    }
-
-    // LV recon
-    if(lv_trigger || cells_volts[i] < config.battery_volt_rec)
-    {
-      lv_recon_trigger = 0; // if cells below min voltage, keep shutdown (no night time drain)
-    }
   }
+
+  // after loop preform trigger checks
+
+  // HV check
+  if(config.hv_monitor && cells_volts[high_cell] >= config.battery_volt_max)
+  {
+    hv_trigger = 1;
+    timers.hv_shutdown = ms + (config.hv_shutdown_delay * 3600000.0);
+  }
+
+  // LV Check
+  if(cells_volts[low_cell] <= config.battery_volt_min)
+  {
+    lv_trigger = 1;
+    timers.lv_shutdown = ms + (config.lv_shutdown_delay * 3600000.0);
+  }
+
   cell_volt_diff = cell_volt_high - cell_volt_low;
-  cell_lh[0] = low_cell;
-  cell_lh[1] = high_cell;
 
   String now_str = datetime_str(0, '/', ' ', ':');
 
@@ -1300,7 +1295,6 @@ void check_cells()
     if(!hv_trigger && flags.shutdown_hvolt && millis() > timers.hv_shutdown)
     {
       flags.shutdown_hvolt = 0;
-//       log_issue("HV recon, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
 
       String tmsg = "HV Reconnect.\n";
       for(uint8_t i = 0; i < config.cell_count; i++)
@@ -1312,15 +1306,14 @@ void check_cells()
 
         tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
       }
-
       log_issue(tmsg);
     }
 
+    // ----------------------------------------------------------------------
     // HV disconnect check
     if(hv_trigger && !flags.shutdown_hvolt)
     {
       flags.shutdown_hvolt = 1;
-//       log_issue("HV shutdown, highest cell: " + String(high_cell+1) + " - " + String(cells_volts[high_cell]) + "v");
 
       String tmsg = "HV Disconnect.\n";
       for(uint8_t i = 0; i < config.cell_count; i++)
@@ -1332,24 +1325,22 @@ void check_cells()
 
         tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
       }
+      log_issue(tmsg);
     }
   }
 
   // ----------------------------------------------------------------------
-  // flags.shutdown_lvolt
-
-  // reconnect check
-  if(lv_recon_trigger && flags.shutdown_lvolt && millis() > timers.lv_shutdown)
+  // flags.shutdown_lvolt check
+  if(lv_trigger && !flags.shutdown_lvolt)
   {
-    flags.shutdown_lvolt = 0;
-//     log_issue("LV reconnect, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
+    flags.shutdown_lvolt = 1;
 
-    String tmsg = "LV Reconnect.\n";
+    String tmsg = "LV Shutdown.\n";
     for(uint8_t i = 0; i < config.cell_count; i++)
     {
       String tspacer = ":\t";
 
-      if(i == low_cell) // highlight lowest cell
+      if(cells_volts[i] <= config.battery_volt_min) // if below min volts, highlight with an *
         tspacer = ":*\t";
 
       tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
@@ -1358,18 +1349,18 @@ void check_cells()
     log_issue(tmsg);
   }
 
-  // flags.shutdown_lvolt check
-  if(lv_trigger && !flags.shutdown_lvolt)
+  // ----------------------------------------------------------------------
+  // reconnect check
+  if(flags.shutdown_lvolt && cells_volts[low_cell] >= config.battery_volt_rec && millis() > timers.lv_shutdown)
   {
-    flags.shutdown_lvolt = 1;
+    flags.shutdown_lvolt = 0;
 
-//     log_issue("LV Shutdown, lowest cell: " + String(low_cell+1) + " - " + String(cells_volts[low_cell]) + "v");
-    String tmsg = "LV Shutdown.\n";
+    String tmsg = "LV Reconnect.\n";
     for(uint8_t i = 0; i < config.cell_count; i++)
     {
       String tspacer = ":\t";
 
-      if(cells_volts[i] <= config.battery_volt_min) // if below min volts, highlight with an *
+      if(i == low_cell) // highlight lowest cell
         tspacer = ":*\t";
 
       tmsg += "   " + String(i+1) + tspacer + String(cells_volts[i], 3) + "\n";
@@ -1445,7 +1436,6 @@ void oled_print_info()
 
   if(flags.access_point)
   {
-
     both_println(F("AP Mode"));
     both_print_ip();
     both_println(F("SSID: SolarAP"));
@@ -1497,17 +1487,6 @@ void oled_print_info()
   {
     float tpsum = 0;
 
-    // NOTE: Western Power and other cunts bill ignoring exports or charging 7c for export on phase A and 29c for import on B or C.
-
-    /*
-    //tpsum = phase_a_watts + phase_b_watts + phase_c_watts;
-    if(phase_a_watts > 0)
-      tpsum += phase_a_watts;
-    if(phase_b_watts > 0)
-      tpsum += phase_b_watts;
-    if(phase_c_watts > 0)
-      tpsum += phase_c_watts;
-    */
     tpsum = get_watts(3);
 
     if(tpsum >= 1000)
@@ -1604,30 +1583,11 @@ void oled_print_info()
 
   if(config.monitor_battery)
   {
-    if(config.cell_count < 4)
-    {
-      for(byte i=0; i< config.cell_count; i++)
-      {
-        oled_print(String(cells_volts[i]) + F(" "));
-      }
-      oled_println(F("v"));
-    }
-    else
-    {
-      float tsum = 0;
-      for(byte i=0; i< config.cell_count; i++)
-        tsum += cells_volts[i];
+    // low_cell
+    oled_print("L " + String(low_cell+1) + ": " + String(cells_volts[low_cell], 2) + " ");
 
-      tsum = tsum / config.cell_count;
-
-      // low_cell
-      oled_print("L " + String(cell_lh[0]) + ": " + String(cells_volts[cell_lh[0]], 2) + " ");
-
-      // high_cell
-      oled_print("H " + String(cell_lh[1]) + ": " + String(cells_volts[cell_lh[1]], 2));
-
-
-    }
+    // high_cell
+    oled_print("H " + String(high_cell+1) + ": " + String(cells_volts[high_cell], 2));
   }
   oled_set2X();
 }

@@ -103,7 +103,6 @@ void save_config()
   doc["day_is_timer"] = (int)config.day_is_timer;
 
   doc["night_is_timer"] = (int)config.night_is_timer;
-  doc["cells_in_series"] = (int)config.cells_in_series;
   doc["monitor_battery"] = (int)config.monitor_battery;
 
   doc["hv_monitor"] = (int)config.hv_monitor;
@@ -263,7 +262,6 @@ bool load_config()
 
   // VMON Calibration
 
-  config.cells_in_series = doc["cells_in_series"];
   config.monitor_battery = doc["monitor_battery"];
   config.cell_count = doc["cell_count"];
   config.dcvoltage_offset = doc["dcvoltage_offset"];
