@@ -1530,7 +1530,7 @@ void i2c_scan()
       {
         webpage += "PCA9555PW:\t0x" + String(address, HEX) + "\n";
       }
-      else if (address == 0x4D)
+      else if (address == 0x4D || address == 0x4e)
       {
         webpage += "MCP3021:\t0x" + String(address, HEX) + " (or MCP3221, check board text)\n";
       }

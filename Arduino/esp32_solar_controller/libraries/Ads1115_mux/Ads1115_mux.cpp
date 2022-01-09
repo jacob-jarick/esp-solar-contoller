@@ -8,6 +8,9 @@ Adafruit_ADS1015 _ads2();
 MCP3021 mcp3021(0x4D);
 MCP3221 mcp3221(0x4D);
 
+MCP3021 mcp3021b(0x4e);
+MCP3221 mcp3221b(0x4e);
+
 Ads1115_mux::Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc, uint8_t pind)
 {
   _pins[0] = pina;
@@ -89,7 +92,9 @@ void Ads1115_mux::setup()
   addr = 0x4D;
   if(i2c_ping(addr))
   {
-    Serial.println("MCP3021 found.");
+    Serial.println("MCP3x21 found.");
+
+    _mcpaddr = addr;
 
     muxtype = 1;
 
@@ -102,6 +107,26 @@ void Ads1115_mux::setup()
     {
       adctype = 3;
       mcp3221.init();
+    }
+  }
+
+  addr = 0x4e;
+  if(i2c_ping(addr))
+  {
+    Serial.println("MCP3x21 found at 0x4e.");
+
+    _mcpaddr = addr;
+    muxtype = 1;
+
+    if(mcptype == 0)
+    {
+      adctype = 2;
+      mcp3021b.init();
+    }
+    else
+    {
+      adctype = 3;
+      mcp3221b.init();
     }
 
     adc_found = 1;
@@ -249,11 +274,22 @@ void Ads1115_mux::adc_poll()
 
     // mcp3021
     else if (adctype == 2)
-      areads[r] = mcp3021.read(); // new ADS
+    {
+      if(_mcpaddr == 0x4D)
+        areads[r] = mcp3021.read(); // new ADS
+      else
+        areads[r] = mcp3021b.read(); // new ADS
+    }
 
     // mcp3221
+
     else if (adctype == 3)
-      areads[r] = mcp3221.read(); // new ADS
+    {
+      if(_mcpaddr == 0x4D)
+        areads[r] = mcp3221.read(); // new ADS
+      else
+        areads[r] = mcp3221b.read(); // new ADS
+    }
   }
 
   bubbleSort(areads,_sample_count);

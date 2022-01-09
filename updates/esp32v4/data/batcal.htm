@@ -54,28 +54,19 @@ function battery_calc(cell)
 // set cell volts using an average voltage
 function vsavg(v, cells)
 {
+console.log("vsavg v="+v+" cells="+cells);
 
   vtemp=0;
   for (i = 0; i < cells; i++)
   {
+    tcell = i+1;
+    console.log("cell " + tcell + " voltage: " + vtemp);
     vtemp+=v;
-    document.getElementById("bv"+(i+1)).value = vtemp;
-    battery_calc(i+1);
+    document.getElementById("bv"+tcell).value = vtemp;
+    battery_calc(tcell);
   }
 }
 
-// set cell voltages using array of cells voltages
-function vsavg(vs)
-{
-
-  vtemp=0;
-  for (i = 0; i < vs.length; i++)
-  {
-    vtemp+=vs[i];
-    document.getElementById("bv"+(i+1)).value = vtemp;
-    battery_calc(i+1);
-  }
-}
 
 function vsavg_submit()
 {
