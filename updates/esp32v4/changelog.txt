@@ -1,20 +1,20 @@
-     HEAD~0	30c7099 small tweak
-     HEAD~1	383ae7b code cleanup
-     HEAD~2	4749d6c optimizations
-     HEAD~3	4fa9442 speed up again
-     HEAD~4	fc9692d adc reads speed up
-     HEAD~5	713bc97 systick reduced to 5ms
-     HEAD~6	d3fdbf7 fix
-     HEAD~7	10a77e8 HV checks more verbose
-     HEAD~8	a5a05a4 latest
-     HEAD~9	8204a5c LV disconnect message formatting
-    HEAD~10	646d3ac roll back to 1.0.6 of esp32 board libs
-    HEAD~11	a6311b8 adc code tweaks. esp board libs 2.0.1
-    HEAD~12	3d8ef03 BUGFIX - pin select in adc poll was wonky
-    HEAD~13	f21534a optimize adc mux polling code
-    HEAD~14	2c00d69 user can toggle ain averaging
-    HEAD~15	a25cef4 fw 282
-    HEAD~16	a2355c1 fw 278
-    HEAD~17	585dfdd adc mux code update complete..
-    HEAD~18	e422dba about to break adsmux for mcp3021
-    HEAD~19	26fb7c0 update code cleaned up
+     HEAD~0	8af6478 added 0x4e address for mcp chip
+     HEAD~1	30c7099 small tweak
+     HEAD~2	383ae7b code cleanup
+     HEAD~3	4749d6c optimizations
+     HEAD~4	4fa9442 speed up again
+     HEAD~5	fc9692d adc reads speed up
+     HEAD~6	713bc97 systick reduced to 5ms
+     HEAD~7	d3fdbf7 fix
+     HEAD~8	10a77e8 HV checks more verbose
+     HEAD~9	a5a05a4 latest
+    HEAD~10	8204a5c LV disconnect message formatting
+    HEAD~11	646d3ac roll back to 1.0.6 of esp32 board libs
+    HEAD~12	a6311b8 adc code tweaks. esp board libs 2.0.1
+    HEAD~13	3d8ef03 BUGFIX - pin select in adc poll was wonky
+    HEAD~14	f21534a optimize adc mux polling code
+    HEAD~15	2c00d69 user can toggle ain averaging
+    HEAD~16	a25cef4 fw 282
+    HEAD~17	a2355c1 fw 278
+    HEAD~18	585dfdd adc mux code update complete..
+    HEAD~19	e422dba about to break adsmux for mcp3021

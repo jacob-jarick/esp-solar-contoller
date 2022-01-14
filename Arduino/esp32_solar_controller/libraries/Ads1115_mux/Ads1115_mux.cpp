@@ -108,6 +108,9 @@ void Ads1115_mux::setup()
       adctype = 3;
       mcp3221.init();
     }
+
+    adc_found = 1;
+    return;
   }
 
   addr = 0x4e;
