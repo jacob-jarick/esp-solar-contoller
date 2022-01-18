@@ -14,6 +14,11 @@ String js_helper_innerhtml(const String n, const String v)
   return "shtml(`" + n  + "`, `" + v + "`);\n";
 }
 
+String js_hide(const String n)
+{
+  return "hide('" + n  + "');\n";
+}
+
 String js_helper(const String n, const String v)
 {
   return "sv('" + n + "', `" + v + "`);\n";
@@ -780,6 +785,19 @@ void stats()
     }
 
     webpage += js_helper_innerhtml(F("battery_voltage"), cell_string );
+  }
+  else
+  {
+    webpage+= js_hide("bvtr");
+  }
+
+  if(flags.lm75a)
+  {
+    webpage += js_helper_innerhtml(F("systemp"), String(board_temp,2) + "c" );
+  }
+  else
+  {
+    webpage+= js_hide("sttr");
   }
 
   webpage += js_helper_innerhtml(F("next_update"), nu_string);

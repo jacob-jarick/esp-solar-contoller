@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 334
+#define FW_VERSION 336
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -765,16 +765,6 @@ void loop()
   set_daynight();
   check_data_sources();
 
-
-
-  if(flags.lm75a && board_temp > config.maxsystemtemp)
-  {
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "board temp " + board_temp + "c higher than max " + config.maxsystemtemp + "c.";
-
-    modeset(0);
-    return;
-  }
-
   // ----------------------------------------------------------------------
   // ADC Error ?
 
@@ -835,6 +825,17 @@ void loop()
     return;
 
   mode_reason = datetime_str(0, '/', ' ', ':') + "\n";
+
+  // ----------------------------------------------------------------------
+  // environment to hot check
+  if(flags.lm75a && board_temp > config.maxsystemtemp)
+  {
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "board temp " + board_temp + "c higher than max " + config.maxsystemtemp + "c.";
+
+    modeset(0);
+    return;
+  }
+
 
   // ----------------------------------------------------------------------
   // update mode
