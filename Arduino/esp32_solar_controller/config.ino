@@ -150,6 +150,9 @@ void save_config()
 
   doc["c_amot"] = (int)config.c_amot;
 
+  doc["maxsystemtemp"] = config.maxsystemtemp;
+
+
   if(SD.exists(json_config_file.c_str() ) )
     SD.remove(json_config_file.c_str() );
 
@@ -360,6 +363,8 @@ bool load_config()
 
   config.c_amot = doc["c_amot"];
 
+  config.maxsystemtemp = doc["maxsystemtemp"];
+
   vars_sanity_check();
 
   return 1;
@@ -414,6 +419,8 @@ void vars_sanity_check()
 
   set_led(config.led_status);
 
+  if(!config.maxsystemtemp)
+    config.maxsystemtemp = 40;
 
   if(!config.threephase)
   {

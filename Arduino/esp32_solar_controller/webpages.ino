@@ -274,7 +274,7 @@ void advance_config()
 
   webpage += js_radio_helper(F("serial_off1"), F("serial_off0"), config.serial_off);
 
-
+  webpage += html_create_input(F("maxsystemtemp"), F("maxsystemtemp"), "3", String(config.maxsystemtemp), "0-255c");
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
@@ -394,6 +394,10 @@ void web_config_submit()
 
       else if (server.argName(i) == F("mcptype"))
         config.mcptype = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("maxsystemtemp"))
+        config.maxsystemtemp = server.arg(i).toInt();
+
 
       else if (server.argName(i) == F("ads1x15type"))
         config.ads1x15type = server.arg(i).toInt();
@@ -1516,7 +1520,10 @@ void i2c_scan()
       }
       else if (address == 0x48)
       {
-        webpage += "ADS1115:\t0x" + String(address, HEX) + " (or ADS1015 if v3 board)\n";
+        if(config.board_rev == 2)
+          webpage += "LM75a:\t\t0x" + String(address, HEX) + "\n";
+        else
+          webpage += "ADS1115:\t0x" + String(address, HEX) + " (or ADS1015 if v3 board)\n";
       }
       else if (address == 0x49)
       {

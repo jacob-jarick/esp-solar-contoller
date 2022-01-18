@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 332
+#define FW_VERSION 334
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -78,6 +78,9 @@ Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3, pin_asel4);
 
 #include <M2M_LM75A.h>
 M2M_LM75A lm75a(0x4f);
+M2M_LM75A lm75a2(0x48); // used on micro boards
+
+uint8_t lm75a_address = 0x4f;
 
 // -----------------------------------------------------------------------------------------
 
@@ -228,6 +231,8 @@ int get_url_code; // global url fetch code, eg 404, 401, 200
 struct Sconfig
 {
   uint16_t fwver = 0;
+
+  uint8_t maxsystemtemp = 40;
 
   char threephase_direct_url[smedium];
   char threephase_push_url[smedium];
@@ -506,7 +511,15 @@ void setup()
     if(flags.i2c_on)
     {
       if(i2c_ping(0x4f))
+      {
+        lm75a_address = 0x4f;
         flags.lm75a = 1;
+      }
+      else if(config.board_rev == 2 && i2c_ping(0x48))
+      {
+        lm75a_address = 0x48;
+        flags.lm75a = 1;
+      }
 
       adsmux.mcptype = config.mcptype;
       adsmux.ads1x15type = config.ads1x15type;
@@ -751,6 +764,16 @@ void loop()
   check_system_timers();
   set_daynight();
   check_data_sources();
+
+
+
+  if(flags.lm75a && board_temp > config.maxsystemtemp)
+  {
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "board temp " + board_temp + "c higher than max " + config.maxsystemtemp + "c.";
+
+    modeset(0);
+    return;
+  }
 
   // ----------------------------------------------------------------------
   // ADC Error ?
@@ -1221,7 +1244,11 @@ bool check_data_sources()
 
   if(flags.lm75a && millis() > timers.lm75a_poll)
   {
-    board_temp = lm75a.getTemperature();
+    if(lm75a_address == 0x48)
+      board_temp = lm75a2.getTemperature();
+    else if(lm75a_address == 0x4f)
+      board_temp = lm75a.getTemperature();
+
     timers.lm75a_poll = millis() + 666;
 
     result = 1;
@@ -1451,6 +1478,18 @@ void oled_print_info()
     oled_set2X();
 
     return;
+  }
+
+  // if over board temp display warning.
+  if(flags.lm75a && board_temp > config.maxsystemtemp)
+  {
+    oled_set2X();
+    oled_println("TO HOT !!!");
+    oled_println("\n  " + String(board_temp, 2) + "c\n" );
+
+    oled_set1X();
+    oled_println("");
+    oled_println(WiFi.localIP().toString());
   }
 
   if(config.display_mode == 1)
