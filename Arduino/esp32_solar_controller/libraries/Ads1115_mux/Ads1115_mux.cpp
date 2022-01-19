@@ -251,7 +251,6 @@ void Ads1115_mux::adc_poll()
   }
 
   // sample X times and bubble sort to get median value.
-//   const uint8_t read_count = 11;
   int16_t areads[_sample_count];
   int16_t areads2[_sample_count]; // for muxtype 0
 

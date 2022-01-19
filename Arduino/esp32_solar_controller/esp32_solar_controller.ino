@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 336
+#define FW_VERSION 340
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -388,6 +388,8 @@ struct SysFlags
   bool i2c_on = 1;
 
   bool cells_checked = 0;
+
+  bool ambient_temp = 0;
 };
 
 SysFlags flags;
@@ -830,10 +832,25 @@ void loop()
   // environment to hot check
   if(flags.lm75a && board_temp > config.maxsystemtemp)
   {
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "board temp " + board_temp + "c higher than max " + config.maxsystemtemp + "c.";
+    String msg = "Too Hot, Ambient Temp " + String(board_temp, 2) + "c, (Max " + String(config.maxsystemtemp) + "c)";
+
+    if(!flags.ambient_temp)
+      log_issue(msg);
+
+    flags.ambient_temp = 1;
+
+    mode_reason = datetime_str(0, '/', ' ', ':') + " " + msg;
 
     modeset(0);
     return;
+  }
+
+  // if flag set, turn off, log recovery
+  if(flags.ambient_temp)
+  {
+    String msg = "Overheat recover, Ambient Temp " + String(board_temp, 2) + "c";
+    log_issue(msg);
+    flags.ambient_temp = 0;
   }
 
 
@@ -1485,7 +1502,7 @@ void oled_print_info()
   if(flags.lm75a && board_temp > config.maxsystemtemp)
   {
     oled_set2X();
-    oled_println("TO HOT !!!");
+    oled_println("TOO HOT !!");
     oled_println("\n  " + String(board_temp, 2) + "c\n" );
 
     oled_set1X();
