@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 341
+#define FW_VERSION 342
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -880,10 +880,10 @@ void loop()
   bool finv = 0; // inverter on flag
   bool fchg = 0; // charger on flag
 
-  if((system_mode == 2 || system_mode == 3) && config.i_enable && flags.night)
+  if(system_mode == 2 || system_mode == 3)
     finv = 1;
 
-  if((system_mode == 1  || system_mode == 3) && config.c_enable && flags.day)
+  if(system_mode == 1  || system_mode == 3)
     fchg = 1;
 
   // -------------------------------------------------------------------------
@@ -992,6 +992,7 @@ void loop()
     else if(fchg) // no change from prior mode and chg on
     {
       new_day_reason += old_day_reason;
+      //new_day_reason += "OLD";
     }
     else // no change from prior mode and chg oFF
     {

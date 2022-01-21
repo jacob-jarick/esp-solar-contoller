@@ -1028,6 +1028,7 @@ void inverter_on()
   if(config.webc_mode)
   {
     mode_reason = "Manual Inverter On";
+    old_night_reason = mode_reason;
     webpage += js_helper_innerhtml(title_str, mode_reason);
 
   }
@@ -1058,6 +1059,9 @@ void both_on() // TODO check charger and inverter are enabled
   if(config.webc_mode)
   {
     mode_reason = "Manual Both On";
+    old_night_reason = mode_reason;
+    old_day_reason = mode_reason;
+
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else
@@ -1088,6 +1092,9 @@ void idle_on()
   if(config.webc_mode)
   {
     mode_reason = "Manual Idle";
+    old_night_reason = mode_reason;
+    old_day_reason = mode_reason;
+
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else
@@ -1113,6 +1120,8 @@ void charger_on()
   if(config.webc_mode)
   {
     mode_reason = "Manual Charger ON";
+    old_day_reason = mode_reason;
+
     webpage += js_helper_innerhtml(title_str, mode_reason);
   }
   else
