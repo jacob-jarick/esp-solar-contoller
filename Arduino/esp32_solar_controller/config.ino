@@ -110,7 +110,6 @@ void save_config()
 
   doc["avg_ain"] = (int)config.avg_ain;
 
-  // ?
 
   doc["day_watts"] = config.day_watts;
   doc["night_watts"] = config.night_watts;
@@ -419,7 +418,7 @@ void vars_sanity_check()
 
   set_led(config.led_status);
 
-  if(!config.maxsystemtemp)
+  if(config.maxsystemtemp <= 0)
     config.maxsystemtemp = 40;
 
   if(!config.threephase)

@@ -279,7 +279,7 @@ void advance_config()
 
   webpage += js_radio_helper(F("serial_off1"), F("serial_off0"), config.serial_off);
 
-  webpage += html_create_input(F("maxsystemtemp"), F("maxsystemtemp"), "3", String(config.maxsystemtemp), "0-255c");
+  webpage += html_create_input(F("maxsystemtemp"), F("maxsystemtemp"), "3", String(config.maxsystemtemp, 1), "(min 0, float)");
 
   webpage += js_radio_helper(F("rotate_oled1"), F("rotate_oled0"), config.rotate_oled);
 
@@ -401,7 +401,7 @@ void web_config_submit()
         config.mcptype = server.arg(i).toInt();
 
       else if (server.argName(i) == F("maxsystemtemp"))
-        config.maxsystemtemp = server.arg(i).toInt();
+        config.maxsystemtemp = server.arg(i).toFloat();
 
 
       else if (server.argName(i) == F("ads1x15type"))

@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 342
+#define FW_VERSION 343
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -232,7 +232,7 @@ struct Sconfig
 {
   uint16_t fwver = 0;
 
-  uint8_t maxsystemtemp = 40;
+  float maxsystemtemp = 40;
 
   char threephase_direct_url[smedium];
   char threephase_push_url[smedium];
@@ -826,7 +826,7 @@ void loop()
   // environment to hot check
   if(flags.lm75a && board_temp > config.maxsystemtemp)
   {
-    String msg = "Too Hot, Ambient Temp " + String(board_temp, 2) + "c, (Max " + String(config.maxsystemtemp) + "c)";
+    String msg = "Too Hot, Ambient Temp " + String(board_temp, 2) + "c, (Max " + String(config.maxsystemtemp, 1) + "c)";
 
     if(!flags.ambient_temp)
       log_issue(msg);
