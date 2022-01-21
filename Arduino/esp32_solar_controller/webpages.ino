@@ -808,7 +808,7 @@ void stats()
 
   if(flags.lm75a)
   {
-    webpage += js_helper_innerhtml(F("systemp"), String(board_temp,2) + "c" );
+    webpage += js_helper_innerhtml(F("systemp"), "Now: " + String(board_temp,2) + "c, Min: " +  String(board_temp_min, 2) + "c, Max: " + String(board_temp_max,2));
   }
   else
   {

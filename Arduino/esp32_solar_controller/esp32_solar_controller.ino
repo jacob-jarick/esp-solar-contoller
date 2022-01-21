@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 343
+#define FW_VERSION 344
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -186,6 +186,9 @@ const uint16_t size_system_msgs = 1024;
 String system_msgs = "";
 
 float board_temp = 0;
+float board_temp_min = 9999999;
+float board_temp_max = 0;
+float board_temp_old = 0; // only used to track changes in temp to prevent message spam.
 
 float phase_a_watts = 0;
 float phase_b_watts = 0;
@@ -826,7 +829,7 @@ void loop()
   // environment to hot check
   if(flags.lm75a && board_temp > config.maxsystemtemp)
   {
-    String msg = "Too Hot, Ambient Temp " + String(board_temp, 2) + "c, (Max " + String(config.maxsystemtemp, 1) + "c)";
+    String msg = "System Overheat, Ambient Temp " + String(board_temp, 2) + "c, (Max " + String(config.maxsystemtemp, 1) + "c)";
 
     if(!flags.ambient_temp)
       log_issue(msg);
@@ -839,10 +842,23 @@ void loop()
     return;
   }
 
+  if(flags.ambient_temp && board_temp + 0.5 > config.maxsystemtemp)
+  {
+    String msg = "System Cooling Down, Ambient Temp " + String(board_temp, 2) + "c";
+
+    if(board_temp_old != board_temp)
+    {
+      board_temp_old = board_temp;
+      log_msg(msg);
+    }
+    mode_reason += msg;
+    return;
+  }
+
   // if flag set, turn off, log recovery
   if(flags.ambient_temp)
   {
-    String msg = "Overheat recover, Ambient Temp " + String(board_temp, 2) + "c";
+    String msg = "System Overheat recover, Ambient Temp " + String(board_temp, 2) + "c";
     log_issue(msg);
     flags.ambient_temp = 0;
   }
@@ -1215,6 +1231,8 @@ uint8_t adc_pcount = 0; // check data sources position count. - min poll count b
 unsigned long adc_pps_ms = millis(); // time of last complete poll
 float adc_poll_time = 0;
 
+
+
 bool check_data_sources()
 {
   bool result = 0;
@@ -1263,6 +1281,9 @@ bool check_data_sources()
       board_temp = lm75a2.getTemperature();
     else if(lm75a_address == 0x4f)
       board_temp = lm75a.getTemperature();
+
+    board_temp_max = mmaths.mmax(board_temp_max, board_temp);
+    board_temp_min = mmaths.mmin(board_temp_min, board_temp);
 
     timers.lm75a_poll = millis() + 666;
 

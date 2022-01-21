@@ -1,20 +1,20 @@
-     HEAD~0	b46ce55 fix mode reason
-     HEAD~1	5c74ce4 status page formatting
-     HEAD~2	b6372a4 log overheat and recovery
-     HEAD~3	76b92b2 ambient temp displayed on status
-     HEAD~4	0066fa2 support lm75a on microboards
-     HEAD~5	4470a83 bugfix
-     HEAD~6	8af6478 added 0x4e address for mcp chip
-     HEAD~7	30c7099 small tweak
-     HEAD~8	383ae7b code cleanup
-     HEAD~9	4749d6c optimizations
-    HEAD~10	4fa9442 speed up again
-    HEAD~11	fc9692d adc reads speed up
-    HEAD~12	713bc97 systick reduced to 5ms
-    HEAD~13	d3fdbf7 fix
-    HEAD~14	10a77e8 HV checks more verbose
-    HEAD~15	a5a05a4 latest
-    HEAD~16	8204a5c LV disconnect message formatting
-    HEAD~17	646d3ac roll back to 1.0.6 of esp32 board libs
-    HEAD~18	a6311b8 adc code tweaks. esp board libs 2.0.1
-    HEAD~19	3d8ef03 BUGFIX - pin select in adc poll was wonky
+     HEAD~0	296b053 small tweak
+     HEAD~1	b46ce55 fix mode reason
+     HEAD~2	5c74ce4 status page formatting
+     HEAD~3	b6372a4 log overheat and recovery
+     HEAD~4	76b92b2 ambient temp displayed on status
+     HEAD~5	0066fa2 support lm75a on microboards
+     HEAD~6	4470a83 bugfix
+     HEAD~7	8af6478 added 0x4e address for mcp chip
+     HEAD~8	30c7099 small tweak
+     HEAD~9	383ae7b code cleanup
+    HEAD~10	4749d6c optimizations
+    HEAD~11	4fa9442 speed up again
+    HEAD~12	fc9692d adc reads speed up
+    HEAD~13	713bc97 systick reduced to 5ms
+    HEAD~14	d3fdbf7 fix
+    HEAD~15	10a77e8 HV checks more verbose
+    HEAD~16	a5a05a4 latest
+    HEAD~17	8204a5c LV disconnect message formatting
+    HEAD~18	646d3ac roll back to 1.0.6 of esp32 board libs
+    HEAD~19	a6311b8 adc code tweaks. esp board libs 2.0.1
