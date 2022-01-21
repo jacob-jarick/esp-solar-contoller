@@ -1,20 +1,20 @@
-     HEAD~0	76b92b2 ambient temp displayed on status
-     HEAD~1	0066fa2 support lm75a on microboards
-     HEAD~2	4470a83 bugfix
-     HEAD~3	8af6478 added 0x4e address for mcp chip
-     HEAD~4	30c7099 small tweak
-     HEAD~5	383ae7b code cleanup
-     HEAD~6	4749d6c optimizations
-     HEAD~7	4fa9442 speed up again
-     HEAD~8	fc9692d adc reads speed up
-     HEAD~9	713bc97 systick reduced to 5ms
-    HEAD~10	d3fdbf7 fix
-    HEAD~11	10a77e8 HV checks more verbose
-    HEAD~12	a5a05a4 latest
-    HEAD~13	8204a5c LV disconnect message formatting
-    HEAD~14	646d3ac roll back to 1.0.6 of esp32 board libs
-    HEAD~15	a6311b8 adc code tweaks. esp board libs 2.0.1
-    HEAD~16	3d8ef03 BUGFIX - pin select in adc poll was wonky
-    HEAD~17	f21534a optimize adc mux polling code
-    HEAD~18	2c00d69 user can toggle ain averaging
-    HEAD~19	a25cef4 fw 282
+     HEAD~0	b6372a4 log overheat and recovery
+     HEAD~1	76b92b2 ambient temp displayed on status
+     HEAD~2	0066fa2 support lm75a on microboards
+     HEAD~3	4470a83 bugfix
+     HEAD~4	8af6478 added 0x4e address for mcp chip
+     HEAD~5	30c7099 small tweak
+     HEAD~6	383ae7b code cleanup
+     HEAD~7	4749d6c optimizations
+     HEAD~8	4fa9442 speed up again
+     HEAD~9	fc9692d adc reads speed up
+    HEAD~10	713bc97 systick reduced to 5ms
+    HEAD~11	d3fdbf7 fix
+    HEAD~12	10a77e8 HV checks more verbose
+    HEAD~13	a5a05a4 latest
+    HEAD~14	8204a5c LV disconnect message formatting
+    HEAD~15	646d3ac roll back to 1.0.6 of esp32 board libs
+    HEAD~16	a6311b8 adc code tweaks. esp board libs 2.0.1
+    HEAD~17	3d8ef03 BUGFIX - pin select in adc poll was wonky
+    HEAD~18	f21534a optimize adc mux polling code
+    HEAD~19	2c00d69 user can toggle ain averaging

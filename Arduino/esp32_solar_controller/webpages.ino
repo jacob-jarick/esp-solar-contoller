@@ -699,7 +699,7 @@ void stats()
 
   String tmps;
 
-  String mymode = "<pre>";
+  String mymode = "";
 
   if (system_mode == 0)
     mymode += F("IDLE");
@@ -709,29 +709,26 @@ void stats()
     mymode += F("DRAIN");
   else if (system_mode == 3)
     mymode += F("Both");
-//   else if (system_mode == 4)
-//     mymode += F("BMS");
 
-  mymode += F(" - ");
+  webpage += js_helper_innerhtml(F("mode"), mymode);
 
+  String daynight = "";
   if (!flags.day && !flags.night)
-    mymode += F("ZZZ");
+    daynight += F("NEITHER");
   else if (config.m247)
-    mymode += F("24/7");
+    daynight += F("BOTH - 24/7 Mode");
   else if (flags.day && flags.night)
-    mymode += F("DAY + NIGHT");
+    daynight += F("BOTH - overlap period");
   else if (!flags.day && config.i_enable && config.c_enable && flags.night)
-    mymode += F("NIGHT");
+    daynight += F("NIGHT");
   else if (flags.day && !flags.night)
-    mymode += F("DAY");
+    daynight += F("DAY");
   else
-    mymode += "ZzZz";
+    daynight += "???";
 
-  mymode += F("\n");
+  webpage += js_helper_innerhtml(F("daynight"), daynight);
 
-
-  mymode += "\n" + mode_reason;
-  mymode += "</pre>";
+  webpage += js_helper_innerhtml(F("modereason"), "<pre>" + mode_reason + "</pre>");
 
   String nu_string = next_update_string(1);
 
@@ -740,24 +737,42 @@ void stats()
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Info");
   webpage += js_helper_innerhtml("pdesc", String(config.description));
 
-  webpage += js_helper_innerhtml(F("mode"), mymode);
-  String extra_info = "";
   if(config.threephase)
   {
-    extra_info += "<pre>Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\\n";
-    extra_info += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\\n";
-    extra_info += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts\\n";
+    String extra_info = "";
 
-    // TODO - real sum.
-    if(config.avg_phase)
-    {
-      extra_info += "Monitored Sum (avg): " + String(phase_sum) + " watts\\n";
-    }
-    extra_info += "Monitored Sum: " + String(get_watts(1)) + " watts\\n";
+    extra_info += "<pre>";
+
+    if(config.monitor_phase_a)
+      extra_info += "* ";
+    else
+      extra_info += "  ";
+
+    extra_info += "Phase A: " + String(phase_a_watts) + " watts, " + String(phase_a_voltage) + " volts\\n";
+
+    if(config.monitor_phase_b)
+      extra_info += "* ";
+    else
+      extra_info += "  ";
+
+    extra_info += "Phase B: " + String(phase_b_watts) + " watts, " + String(phase_b_voltage) + " volts\\n";
+
+    if(config.monitor_phase_c)
+      extra_info += "* ";
+    else
+      extra_info += "  ";
+    extra_info += "Phase C: " + String(phase_c_watts) + " watts, " + String(phase_c_voltage) + " volts";
 
     extra_info += "</pre>";
+
+    webpage += js_helper_innerhtml(F("tphased"), extra_info);
   }
-  webpage += js_helper_innerhtml(F("watts"), String(phase_sum) + " Watts" + extra_info);
+  else
+  {
+    webpage += js_hide("td3pd");
+  }
+
+  webpage += js_helper_innerhtml(F("watts"), String(phase_sum) + " Watts");
 
   if(config.monitor_battery)
   {

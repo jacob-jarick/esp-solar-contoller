@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 340
+#define FW_VERSION 341
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -772,7 +772,7 @@ void loop()
 
   if(flags.adc_config_error)
   {
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + "Config ERROR.\nconfig requires ADC, but ADC not found.";
+    mode_reason = datetime_str(3, '/', ' ', ':') + ": Config ERROR.\nconfig requires ADC, but ADC not found.";
 
     modeset(0);
     return;
@@ -781,9 +781,7 @@ void loop()
 
   if(config.monitor_battery && !flags.cells_checked)
   {
-    mode_reason = "waiting on cells first check";
-//     log_msg(mode_reason  + "\n");
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
+    mode_reason = datetime_str(3, '/', ' ', ':') + ": waiting on cells first check";
     modeset(0);
 
     return;
@@ -798,7 +796,7 @@ void loop()
   {
     mode_reason = "cell over volt (" + String(cell_volt_low, 3) + "v). force IDLE.";
     log_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
+    mode_reason = datetime_str(3, '/', ' ', ':') + ": " + mode_reason;
 
     modeset(0);
 
@@ -810,11 +808,7 @@ void loop()
   if(config.monitor_battery && system_mode == 2 && cell_volt_low <= config.battery_volt_min)
   {
     mode_reason = "Cell under volt (" + String(cell_volt_low, 3) + "v), force IDLE";
-//     log_msg(mode_reason  + "\n");
-
-
-
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + mode_reason;
+    mode_reason = datetime_str(3, '/', ' ', ':') + ": " + mode_reason;
 
     modeset(0);
 
@@ -826,7 +820,7 @@ void loop()
   if (timers.mode_check > millis())
     return;
 
-  mode_reason = datetime_str(0, '/', ' ', ':') + "\n";
+  mode_reason = datetime_str(3, '/', ' ', ':') + ": ";
 
   // ----------------------------------------------------------------------
   // environment to hot check
@@ -839,7 +833,7 @@ void loop()
 
     flags.ambient_temp = 1;
 
-    mode_reason = datetime_str(0, '/', ' ', ':') + " " + msg;
+    mode_reason += msg;
 
     modeset(0);
     return;
@@ -894,6 +888,8 @@ void loop()
 
   // -------------------------------------------------------------------------
   // Night Device
+
+  mode_reason = datetime_str(3, '/', ' ', ':') + "\n"; // made it this far, so reason will likely be multiline.
 
   // discharger
   if (config.i_enable && flags.night)
