@@ -1,0 +1,59 @@
+
+<center>
+
+<form action='/result' method='POST'>
+
+<table border=1>
+
+<tr>
+  <td>Server Hostname:</td>
+  <td><input id=api_server1 type=text name='api_server1' value="" size=64></td>
+</tr>
+
+<tr>
+  <td>Enable:</td>
+	<td>
+		<input id=api_enable1 type=radio name="api_enable" value=1> Yes
+		<input id=api_enable0 type=radio name="api_enable" value=0> No
+	</td>
+</tr>
+
+
+<tr>
+  <td>Poll Time (seconds):</td>
+  <td><input id=api_pollsecs type=text name='api_pollsecs' value="" size=8></td>
+</tr>
+
+
+<tr>
+  <td>Copy Ambient Temp:</td>
+	<td>
+		<input id=api_lm75a1 type=radio name="api_lm75a" value=1> Yes
+		<input id=api_lm75a0 type=radio name="api_lm75a" value=0> No
+	</td>
+</tr>
+
+<tr>
+  <td>Copy Cell Info:</td>
+	<td>
+		<input id=api_cellvolts1 type=radio name="api_cellvolts" value=1> Yes
+		<input id=api_cellvolts0 type=radio name="api_cellvolts" value=0> No
+	</td>
+</tr>
+
+<tr>
+  <td>Copy Grid Info:</td>
+	<td>
+		<input id=api_grid1 type=radio name="api_grid" value=1> Yes
+		<input id=api_grid0 type=radio name="api_grid" value=0> No
+	</td>
+</tr>
+
+<tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr>
+
+
+</table>
+</form>
+
+
+</center>

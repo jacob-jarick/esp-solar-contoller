@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 344
+#define FW_VERSION 358
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -49,6 +49,7 @@ this seems to resolve OTA issues.
 
 
 #include <ArduinoJson.h>
+const size_t jsonsize = 1024 * 4;
 
 #include <WebServer.h>
 WebServer server(80);
@@ -102,6 +103,9 @@ WiFiUDP udp;
 
 struct SysTimers
 {
+  unsigned long api = 0;
+  unsigned long api_last_update = 0;
+
   unsigned long mode_check = 0;
   unsigned long pgrid_last_update = 0;
   unsigned long use_fallback = 0;
@@ -164,6 +168,7 @@ const String html_acinfo          = "/acinfo" + dothtml;
 const String html_cpconfig        = "/cpconfig" + dothtml;
 const String html_stats           = "/stats" + dothtml;
 const String html_mode            = "/mode" + dothtml;
+const String html_apiservers      = "/api" + dothtml;
 const String html_advance_config  = "/advance" + dothtml;
 const String html_footer          = "/footer" + dothtml;
 const String html_js_header       = "/jsheader" + dothtml;
@@ -236,6 +241,20 @@ struct Sconfig
   uint16_t fwver = 0;
 
   float maxsystemtemp = 40;
+
+
+  // API
+  char api_server1[ssmall];
+  bool api_enable = 0;
+
+  bool api_lm75a = 0;
+  bool api_cellvolts = 0;
+
+  bool api_grid = 0;
+
+  float api_pollsecs = 1;
+
+  // END of API
 
   char threephase_direct_url[smedium];
   char threephase_push_url[smedium];
@@ -353,6 +372,8 @@ struct Sconfig
   bool mcptype = 0; // 0 = MCP3021, 1 = MCP3221
   bool ads1x15type = 0; // 0 = ADS1015, 1 = ADS1115
   bool muxtype = 0; // 0 = old board (2* 8-1), 1 = new boards (16-1)
+
+  bool dumbsystem = 0; // 1 dont check fronius, turn on SSRs etc
 };
 
 Sconfig config;
@@ -393,6 +414,8 @@ struct SysFlags
   bool cells_checked = 0;
 
   bool ambient_temp = 0;
+
+  bool api_checked = 0;
 };
 
 SysFlags flags;
@@ -583,6 +606,9 @@ void setup()
   both_println(F("HTTP"));
   {
     server.on("/", stats);
+    server.on("/jsonapi", jsonapi);
+    server.on("/apiservers", apiservers);
+
     server.on("/config", web_config);
     server.on("/result", web_config_submit);
 
@@ -679,7 +705,7 @@ void setup()
   {
     // check config, if volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
 
-    if(config.monitor_battery)
+    if(config.monitor_battery && !config.api_cellvolts)
     {
       log_msg("monitor_battery enabled but ADC not found");
       flags.adc_config_error = 1;
@@ -698,12 +724,16 @@ void setup()
     save_config();
   }
 
+  log_msg("system startup finished OK.");
+
   // turn off serial if set in config.
 
   if(config.serial_off)
   {
     Serial.end();
   }
+
+
 }
 
 void set_pins()
@@ -770,10 +800,15 @@ void loop()
   set_daynight();
   check_data_sources();
 
+  if(config.dumbsystem)
+  {
+    return;
+  }
+
   // ----------------------------------------------------------------------
   // ADC Error ?
 
-  if(flags.adc_config_error)
+  if(!config.api_cellvolts && flags.adc_config_error)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": Config ERROR.\nconfig requires ADC, but ADC not found.";
 
@@ -782,6 +817,22 @@ void loop()
   }
 
 
+
+
+  // ----------------------------------------------------------------------
+  // waiting on API ?
+
+  if(config.api_enable && !flags.api_checked)
+  {
+    mode_reason = datetime_str(3, '/', ' ', ':') + ": waiting on first API check.";
+    modeset(0);
+
+    return;
+  }
+
+  // ----------------------------------------------------------------------
+  // Waiting on ADC fist complete poll.
+
   if(config.monitor_battery && !flags.cells_checked)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": waiting on cells first check";
@@ -789,7 +840,6 @@ void loop()
 
     return;
   }
-
 
   // ----------------------------------------------------------------------
 
@@ -1081,6 +1131,7 @@ bool check_system_triggers() // returns 1 if a event was triggered
     oled_clear();
     oled_set2X();
     both_println(F("restart"));
+    log_issue("Restarting, flag set");
     modeset(0);
     delay(500);
     ESP.restart();
@@ -1091,6 +1142,9 @@ bool check_system_triggers() // returns 1 if a event was triggered
   {
     oled_clear();
     both_println(F("WiFi ERROR"));
+
+    log_issue("Restarting, WiFi disconnected");
+
     modeset(0);
     flags.restart = !wifi_start(); // seems to need a restart if wifi is out here.
     return 1;
@@ -1140,25 +1194,52 @@ bool check_system_timers()
 
   // all if statements should be timer based
 
-  // data source timeout trigger (time based)
+  // Grid data source timeout trigger (time based)
   if
   (
+    !config.dumbsystem &&
+    !config.api_grid &&
     !flags.access_point &&
+    timers.pgrid_last_update != 0 &&
     millis() - timers.pgrid_last_update > check_timeout
   )
   {
     oled_clear();
     both_print(F("CHECK\nTIMEOUT"));
 
+    log_issue("Restarting, Grid datasource timeout");
+
     flags.restart = 1;
     return 1;
   }
+
+  // API source timeout trigger (time based)
+  if
+    (
+      !flags.access_point &&
+      config.api_enable &&
+      timers.api_last_update != 0 &&
+      millis() - timers.api_last_update > (15 * 60 * 1000)
+    )
+    {
+      oled_clear();
+      both_print(F("CHECK\nTIMEOUT"));
+
+      String msg = "Restarting, API datasource timeout";
+      Serial.println("\n\n" + msg);
+      log_issue(msg);
+
+      flags.restart = 1;
+      return 1;
+    }
 
   // AP Mode restart trigger (time based)
   if(flags.access_point && millis() > ap_time)
   {
     oled_clear();
     both_print(F("AP\nTIMEOUT"));
+
+    log_issue("Restarting, AP Timeout");
     flags.restart = 1;
     return 1;
   }
@@ -1237,8 +1318,24 @@ bool check_data_sources()
 {
   bool result = 0;
 
+  // API Check
+
+
+  if(config.api_enable && millis() > timers.api)
+  {
+    bool api_result = api_sync();
+
+    if(api_result)
+      timers.api = millis() + (1000 * config.api_pollsecs);
+    else
+      timers.api = millis() + (httpget_timeout * 3); // if failed, fallback to safe poll time.
+
+    result = 1;
+  }
+
+
   // fronius grid check
-  if(millis() > timers.pgrid)
+  if(!config.dumbsystem && !config.api_grid && millis() > timers.pgrid)
   {
     check_grid();
 
@@ -1247,7 +1344,7 @@ bool check_data_sources()
   }
 
   // ADC poll
-  if(config.monitor_battery && millis() > timers.adc_poll)
+  if(!config.api_cellvolts && config.monitor_battery && millis() > timers.adc_poll)
   {
     timers.adc_poll = millis() + 3; // optimistic but whatever.
 
@@ -1275,7 +1372,7 @@ bool check_data_sources()
     result = 1;
   }
 
-  if(flags.lm75a && millis() > timers.lm75a_poll)
+  if(!config.api_lm75a && flags.lm75a && millis() > timers.lm75a_poll)
   {
     if(lm75a_address == 0x48)
       board_temp = lm75a2.getTemperature();
@@ -1512,6 +1609,18 @@ void oled_print_info()
     rbtime /= 60;
     both_println(String(F("Reboot in:\n")) + String(rbtime) + String(F(" min")));
     oled_set2X();
+
+    return;
+  }
+
+  if(config.dumbsystem)
+  {
+    oled_set2X();
+    oled_println(config.hostn);
+    oled_println(datetime_str(2, ' ', ' ', ':'));
+    oled_set1X();
+    oled_println("");
+    oled_println(WiFi.localIP().toString());
 
     return;
   }

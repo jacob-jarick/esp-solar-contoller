@@ -7,27 +7,10 @@ void cells_update()
     read_cell_volts(x);
 }
 
-
-// // used on startup
-// void adc_quick_poll()
-// {
-//   if(!adsmux.adc_found)
-//     return;
-//
-//   while(adsmux.polling_complete == 0)
-//   {
-//     oled_print(".");
-//     adsmux.adc_poll();
-//   }
-// }
-
-
 double read_cell_volts(const byte cell)
 {
   if(!adsmux.adc_found)
     return -1;
-
-//   const double ads_mv = 0.125 / 1000;
 
   double v = adsmux.adc_val[cell];
 

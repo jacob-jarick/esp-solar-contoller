@@ -255,22 +255,28 @@ void set_daynight()
 
   if(config.m247)
   {
-    flags.night = 1;
-    flags.day = 1;
+    if(config.i_enable)
+      flags.night = 1;
+
+    if(config.c_enable)
+      flags.day = 1;
+
     return;
   }
 
   time_t timetmp = now();
   byte myhour = hour(timetmp);
 
-  if (in_time_range(myhour, config.c_start_h, config.c_finish_h) ) // day
+  if (config.c_enable && in_time_range(myhour, config.c_start_h, config.c_finish_h) ) // day
     flags.day = 1;
 
-  if (in_time_range(myhour, config.i_start_h, config.i_finish_h) ) // night
+  if (config.i_enable && in_time_range(myhour, config.i_start_h, config.i_finish_h) ) // night
     flags.night = 1;
 
+  /*
   if(config.prefer_dc)
     flags.night = 1;
+  */
 }
 
 bool in_time_range(const int h, const int t_start, const int t_end)

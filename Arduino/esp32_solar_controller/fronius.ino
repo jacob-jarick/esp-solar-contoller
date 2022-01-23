@@ -1,5 +1,4 @@
 const uint8_t fronius_min_sync_seconds = 90;
-const size_t jsonsize = 1024 * 4;
 unsigned long fronius_last_time = 0;
 
 bool update_p_grid()
@@ -257,7 +256,7 @@ int8_t power_array_pos = -1;
 
 void set_power(const float p)
 {
-  if(config.avg_phase <= 1)
+  if(config.avg_phase <= 1 || config.api_grid)
   {
     phase_sum = p;
     return;

@@ -287,6 +287,9 @@ void advance_config()
   webpage += js_radio_helper(F("ads1x15type1"), F("ads1x15type0"), config.ads1x15type);
   webpage += js_radio_helper(F("muxtype1"), F("muxtype0"), config.muxtype);
 
+  webpage += js_radio_helper(F("dumbsystem1"), F("dumbsystem0"), config.dumbsystem);
+
+
 //   webpage += js_radio_helper(F("display_phases1"), F("display_phases0"), config.display_phases);
   webpage += js_select_helper(F("display_mode"), String(config.display_mode));
 
@@ -352,12 +355,35 @@ void web_config_submit()
       bool skip2next = 0;
 //       Serial.println(server.argName(i) + " = '" + server.arg(i) + "'");
 
+
       if (server.argName(i) == F("board_rev"))
         config.board_rev = server.arg(i).toInt();
 
-      if (server.argName(i) == F("i2cmaxspeed"))
+      else if (server.argName(i) == F("i2cmaxspeed"))
         config.i2cmaxspeed = server.arg(i).toInt();
 
+      // API stuff
+
+      else if (server.argName(i) == F("api_server1"))
+        strlcpy(config.api_server1, server.arg(i).c_str(), sizeof(config.api_server1));
+
+      else if (server.argName(i) == F("api_lm75a"))
+        config.api_lm75a = server.arg(i).toInt();
+      else if (server.argName(i) == F("api_cellvolts"))
+        config.api_cellvolts = server.arg(i).toInt();
+      else if (server.argName(i) == F("api_enable"))
+        config.api_enable = server.arg(i).toInt();
+      else if (server.argName(i) == F("api_grid"))
+        config.api_grid = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("api_pollsecs"))
+        config.api_pollsecs = server.arg(i).toFloat();
+
+
+
+
+
+      // end API stuff
 
       else if (server.argName(i) == F("m247"))
         config.m247 = server.arg(i).toInt();
@@ -409,6 +435,10 @@ void web_config_submit()
 
       else if (server.argName(i) == F("muxtype"))
         config.muxtype = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("dumbsystem"))
+        config.dumbsystem = server.arg(i).toInt();
+
 
       else if (server.argName(i) == F("web_mode"))
         config.webc_mode = server.arg(i).toInt();
@@ -668,6 +698,91 @@ void config_raw()
   server.send(200, mime_json, webpage);
 }
 
+void jsonapi()
+{
+  String webpage = "";
+
+  DynamicJsonDocument doc(config_json_size);
+
+  doc["api_version"] = 1;
+
+  doc["system_mode"] = system_mode;
+  doc["system_time"] = datetime_str(0, '/', ' ', ':');
+
+  doc["lm75a"] = flags.lm75a;
+  doc["lm75a_now"] = board_temp;
+  doc["lm75a_min"] = board_temp_min;
+  doc["lm75a_max"] = board_temp_max;
+
+  doc["cell_monitor"] = config.monitor_battery;
+  doc["cell_count"] = config.cell_count;
+
+  doc["cell_low"] = low_cell;
+  doc["cell_high"] = high_cell;
+
+  doc["adc_poll_time"] = adc_poll_time;
+
+  for(uint8_t i = 0; i < config.cell_count; i++)
+  {
+    doc["cell_"+String(i+1)] = cells_volts[i];
+  }
+  doc["cell_diff"] = cell_volt_diff;
+
+  doc["cell_total"] = cells_volts_real[config.cell_count-1];
+
+  // grid info
+
+  doc["phase_a_watts"] = phase_a_watts;
+  doc["phase_b_watts"] = phase_b_watts;
+  doc["phase_c_watts"] = phase_c_watts;
+
+  doc["phase_a_voltage"] = phase_a_voltage;
+  doc["phase_b_voltage"] = phase_b_voltage;
+  doc["phase_c_voltage"] = phase_c_voltage;
+
+  doc["phase_a_voltage_low"] = phase_a_voltage_low;
+  doc["phase_b_voltage_low"] = phase_b_voltage_low;
+  doc["phase_c_voltage_low"] = phase_c_voltage_low;
+
+  doc["phase_a_voltage_high"] = phase_a_voltage_high;
+  doc["phase_b_voltage_high"] = phase_b_voltage_high;
+  doc["phase_c_voltage_high"] = phase_c_voltage_high;
+
+
+
+  serializeJsonPretty(doc, webpage);
+
+
+  server.send(200, mime_json, webpage);
+}
+
+void apiservers()
+{
+  // ups mode stuff
+  String webpage = get_file(html_header);
+  webpage += get_file(html_apiservers);
+  webpage += js_header();
+
+  webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F(" API Servers")) );
+
+  webpage += js_helper(F("api_server1"), String(config.api_server1));
+  webpage += js_radio_helper(F("api_enable1"), F("api_enable0"), config.api_enable);
+  webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
+  webpage += js_radio_helper(F("api_cellvolts1"), F("api_cellvolts0"), config.api_cellvolts);
+  webpage += js_radio_helper(F("api_grid1"), F("api_grid0"), config.api_grid);
+
+  //
+  webpage += js_helper(F("api_pollsecs"), String(config.api_pollsecs, 1));
+
+  //webpage += js_radio_helper(F("hv_monitor1"), F("hv_monitor0"), config.hv_monitor);
+
+//  webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-16");
+
+  webpage += web_footer();
+
+  server.send(200, mime_html, webpage); // Send response
+}
+
 void info_raw()
 {
   String webpage = datetime_str(0, '-', 'T', ':');
@@ -713,15 +828,25 @@ void stats()
   webpage += js_helper_innerhtml(F("mode"), mymode);
 
   String daynight = "";
-  if (!flags.day && !flags.night)
+  if (config.m247)
+  {
+    if(!config.i_enable && !config.c_enable)
+      daynight += F("NEITHER - 24/7 Mode");
+    else if(config.i_enable && config.c_enable)
+      daynight += F("BOTH - 24/7 Mode");
+    else if(config.i_enable)
+      daynight += F("NIGHT - 24/7 Mode");
+    else if(config.c_enable)
+      daynight += F("DAY - 24/7 Mode");
+  }
+  else if (!flags.day && !flags.night)
     daynight += F("NEITHER");
-  else if (config.m247)
-    daynight += F("BOTH - 24/7 Mode");
+
   else if (flags.day && flags.night)
     daynight += F("BOTH - overlap period");
-  else if (!flags.day && config.i_enable && config.c_enable && flags.night)
+  else if (flags.night)
     daynight += F("NIGHT");
-  else if (flags.day && !flags.night)
+  else if (flags.day)
     daynight += F("DAY");
   else
     daynight += "???";
@@ -1528,6 +1653,10 @@ void port_info()
       webpage += "False";
     else
       webpage += "True";
+
+
+    webpage += "\n\nDay Flag: " + String(flags.day) + "\n";
+    webpage += "Night Flag: " + String(flags.night) + "\n";
 
     webpage += "\n";
   }

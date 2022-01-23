@@ -46,6 +46,18 @@ void save_config()
     doc["volt_mod" + String(i+1)] = config.battery_volt_mod[i];
   }
 
+  // API
+
+  doc["api_server1"] = config.api_server1;
+  doc["api_lm75a"] = config.api_lm75a;
+  doc["api_cellvolts"] = config.api_cellvolts;
+  doc["api_enable"] = config.api_enable;
+
+  doc["api_grid"] = config.api_grid;
+
+
+  // END of API
+
   // PINS
 
   doc["pin_led"] = config.pin_led;
@@ -56,6 +68,8 @@ void save_config()
   doc["pin_sda"] = config.pin_sda;
   doc["pin_scl"] = config.pin_scl;
   doc["pin_buzzer"] = config.pin_buzzer;
+
+  doc["api_pollsecs"] = config.api_pollsecs;
 
 
   // END PINS
@@ -84,6 +98,10 @@ void save_config()
 
 
   doc["display_mode"] = (int)config.display_mode;
+
+
+
+  doc["dumbsystem"] = (int)config.dumbsystem;
 
   doc["blink_led"] = (int)config.blink_led;
   doc["blink_led_default"] = (int)config.blink_led_default;
@@ -221,27 +239,58 @@ bool load_config()
 
   config.fwver = doc["fwver"];
 
-  // NETWORK
-  strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
-  strlcpy(config.wifi_pass1, doc["wifi_pass1"], sizeof(config.wifi_pass1));
-  strlcpy(config.wifi_ssid2, doc["wifi_ssid2"], sizeof(config.wifi_ssid2));
-  strlcpy(config.wifi_pass2, doc["wifi_pass2"], sizeof(config.wifi_pass2));
+  // API
 
-  strlcpy(config.hostn, doc["hostn"], sizeof(config.hostn));
-  strlcpy(config.description, doc["description"], sizeof(config.description));
+  if(doc.containsKey("api_server1"))
+    strlcpy(config.api_server1, doc["api_server1"], sizeof(config.api_server1));
+
+  config.api_lm75a = doc["api_lm75a"];
+  config.api_cellvolts = doc["api_cellvolts"];
+  config.api_enable = doc["api_enable"];
+
+  config.api_grid = doc["api_grid"];
+
+  config.api_pollsecs = doc["api_pollsecs"];
+
+
+  // END of API
+
+
+  // NETWORK
+  if(doc.containsKey("wifi_ssid1"))
+    strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
+
+  if(doc.containsKey("wifi_pass1"))
+    strlcpy(config.wifi_pass1, doc["wifi_pass1"], sizeof(config.wifi_pass1));
+
+  if(doc.containsKey("wifi_ssid2"))
+    strlcpy(config.wifi_ssid2, doc["wifi_ssid2"], sizeof(config.wifi_ssid2));
+
+  if(doc.containsKey("wifi_pass2"))
+    strlcpy(config.wifi_pass2, doc["wifi_pass2"], sizeof(config.wifi_pass2));
+
+  if(doc.containsKey("hostn"))
+    strlcpy(config.hostn, doc["hostn"], sizeof(config.hostn));
+
+  if(doc.containsKey("description"))
+    strlcpy(config.description, doc["description"], sizeof(config.description));
 
 
   // URLS
-//   strlcpy(config.inverter_url, doc["inverter_url"], sizeof(config.inverter_url));
-//   strlcpy(config.inverter_push_url, doc["inverter_push_url"], sizeof(config.inverter_push_url));
-  strlcpy(config.threephase_push_url, doc["3p_push_url"], sizeof(config.threephase_push_url));
-  strlcpy(config.threephase_direct_url, doc["3p_direct_url"], sizeof(config.threephase_direct_url));
+  if(doc.containsKey("3p_push_url"))
+    strlcpy(config.threephase_push_url, doc["3p_push_url"], sizeof(config.threephase_push_url));
+
+  if(doc.containsKey("3p_direct_url"))
+    strlcpy(config.threephase_direct_url, doc["3p_direct_url"], sizeof(config.threephase_direct_url));
 
   strlcpy(config.pub_url, doc["pub_url"], sizeof(config.pub_url));
 
   // HOSTS
-  strlcpy(config.ntp_server, doc["ntp_server"], sizeof(config.ntp_server));
-  strlcpy(config.update_host, doc["update_host"], sizeof(config.update_host));
+  if(doc.containsKey("ntp_server"))
+    strlcpy(config.ntp_server, doc["ntp_server"], sizeof(config.ntp_server));
+
+  if(doc.containsKey("update_host"))
+    strlcpy(config.update_host, doc["update_host"], sizeof(config.update_host));
 
   for(uint8_t i = 0; i < adsmux.ain_count; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];
@@ -348,9 +397,14 @@ bool load_config()
 
   config.m247 = doc["m247"];
 
+
+  config.dumbsystem = doc["dumbsystem"];
+
   // LED
   config.led_status = doc["led_status"];
   config.blink_led = doc["blink_led"];
+
+
   config.blink_led_default = doc["blink_led_default"];
 
   // charger off delay
@@ -363,6 +417,8 @@ bool load_config()
   config.c_amot = doc["c_amot"];
 
   config.maxsystemtemp = doc["maxsystemtemp"];
+
+
 
   vars_sanity_check();
 
@@ -427,6 +483,26 @@ void vars_sanity_check()
     config.monitor_phase_b = 0;
     config.monitor_phase_c = 0;
   }
+
+  String tmp = config.api_server1;
+  if(config.api_enable && tmp.length() == 0)
+  {
+    Serial.println("config error: api_server1 null host");
+    config.api_enable = 0;
+  }
+
+  if(!config.api_enable)
+  {
+    config.api_cellvolts = 0;
+    config.api_lm75a = 0;
+    config.api_grid = 0;
+  }
+
+  if(config.api_pollsecs < 1)
+    config.api_pollsecs = 1;
+  if(config.api_pollsecs > 900)
+    config.api_pollsecs = 60;
+
 
   if(config.hv_shutdown_delay < 0)
   {
@@ -558,9 +634,11 @@ void get_config_and_save(const String target_ip)
   oled_print(F("from "));
   oled_println(target_ip);
 
-  WiFiClient client;
-  HTTPClient http;
-  http.setTimeout(httpget_timeout * 2);
+
+  //WiFiClient client;
+  //HTTPClient http;
+  //http.setTimeout(httpget_timeout * 2);
+
 
   String url = http_str + target_ip + "/config_raw";
   String file_dest = json_config_file;
@@ -575,6 +653,8 @@ void get_config_and_save(const String target_ip)
   }
   else
   {
+    HTTPClient http; // used to decode error number to string.
+
     both_println(F("HTTP code:")); // there may be a file error as well. so dont declare this as an error
     both_println(http.errorToString(get_url_code).c_str());
 
