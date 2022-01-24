@@ -3,8 +3,21 @@ void cells_update()
   if(!adsmux.adc_found)
     return;
 
-  for(uint8_t x = 0; x < config.cell_count; x++)
+  uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+
+  for(uint8_t x = 0; x < local_cell_count; x++)
     read_cell_volts(x);
+
+
+/*
+  if(config.api_cellvolts)
+  {
+    pack_total_volts = 0;
+    for(uint8_t x = 0; x < config.cell_count; x++)
+      pack_total_volts += cells_volts[x];
+  }
+  */
+  pack_total_volts = cells_volts_real[local_cell_count-1];
 }
 
 double read_cell_volts(const byte cell)

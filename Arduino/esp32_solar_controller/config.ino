@@ -49,6 +49,7 @@ void save_config()
   // API
 
   doc["api_server1"] = config.api_server1;
+  doc["api_server2"] = config.api_server2;
   doc["api_lm75a"] = config.api_lm75a;
   doc["api_cellvolts"] = config.api_cellvolts;
   doc["api_enable"] = config.api_enable;
@@ -243,6 +244,8 @@ bool load_config()
 
   if(doc.containsKey("api_server1"))
     strlcpy(config.api_server1, doc["api_server1"], sizeof(config.api_server1));
+  if(doc.containsKey("api_server2"))
+    strlcpy(config.api_server2, doc["api_server2"], sizeof(config.api_server2));
 
   config.api_lm75a = doc["api_lm75a"];
   config.api_cellvolts = doc["api_cellvolts"];
@@ -518,7 +521,7 @@ void vars_sanity_check()
     flags.save_config = 1;
   }
 
-  config.cell_count = constrain(config.cell_count, 1, adsmux.ain_count);
+  //config.cell_count = constrain(config.cell_count, 1, adsmux.ain_count);
 
   if(config.cell_count == 1 && config.pack_volt_min != config.battery_volt_min)
   {
@@ -566,7 +569,9 @@ void vars_sanity_check()
   // enable battery channels
   if(config.monitor_battery)
   {
-    for(byte i = 0; i < config.cell_count; i++)
+    uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+
+    for(byte i = 0; i < local_cell_count; i++)
       adsmux.adc_enable[i] = 1;
   }
 

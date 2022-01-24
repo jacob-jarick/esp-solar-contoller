@@ -230,7 +230,7 @@ void battery_info()
     // add complete adc poll time
     webpage += js_table_add_row("battery_table", String("*"), String(adc_poll_time, 3) + String(" sec"),  "ADC Complete poll time duration");
 
-    webpage += js_table_add_row("battery_table", String("*"), String(cells_volts_real[config.cell_count-1], 4),  "SUM");
+    webpage += js_table_add_row("battery_table", String("*"), String(pack_total_volts, 4),  "SUM");
 
 
   }
@@ -249,7 +249,9 @@ void battery_calibrate()
   webpage += get_file(html_calibrate);
   webpage += js_header();
 
-  for(uint8_t i = 0; i < config.cell_count; i++)
+  uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+
+  for(uint8_t i = 0; i < local_cell_count; i++)
   {
     String tmp = "";
     webpage += "batcal_add_row(" + String(i+1) + ", " + String(cells_volts_real[i], 24) + ", " + String(config.battery_volt_mod[i], 24) + ");\n";
@@ -257,7 +259,7 @@ void battery_calibrate()
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
 
-  webpage += js_helper(F("ccount"), String(config.cell_count));
+  webpage += js_helper(F("ccount"), String(local_cell_count));
 
   webpage += web_footer();
 
@@ -366,6 +368,8 @@ void web_config_submit()
 
       else if (server.argName(i) == F("api_server1"))
         strlcpy(config.api_server1, server.arg(i).c_str(), sizeof(config.api_server1));
+      else if (server.argName(i) == F("api_server2"))
+        strlcpy(config.api_server2, server.arg(i).c_str(), sizeof(config.api_server2));
 
       else if (server.argName(i) == F("api_lm75a"))
         config.api_lm75a = server.arg(i).toInt();
@@ -704,6 +708,8 @@ void jsonapi()
 
   DynamicJsonDocument doc(config_json_size);
 
+  doc["host_name"] = String(config.hostn);
+
   doc["api_version"] = 1;
 
   doc["system_mode"] = system_mode;
@@ -728,7 +734,7 @@ void jsonapi()
   }
   doc["cell_diff"] = cell_volt_diff;
 
-  doc["cell_total"] = cells_volts_real[config.cell_count-1];
+  doc["cell_total"] = pack_total_volts;
 
   // grid info
 
@@ -766,6 +772,7 @@ void apiservers()
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F(" API Servers")) );
 
   webpage += js_helper(F("api_server1"), String(config.api_server1));
+  webpage += js_helper(F("api_server2"), String(config.api_server2));
   webpage += js_radio_helper(F("api_enable1"), F("api_enable0"), config.api_enable);
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
   webpage += js_radio_helper(F("api_cellvolts1"), F("api_cellvolts0"), config.api_cellvolts);
@@ -916,12 +923,12 @@ void stats()
       }
 
       cell_string += "Diff: " + String(cell_volt_diff, 4) + "v</pre>\n";
-      cell_string += "Pack Total: " + String(cells_volts_real[config.cell_count-1]) + "v\n";
+      cell_string += "Pack Total: " + String(pack_total_volts) + "v\n";
     }
     // single cell
-    else
+    else if(config.cell_count == 1)
     {
-      cell_string = String(cells_volts_real[config.cell_count-1]) + "v";
+      cell_string = String(cells_volts[0]) + "v";
     }
 
     webpage += js_helper_innerhtml(F("battery_voltage"), cell_string );
@@ -1593,7 +1600,9 @@ void bms_raw_info()
 {
   String webpage = datetime_str(0, '-', 'T', ':') + String(",");
 
-  for(byte i = 0; i< config.cell_count; i++)
+  uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+
+  for(byte i = 0; i< local_cell_count; i++)
     webpage += String(cells_volts[i], 6) + ",";
 
   server.send(200, mime_txt, webpage);
@@ -1630,14 +1639,16 @@ void port_info()
 //     webpage += "\nlow volt shutdown: " + String(flags.shutdown_lvolt ) + "\n";
 //     webpage += "high volt shutdown: " + String(flags.shutdown_hvolt ) + "\n\n";
 
+    uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+
     webpage += "Cell Series Volts:\n";
-    for(byte i = 0; i< config.cell_count; i++)
+    for(byte i = 0; i< local_cell_count; i++)
       webpage += String(i+1) + ") " + String(cells_volts_real[i], 6) + "v\n";
 
     webpage += "\n\n";
 
     webpage += "Cell Volts:\n\n";
-    for(byte i = 0; i< config.cell_count; i++)
+    for(byte i = 0; i< local_cell_count; i++)
       webpage += String(i+1) + ") " + String(cells_volts[i], 6) + "v\n";
 
     webpage += "\n\n";

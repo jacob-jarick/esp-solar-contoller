@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 358
+#define FW_VERSION 360
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -142,6 +142,8 @@ float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
 
+float pack_total_volts = 0;
+
 // uint8_t cell_lh[2] = {0, 0};
 uint8_t low_cell = 0;
 uint8_t high_cell = 0;
@@ -245,6 +247,7 @@ struct Sconfig
 
   // API
   char api_server1[ssmall];
+  char api_server2[ssmall];
   bool api_enable = 0;
 
   bool api_lm75a = 0;
@@ -847,8 +850,8 @@ void loop()
 
   if(config.hv_monitor && config.monitor_battery && system_mode == 1 && cell_volt_high > config.battery_volt_max)
   {
-    mode_reason = "cell over volt (" + String(cell_volt_low, 3) + "v). force IDLE.";
-    log_msg(mode_reason  + "\n" + String(cell_volt_high, 2) + "v" );
+    mode_reason = "cell over volt (" + String(cell_volt_high, 3) + "v). force IDLE.";
+    log_msg(mode_reason);
     mode_reason = datetime_str(3, '/', ' ', ':') + ": " + mode_reason;
 
     modeset(0);
@@ -1323,7 +1326,7 @@ bool check_data_sources()
 
   if(config.api_enable && millis() > timers.api)
   {
-    bool api_result = api_sync();
+    bool api_result = api_sync(1);
 
     if(api_result)
       timers.api = millis() + (1000 * config.api_pollsecs);
@@ -1400,10 +1403,6 @@ void check_cells()
 //   bool lv_recon_trigger = 1; // reconnect if all cells are above battery_volt_rec
   bool lv_trigger = 0;
   bool hv_trigger = 0;
-
-//   uint8_t low_cell = 0;
-//   uint8_t high_cell = 0;
-
 
   unsigned long ms = millis();
 
