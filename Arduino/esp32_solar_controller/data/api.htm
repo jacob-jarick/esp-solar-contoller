@@ -6,16 +6,6 @@
 <table border=1>
 
 <tr>
-  <td>Server 1 Hostname:</td>
-  <td><input id=api_server1 type=text name='api_server1' value="" size=64></td>
-</tr>
-
-<tr>
-  <td>Server 2 Hostname:</td>
-  <td><input id=api_server2 type=text name='api_server2' value="" size=64></td>
-</tr>
-
-<tr>
   <td>Enable:</td>
 	<td>
 		<input id=api_enable1 type=radio name="api_enable" value=1> Yes
@@ -23,12 +13,15 @@
 	</td>
 </tr>
 
-
 <tr>
   <td>Poll Time (seconds):</td>
   <td><input id=api_pollsecs type=text name='api_pollsecs' value="" size=8></td>
 </tr>
 
+<tr>
+  <td>Server 1 Hostname:</td>
+  <td><input id=api_server1 type=text name='api_server1' value="" size=64></td>
+</tr>
 
 <tr>
   <td>Copy Ambient Temp:</td>
@@ -51,6 +44,27 @@
 	<td>
 		<input id=api_grid1 type=radio name="api_grid" value=1> Yes
 		<input id=api_grid0 type=radio name="api_grid" value=0> No
+	</td>
+</tr>
+
+<tr>
+  <td>Server 2 Hostname:</td>
+  <td><input id=api_server2 type=text name='api_server2' value="" size=64></td>
+</tr>
+
+<tr>
+  <td>Enable:</td>
+	<td>
+		<input id=api2_enable1 type=radio name="api2_enable" value=1> Yes
+		<input id=api2_enable0 type=radio name="api2_enable" value=0> No
+	</td>
+</tr>
+
+<tr>
+  <td>Copy Cell Info:</td>
+	<td>
+		<input id=api2_cellvolts1 type=radio name="api2_cellvolts" value=1> Yes
+		<input id=api2_cellvolts0 type=radio name="api2_cellvolts" value=0> No
 	</td>
 </tr>
 

@@ -9,14 +9,7 @@ void cells_update()
     read_cell_volts(x);
 
 
-/*
-  if(config.api_cellvolts)
-  {
-    pack_total_volts = 0;
-    for(uint8_t x = 0; x < config.cell_count; x++)
-      pack_total_volts += cells_volts[x];
-  }
-  */
+
   pack_total_volts = cells_volts_real[local_cell_count-1];
 }
 

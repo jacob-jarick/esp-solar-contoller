@@ -136,8 +136,8 @@ SysTimers timers;
 //------------------------------------------------------------------------------
 // cell voltages
 
-double cells_volts[MAX_CELLS];
-double cells_volts_real[MAX_CELLS];
+double cells_volts[MAX_CELLS*3];
+double cells_volts_real[MAX_CELLS*3]; // used to track real voltage when using AIN, used as temp storage for API
 float cell_volt_diff = 0;
 float cell_volt_high = 0;
 float cell_volt_low = 0;
@@ -249,9 +249,11 @@ struct Sconfig
   char api_server1[ssmall];
   char api_server2[ssmall];
   bool api_enable = 0;
+  bool api2_enable = 0;
 
   bool api_lm75a = 0;
   bool api_cellvolts = 0;
+  bool api2_cellvolts = 0;
 
   bool api_grid = 0;
 
@@ -1326,7 +1328,17 @@ bool check_data_sources()
 
   if(config.api_enable && millis() > timers.api)
   {
+    /*
     bool api_result = api_sync(1);
+
+    if(api_result && config.api2_enable)
+      api_result = api_sync(2);
+
+    if(api_result)
+      api_docalcs();
+    */
+
+    bool api_result = api_poller();
 
     if(api_result)
       timers.api = millis() + (1000 * config.api_pollsecs);
@@ -1411,8 +1423,11 @@ void check_cells()
     lv_trigger = 1;
 
   // cell checks
+  pack_total_volts = 0;
   for(byte i = 0; i < config.cell_count; i++)
   {
+    pack_total_volts += cells_volts[i];
+
     if(cells_volts[i] < cell_volt_low)
     {
       low_cell = i;

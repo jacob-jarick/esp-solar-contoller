@@ -31,10 +31,56 @@ bool mdnscachelookup(String hn, String &ip)
   return true;
 }
 
+uint8_t new_cell_count = 0; // hacky way of auto detecting cells monitored
+
+uint8_t poller_pos = 0;
+bool api_poller()
+{
+  bool api_result = false;
+
+  uint8_t posmax = 0;
+
+  if(config.api2_enable)
+    posmax = 1;
+
+  if(poller_pos == 0)
+    api_result = api_sync(1);
+  else
+    api_result = api_sync(2);
+
+  // increment position if successful.
+  if(api_result)
+  {
+    poller_pos++;
+    if(poller_pos > posmax)
+    {
+      poller_pos = 0;
+      api_docalcs();
+    }
+  }
+
+  return api_result;
+}
+
+void api_docalcs()
+{
+  config.cell_count = new_cell_count;
+
+  for(uint8_t i = 0; i < MAX_CELLS * 3; i++)
+  {
+    cells_volts[i] = cells_volts_real[i];
+  }
+
+
+  // calculate new total pack voltage
+  check_cells();
+  flags.cells_checked = 1;
+}
 
 bool api_sync(uint8_t serverid)
 {
   String shn = "";
+  String msg_prefix = "API Server ID " + String(serverid) + ", ";
   if(serverid == 1)
   {
     shn = String(config.api_server1);
@@ -46,15 +92,16 @@ bool api_sync(uint8_t serverid)
   else
   {
     log_msg("api_sync ERROR unknown server id: " + String(serverid) );
+    return 0;
   }
 
 
   String msg = "";
   String hostip = "";
 
-  if(!mdnscachelookup(String(config.api_server1), hostip))
+  if(!mdnscachelookup(shn, hostip))
   {
-    log_msg("MDNS lookup '" + String(config.api_server1) + "' error.");
+    log_msg(msg_prefix + "MDNS lookup '" + shn + "' error.");
     return false;
   }
 
@@ -65,7 +112,7 @@ bool api_sync(uint8_t serverid)
 
   if(!check)
   {
-    msg = "API fetch error, URL: " + url;
+    msg = msg_prefix + "fetch error, URL: " + url;
     log_msg(msg);
 
     return false;
@@ -77,7 +124,7 @@ bool api_sync(uint8_t serverid)
 
   if (error2)
   {
-    log_msg(String("API Decode Error: ") + error2.c_str() );
+    log_msg(String(msg_prefix + "JSON Decode Error: ") + error2.c_str() );
 
     return false;
   }
@@ -92,7 +139,7 @@ bool api_sync(uint8_t serverid)
     String rhn = doc["host_name"];
     if(shn != rhn)
     {
-      log_msg("API ERROR: wrong hostname '" + rhn + "' in JSON.");
+      log_msg(msg_prefix + "ERROR, hostname mismatch JSON: '" + rhn + "' Config Hostname '" + shn + "'");
       mdns_hn_cache = ""; // invalidate cache
 
       return false;
@@ -100,7 +147,7 @@ bool api_sync(uint8_t serverid)
   }
   else
   {
-    log_msg("API ERROR: hostname not present in JSON.");
+    log_msg(msg_prefix + "ERROR: hostname not present in JSON" );
     Serial.println("XX");
 
     return false;
@@ -110,11 +157,11 @@ bool api_sync(uint8_t serverid)
   // get amb temp
 
   //config.api_lm75a
-  if(config.api_lm75a)
+  if(serverid == 1 && config.api_lm75a)
   {
     if(doc["lm75a"] == 0)
     {
-      msg = "API Server lm75a not found, yet config requests it.";
+      msg = msg_prefix + "Server lm75a not found, yet config requests it.";
       log_msg(msg);
       return false;
     }
@@ -131,33 +178,42 @@ bool api_sync(uint8_t serverid)
   {
     if(doc["cell_monitor"] == 0)
     {
-      msg = "API Server does not have cell monitoring enabled yet config requests it.";
+      msg = msg_prefix + "Server does not have cell monitoring enabled yet config requests it.";
       log_msg(msg);
       return false;
     }
 
-    flags.cells_checked = 1;
 
-    config.cell_count = doc["cell_count"];
+    // track total number of cells in json(s)
+    if(serverid == 1)
+    {
+      new_cell_count = doc["cell_count"];
+    }
+    else
+    {
+      new_cell_count += uint8_t(doc["cell_count"]);
+    }
+
+    uint8_t i_offset = 16 * (serverid-1);
 
     for(uint8_t i = 0; i < config.cell_count; i++)
     {
-      cells_volts[i] = doc["cell_"+String(i+1)];
+      cells_volts_real[i_offset+i] = doc["cell_"+String(i+1)];
     }
 
-    cell_volt_diff = doc["cell_diff"];
+//    cell_volt_diff = doc["cell_diff"];
 
-    pack_total_volts = doc["cell_total"];
+//    pack_total_volts = doc["cell_total"];
 
     adc_poll_time = doc["adc_poll_time"];
 
-    low_cell = doc["cell_low"];
-    high_cell = doc["cell_high"];
+//    low_cell = doc["cell_low"];
+//    high_cell = doc["cell_high"];
 
   }
 
   // update grid info
-  if(config.api_grid)
+  if(serverid == 1 && config.api_grid)
   {
     phase_a_watts = doc["phase_a_watts"];
     phase_b_watts = doc["phase_b_watts"];

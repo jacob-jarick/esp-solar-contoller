@@ -52,7 +52,9 @@ void save_config()
   doc["api_server2"] = config.api_server2;
   doc["api_lm75a"] = config.api_lm75a;
   doc["api_cellvolts"] = config.api_cellvolts;
+  doc["api2_cellvolts"] = config.api2_cellvolts;
   doc["api_enable"] = config.api_enable;
+  doc["api2_enable"] = config.api2_enable;
 
   doc["api_grid"] = config.api_grid;
 
@@ -249,7 +251,9 @@ bool load_config()
 
   config.api_lm75a = doc["api_lm75a"];
   config.api_cellvolts = doc["api_cellvolts"];
+  config.api2_cellvolts = doc["api2_cellvolts"];
   config.api_enable = doc["api_enable"];
+  config.api2_enable = doc["api2_enable"];
 
   config.api_grid = doc["api_grid"];
 
@@ -492,6 +496,14 @@ void vars_sanity_check()
   {
     Serial.println("config error: api_server1 null host");
     config.api_enable = 0;
+    config.api2_enable = 0;
+  }
+
+  tmp = config.api_server2;
+  if(config.api2_enable && tmp.length() == 0)
+  {
+    Serial.println("config error: api_server2 null host");
+    config.api2_enable = 0;
   }
 
   if(!config.api_enable)
@@ -499,6 +511,8 @@ void vars_sanity_check()
     config.api_cellvolts = 0;
     config.api_lm75a = 0;
     config.api_grid = 0;
+
+    config.api2_cellvolts = 0;
   }
 
   if(config.api_pollsecs < 1)

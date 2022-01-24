@@ -375,8 +375,15 @@ void web_config_submit()
         config.api_lm75a = server.arg(i).toInt();
       else if (server.argName(i) == F("api_cellvolts"))
         config.api_cellvolts = server.arg(i).toInt();
+
+      else if (server.argName(i) == F("api2_cellvolts"))
+        config.api2_cellvolts = server.arg(i).toInt();
+
       else if (server.argName(i) == F("api_enable"))
         config.api_enable = server.arg(i).toInt();
+      else if (server.argName(i) == F("api2_enable"))
+        config.api2_enable = server.arg(i).toInt();
+
       else if (server.argName(i) == F("api_grid"))
         config.api_grid = server.arg(i).toInt();
 
@@ -774,8 +781,10 @@ void apiservers()
   webpage += js_helper(F("api_server1"), String(config.api_server1));
   webpage += js_helper(F("api_server2"), String(config.api_server2));
   webpage += js_radio_helper(F("api_enable1"), F("api_enable0"), config.api_enable);
+  webpage += js_radio_helper(F("api2_enable1"), F("api2_enable0"), config.api2_enable);
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
   webpage += js_radio_helper(F("api_cellvolts1"), F("api_cellvolts0"), config.api_cellvolts);
+  webpage += js_radio_helper(F("api2_cellvolts1"), F("api2_cellvolts0"), config.api2_cellvolts);
   webpage += js_radio_helper(F("api_grid1"), F("api_grid0"), config.api_grid);
 
   //

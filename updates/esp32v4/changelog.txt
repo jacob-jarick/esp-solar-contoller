@@ -1,20 +1,20 @@
-     HEAD~0	5c3bcbb api added
-     HEAD~1	4e24030 track min max amb temp
-     HEAD~2	296b053 small tweak
-     HEAD~3	b46ce55 fix mode reason
-     HEAD~4	5c74ce4 status page formatting
-     HEAD~5	b6372a4 log overheat and recovery
-     HEAD~6	76b92b2 ambient temp displayed on status
-     HEAD~7	0066fa2 support lm75a on microboards
-     HEAD~8	4470a83 bugfix
-     HEAD~9	8af6478 added 0x4e address for mcp chip
-    HEAD~10	30c7099 small tweak
-    HEAD~11	383ae7b code cleanup
-    HEAD~12	4749d6c optimizations
-    HEAD~13	4fa9442 speed up again
-    HEAD~14	fc9692d adc reads speed up
-    HEAD~15	713bc97 systick reduced to 5ms
-    HEAD~16	d3fdbf7 fix
-    HEAD~17	10a77e8 HV checks more verbose
-    HEAD~18	a5a05a4 latest
-    HEAD~19	8204a5c LV disconnect message formatting
+     HEAD~0	de86555 begin multiple api server support
+     HEAD~1	5c3bcbb api added
+     HEAD~2	4e24030 track min max amb temp
+     HEAD~3	296b053 small tweak
+     HEAD~4	b46ce55 fix mode reason
+     HEAD~5	5c74ce4 status page formatting
+     HEAD~6	b6372a4 log overheat and recovery
+     HEAD~7	76b92b2 ambient temp displayed on status
+     HEAD~8	0066fa2 support lm75a on microboards
+     HEAD~9	4470a83 bugfix
+    HEAD~10	8af6478 added 0x4e address for mcp chip
+    HEAD~11	30c7099 small tweak
+    HEAD~12	383ae7b code cleanup
+    HEAD~13	4749d6c optimizations
+    HEAD~14	4fa9442 speed up again
+    HEAD~15	fc9692d adc reads speed up
+    HEAD~16	713bc97 systick reduced to 5ms
+    HEAD~17	d3fdbf7 fix
+    HEAD~18	10a77e8 HV checks more verbose
+    HEAD~19	a5a05a4 latest
