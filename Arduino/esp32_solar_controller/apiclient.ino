@@ -67,7 +67,6 @@ void api_docalcs()
 
   // calculate new total pack voltage
   check_cells();
-  flags.cells_checked = 1;
 }
 
 bool api_sync(uint8_t serverid)

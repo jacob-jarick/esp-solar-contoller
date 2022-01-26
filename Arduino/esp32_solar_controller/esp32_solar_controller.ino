@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 364
+#define FW_VERSION 365
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1391,11 +1391,11 @@ bool check_data_sources()
       if(adc_pcount > adsmux.ain_history_size)
       {
         // ignore latest poll if it took too long.
-        if(adc_poll_time < 0.7)
-        {
+//         if(adc_poll_time < 0.7)
+//         {
           cells_update();
           check_cells();
-        }
+//         }
       }
       else
       {
