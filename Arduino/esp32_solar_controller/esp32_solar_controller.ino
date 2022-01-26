@@ -64,7 +64,7 @@ SSD1306AsciiWire oled;
 
 // -----------------------------------------------------------------------------------------
 
-#include <Ads1115_mux.h>
+#include "libraries/Ads1115_mux/Ads1115_mux.h"
 const uint8_t pin_asel1 = 26;
 const uint8_t pin_asel2 = 17;
 const uint8_t pin_asel3 = 14;
@@ -85,7 +85,7 @@ uint8_t lm75a_address = 0x4f;
 
 // -----------------------------------------------------------------------------------------
 
-#include <Mmaths.h>
+#include "libraries/Mmaths/Mmaths.h"
 
 Mmaths mmaths;
 
@@ -1958,4 +1958,3 @@ void modeset(byte m, bool manual)
   if(config.pin_inverter != OPT_DISABLE)
     digitalWrite(config.pin_inverter, i_pinmode);
 }
-
