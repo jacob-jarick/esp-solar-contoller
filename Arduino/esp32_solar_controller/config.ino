@@ -48,15 +48,48 @@ void save_config()
 
   // API
 
+  /*
   doc["api_server1"] = config.api_server1;
   doc["api_server2"] = config.api_server2;
+  doc["api_server3"] = config.api_server3;
+  */
+
+  for(uint8_t i = 0; i < max_api_servers; i++)
+  {
+    String keyname = "api_server" + String(i+1);
+    doc[keyname] = config.api_server_hostname[i];
+
+    keyname = "api_enable" + String(i+1);
+    doc[keyname] = config.api_enable[i];
+
+    keyname = "api_cellvolts" + String(i+1);
+    doc[keyname] = config.api_cellvolts[i];
+  }
+
   doc["api_lm75a"] = config.api_lm75a;
+
+  /*
   doc["api_cellvolts"] = config.api_cellvolts;
   doc["api2_cellvolts"] = config.api2_cellvolts;
+  doc["api3_cellvolts"] = config.api3_cellvolts;
+  */
+
+  /*
   doc["api_enable"] = config.api_enable;
   doc["api2_enable"] = config.api2_enable;
+  doc["api3_enable"] = config.api3_enable;
+  */
 
   doc["api_grid"] = config.api_grid;
+
+  // update server count
+  config.api_server_count = 0;
+  for(uint8_t i = 0; i < max_api_servers; i++)
+  {
+    if(config.api_enable[i])
+      config.api_server_count++;
+  }
+
 
 
   // END of API
@@ -244,16 +277,43 @@ bool load_config()
 
   // API
 
+  /*
   if(doc.containsKey("api_server1"))
     strlcpy(config.api_server1, doc["api_server1"], sizeof(config.api_server1));
   if(doc.containsKey("api_server2"))
     strlcpy(config.api_server2, doc["api_server2"], sizeof(config.api_server2));
+  if(doc.containsKey("api_server3"))
+    strlcpy(config.api_server3, doc["api_server3"], sizeof(config.api_server3));
+  */
+
+  for(uint8_t i = 0; i < max_api_servers; i++)
+  {
+    String keyname = "api_server" + String(i+1);
+
+    if(doc.containsKey(keyname))
+      strlcpy(config.api_server_hostname[i], doc[keyname], sizeof(config.api_server_hostname[i]));
+
+    keyname = "api_enable" + String(i+1);
+    config.api_enable[i] = doc[keyname];
+
+    keyname = "api_cellvolts" + String(i+1);
+    config.api_cellvolts[i] = doc[keyname];
+
+  }
 
   config.api_lm75a = doc["api_lm75a"];
+
+  /*
   config.api_cellvolts = doc["api_cellvolts"];
   config.api2_cellvolts = doc["api2_cellvolts"];
+  config.api3_cellvolts = doc["api3_cellvolts"];
+  */
+
+  /*
   config.api_enable = doc["api_enable"];
   config.api2_enable = doc["api2_enable"];
+  config.api3_enable = doc["api3_enable"];
+  */
 
   config.api_grid = doc["api_grid"];
 
@@ -491,35 +551,132 @@ void vars_sanity_check()
     config.monitor_phase_c = 0;
   }
 
+  // API
+
+  // check if server1 hostname is blank
+
+  for(uint8_t i = 0; i < max_api_servers; i++)
+  {
+    String tmp = config.api_server_hostname[i];
+
+    if(config.api_enable[i] && tmp.length() == 0)
+    {
+      // disable this server and all following
+      for(uint8_t x = i; x < max_api_servers; x++)
+      {
+        config.api_enable[x] = false;
+      }
+
+    }
+  }
+
+  // count servers, if server N is disabled, disabled all servers after N
+  config.api_server_count = 0;
+  for(uint8_t i = 0; i < max_api_servers; i++)
+  {
+    bool exitloop = false;
+    if(config.api_enable[i])
+    {
+      config.api_server_count++;
+    }
+    else
+    {
+      // disable this server and all following
+      for(uint8_t x = i; x < max_api_servers; x++)
+      {
+        config.api_enable[x] = false;
+        config.api_cellvolts[x] = false;
+      }
+      exitloop = true;
+      break;
+    }
+    if(exitloop)
+      break;
+  }
+
+
+  /*
   String tmp = config.api_server1;
   if(config.api_enable && tmp.length() == 0)
   {
     Serial.println("config error: api_server1 null host");
     config.api_enable = 0;
     config.api2_enable = 0;
+    config.api3_enable = 0;
   }
 
+  // check if server2 hostname is blank
   tmp = config.api_server2;
   if(config.api2_enable && tmp.length() == 0)
   {
     Serial.println("config error: api_server2 null host");
     config.api2_enable = 0;
+    config.api3_enable = 0;
   }
 
-  if(!config.api_enable)
+  // check if server3 hostname is blank
+  tmp = config.api_server3;
+  if(config.api3_enable && tmp.length() == 0)
   {
-    config.api_cellvolts = 0;
+    Serial.println("config error: api_server3 null host");
+    config.api3_enable = 0;
+  }
+  */
+
+  // if server 1 is disabled, disable extra options
+  if(!config.api_enable[0])
+  {
     config.api_lm75a = 0;
     config.api_grid = 0;
 
+    /*
+    config.api2_enable = 0;
+    config.api3_enable = 0;
+
+    config.api_cellvolts = 0;
     config.api2_cellvolts = 0;
+    config.api3_cellvolts = 0;
+    */
   }
 
+  /*
+  // if server 2 is disabled, disable options and server 3
+  if(!config.api2_enable)
+  {
+    config.api3_enable = 0;
+
+    config.api2_cellvolts = 0;
+    config.api3_cellvolts = 0;
+  }
+
+  // if server 3 is disabled, disable options
+  if(!config.api3_enable)
+  {
+    config.api3_cellvolts = 0;
+  }
+
+
+  // if first server does not monitor voltage, the rest cannot.
+  if(!config.api_cellvolts)
+  {
+    config.api2_cellvolts = 0;
+    config.api3_cellvolts = 0;
+  }
+
+  // if second server does not monitor voltage the third cannot.
+  if(!config.api2_cellvolts)
+  {
+    config.api3_cellvolts = 0;
+  }
+  */
+
+  // limit poll time
   if(config.api_pollsecs < 1)
     config.api_pollsecs = 1;
   if(config.api_pollsecs > 900)
     config.api_pollsecs = 60;
 
+  // END API
 
   if(config.hv_shutdown_delay < 0)
   {
@@ -629,6 +786,8 @@ void vars_sanity_check()
     config.i_enable = 0;
   if(config.pin_charger == OPT_DISABLE)
     config.c_enable = 0;
+
+  adsmux.avg_ain = config.avg_ain;
 }
 
 void copy_config(const String target_ip)

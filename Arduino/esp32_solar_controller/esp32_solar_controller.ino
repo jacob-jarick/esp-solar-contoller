@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 360
+#define FW_VERSION 362
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -238,6 +238,8 @@ int get_url_code; // global url fetch code, eg 404, 401, 200
 
 //------------------------------------------------------------------------------
 
+const uint8_t max_api_servers = 3;
+
 struct Sconfig
 {
   uint16_t fwver = 0;
@@ -246,14 +248,29 @@ struct Sconfig
 
 
   // API
+
+  uint8_t api_server_count = 0;
+
+  /*
   char api_server1[ssmall];
   char api_server2[ssmall];
+  char api_server3[ssmall];
   bool api_enable = 0;
   bool api2_enable = 0;
+  bool api3_enable = 0;
+  */
+
+  bool api_enable[max_api_servers];
+  char api_server_hostname[max_api_servers][ssmall];
 
   bool api_lm75a = 0;
+  /*
   bool api_cellvolts = 0;
   bool api2_cellvolts = 0;
+  bool api3_cellvolts = 0;
+  */
+
+  bool api_cellvolts[max_api_servers];
 
   bool api_grid = 0;
 
@@ -612,6 +629,8 @@ void setup()
   {
     server.on("/", stats);
     server.on("/jsonapi", jsonapi);
+    server.on("/json_cells", json_cells);
+
     server.on("/apiservers", apiservers);
 
     server.on("/config", web_config);
@@ -827,7 +846,7 @@ void loop()
   // ----------------------------------------------------------------------
   // waiting on API ?
 
-  if(config.api_enable && !flags.api_checked)
+  if(config.api_enable[0] && !flags.api_checked)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": waiting on first API check.";
     modeset(0);
@@ -1222,7 +1241,7 @@ bool check_system_timers()
   if
     (
       !flags.access_point &&
-      config.api_enable &&
+      config.api_enable[0] &&
       timers.api_last_update != 0 &&
       millis() - timers.api_last_update > (15 * 60 * 1000)
     )
@@ -1262,7 +1281,11 @@ bool check_system_timers()
       oled_print_info();
 
     result = 1;
-    timers.oled = millis() + 1750;
+
+    if(config.dumbsystem)
+      timers.oled = millis() + 10 * 1000;
+    else
+      timers.oled = millis() + 1750;
   }
 
   if(flags.i2c_on && millis() > timers.i2c_check)
@@ -1273,7 +1296,7 @@ bool check_system_timers()
       flags.restart = 1;
       result = 1;
     }
-    timers.i2c_check = millis() + (60 * 1000);
+    timers.i2c_check = millis() + (15 * 60 * 1000);
   }
 
   // auto update timer
@@ -1326,18 +1349,8 @@ bool check_data_sources()
   // API Check
 
 
-  if(config.api_enable && millis() > timers.api)
+  if(config.api_enable[0] && millis() > timers.api)
   {
-    /*
-    bool api_result = api_sync(1);
-
-    if(api_result && config.api2_enable)
-      api_result = api_sync(2);
-
-    if(api_result)
-      api_docalcs();
-    */
-
     bool api_result = api_poller();
 
     if(api_result)
@@ -1361,9 +1374,11 @@ bool check_data_sources()
   // ADC poll
   if(!config.api_cellvolts && config.monitor_battery && millis() > timers.adc_poll)
   {
-    timers.adc_poll = millis() + 3; // optimistic but whatever.
 
-    adsmux.adc_poll();
+
+    // wait if pins have been set, go next loop immediately otherwise (dont update timer)
+    if(adsmux.adc_poll())
+      timers.adc_poll = millis() + 10; // be reasonable, also lets mux output settle
 
     // if polling complete, check cells etc
     if(adsmux.polling_complete)
@@ -1375,8 +1390,12 @@ bool check_data_sources()
       // wait (adsmux.ain_history_size) full polls a little for voltages to smooth.
       if(adc_pcount > adsmux.ain_history_size)
       {
-        cells_update();
-        check_cells();
+        // ignore latest poll if it took too long.
+        if(adc_poll_time < 0.7)
+        {
+          cells_update();
+          check_cells();
+        }
       }
       else
       {

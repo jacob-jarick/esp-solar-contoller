@@ -155,10 +155,11 @@ void Ads1115_mux::digital_write(const uint8_t pin, const bool status)
   digitalWrite(_pins[pin], status);
 }
 
-void Ads1115_mux::adc_poll()
+// returns true if pins have just been set
+bool Ads1115_mux::adc_poll()
 {
   if(!adc_found)
-    return;
+    return false;
 
   polling_complete = 0;
 
@@ -177,7 +178,7 @@ void Ads1115_mux::adc_poll()
       _adc_mpins_set = 0;
       _adc_poll_pos = 0;
       polling_complete = 1;
-      return;
+      return false;
     }
 
     // ------------------------------------------------------------------------
@@ -205,7 +206,7 @@ void Ads1115_mux::adc_poll()
       _adc_mpins_set = 0;
       _adc_poll_pos = 0; // check 0 next round.
       polling_complete = 1;
-      return;
+      return false;
     }
 
     // ------------------------------------------------------------------------
@@ -216,7 +217,7 @@ void Ads1115_mux::adc_poll()
     {
       _adc_mpins_set = 0;
       _adc_poll_pos++;
-      return;
+      return false;
     }
 
   }
@@ -247,14 +248,19 @@ void Ads1115_mux::adc_poll()
     }
 
     _adc_mpins_set = 1;
-    return; // return without shifting _adc_poll_pos
+    return true; // return without shifting _adc_poll_pos
   }
 
   // sample X times and bubble sort to get median value.
-  int16_t areads[_sample_count];
+  int16_t areads[_mcp_sample_count];
   int16_t areads2[_sample_count]; // for muxtype 0
 
-  for(uint8_t r = 0; r < _sample_count; r++)
+  uint8_t local_sample_count = _sample_count;
+
+  if(adctype == 2)
+    local_sample_count = _mcp_sample_count;
+
+  for(uint8_t r = 0; r < local_sample_count; r++)
   {
     // ADS1105
     if (adctype == 0)
@@ -294,8 +300,14 @@ void Ads1115_mux::adc_poll()
     }
   }
 
-  bubbleSort(areads,_sample_count);
-  update_adc_val(_adc_poll_pos, areads[_sample_count/2]);
+  bubbleSort(areads, local_sample_count);
+
+  // update from mcp array
+  if (adctype == 2)
+    update_adc_val(_adc_poll_pos, average_middle(areads, local_sample_count));
+  else // update from normal array
+    update_adc_val(_adc_poll_pos, areads[local_sample_count/2]);
+
 
   // muxtype 0 support
   if(muxtype == 0 && (adctype == 0 || adctype == 1) && adc_enable[_adc_poll_pos+8])
@@ -307,7 +319,7 @@ void Ads1115_mux::adc_poll()
 
   _adc_poll_pos++;
   _adc_mpins_set = 0;
-  return;
+  return false;
 }
 
 // bubble sort
@@ -326,6 +338,24 @@ void Ads1115_mux::bubbleSort(int16_t a[], const uint8_t size)
       }
     }
   }
+}
+
+int16_t Ads1115_mux::average_middle(int16_t a[], const uint8_t size)
+{
+  uint8_t spos = size / 4;
+  uint8_t epos = size - spos;
+  uint8_t new_size = epos - spos;
+
+  float result = 0;
+
+  for(uint8_t i = spos; i<epos; i++)
+  {
+    result += a[i];
+  }
+
+  result = result / (float) new_size;
+
+  return (uint16_t) result;
 }
 
 bool Ads1115_mux::i2c_ping(const char address)

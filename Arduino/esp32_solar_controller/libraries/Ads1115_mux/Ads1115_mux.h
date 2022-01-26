@@ -17,9 +17,11 @@ class Ads1115_mux
   public:
     Ads1115_mux(uint8_t pina, uint8_t pinb, uint8_t pinc, uint8_t pind);
 
+    int16_t average_middle(int16_t a[], const uint8_t size);
+
     void setup();
 
-    void adc_poll();
+    bool adc_poll();
 
     uint8_t adctype;
 
@@ -38,7 +40,7 @@ class Ads1115_mux
     uint16_t adc_val[ain_count];
     bool adc_enable[ain_count];
 
-    const static uint8_t ain_history_size = 3;
+    const static uint8_t ain_history_size = 5;
 
     uint16_t adc_val_history[ain_count][ain_history_size];
 
@@ -51,6 +53,7 @@ class Ads1115_mux
     void update_adc_val(uint8_t index, uint16_t value);
 
     const static uint8_t _sample_count = 9; // how many times a ADC value is read for the median array
+    const static uint8_t _mcp_sample_count = 42; // how many times a ADC value is read for the median array
 
     uint8_t _mcpaddr;
 

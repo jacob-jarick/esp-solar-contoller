@@ -366,23 +366,67 @@ void web_config_submit()
 
       // API stuff
 
+      /*
       else if (server.argName(i) == F("api_server1"))
         strlcpy(config.api_server1, server.arg(i).c_str(), sizeof(config.api_server1));
       else if (server.argName(i) == F("api_server2"))
         strlcpy(config.api_server2, server.arg(i).c_str(), sizeof(config.api_server2));
+      else if (server.argName(i) == F("api_server3"))
+        strlcpy(config.api_server3, server.arg(i).c_str(), sizeof(config.api_server3));
+      */
+
+      else if(server.argName(i).startsWith("api_enable"))
+      {
+        for(uint8_t i = 0; i < max_api_servers; i++)
+        {
+          if(server.argName(i) == "api_enable" + String(i+1))
+          {
+            config.api_enable[i] = server.arg(i).toInt();
+          }
+        }
+      }
+      else if(server.argName(i).startsWith("api_server_hostname"))
+      {
+        for(uint8_t i = 0; i < max_api_servers; i++)
+        {
+          if(server.argName(i) == "api_server" + String(i+1))
+          {
+            strlcpy(config.api_server_hostname[i], server.arg(i).c_str(), sizeof(config.api_server_hostname[i]));
+          }
+        }
+      }
+      else if(server.argName(i).startsWith("api_cellvolts"))
+      {
+        for(uint8_t i = 0; i < max_api_servers; i++)
+        {
+          if(server.argName(i) == "api_cellvolts" + String(i+1))
+          {
+            config.api_cellvolts[i] = server.arg(i).toInt();
+          }
+        }
+      }
 
       else if (server.argName(i) == F("api_lm75a"))
         config.api_lm75a = server.arg(i).toInt();
+
+      /*
       else if (server.argName(i) == F("api_cellvolts"))
         config.api_cellvolts = server.arg(i).toInt();
 
       else if (server.argName(i) == F("api2_cellvolts"))
         config.api2_cellvolts = server.arg(i).toInt();
+      else if (server.argName(i) == F("api3_cellvolts"))
+        config.api3_cellvolts = server.arg(i).toInt();
+      */
 
+      /*
       else if (server.argName(i) == F("api_enable"))
         config.api_enable = server.arg(i).toInt();
       else if (server.argName(i) == F("api2_enable"))
         config.api2_enable = server.arg(i).toInt();
+      else if (server.argName(i) == F("api3_enable"))
+        config.api3_enable = server.arg(i).toInt();
+      */
 
       else if (server.argName(i) == F("api_grid"))
         config.api_grid = server.arg(i).toInt();
@@ -709,6 +753,38 @@ void config_raw()
   server.send(200, mime_json, webpage);
 }
 
+void json_cells()
+{
+  String webpage = "";
+
+  DynamicJsonDocument doc(config_json_size);
+
+  doc["host_name"] = String(config.hostn);
+
+  doc["api_version"] = 1;
+
+  doc["cell_monitor"] = config.monitor_battery;
+  doc["cell_count"] = config.cell_count;
+
+  doc["cell_low"] = low_cell;
+  doc["cell_high"] = high_cell;
+
+  doc["adc_poll_time"] = adc_poll_time;
+
+  for(uint8_t i = 0; i < config.cell_count; i++)
+  {
+    doc["cell_"+String(i+1)] = cells_volts[i];
+  }
+  doc["cell_diff"] = cell_volt_diff;
+
+  doc["cell_total"] = pack_total_volts;
+
+  serializeJsonPretty(doc, webpage);
+
+  server.send(200, mime_json, webpage);
+}
+
+
 void jsonapi()
 {
   String webpage = "";
@@ -778,13 +854,35 @@ void apiservers()
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F(" API Servers")) );
 
+  /*
   webpage += js_helper(F("api_server1"), String(config.api_server1));
   webpage += js_helper(F("api_server2"), String(config.api_server2));
+  webpage += js_helper(F("api_server3"), String(config.api_server3));
+  */
+
+  for(uint8_t i = 0; i < max_api_servers; i++)
+  {
+    webpage += js_helper("api_server_hostname" + String(i+1), String(config.api_server_hostname[i]));
+
+    webpage += js_radio_helper("api_enable1" + String(i+1), "api_enable0" + String(i+1), config.api_enable[i]);
+
+    webpage += js_radio_helper("api_cellvolts1" + String(i+1), "api_cellvolts0"  + String(i+1), config.api_cellvolts[i]);
+  }
+
+  /*
   webpage += js_radio_helper(F("api_enable1"), F("api_enable0"), config.api_enable);
   webpage += js_radio_helper(F("api2_enable1"), F("api2_enable0"), config.api2_enable);
+  webpage += js_radio_helper(F("api3_enable1"), F("api3_enable0"), config.api3_enable);
+  */
+
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
+
+  /*
   webpage += js_radio_helper(F("api_cellvolts1"), F("api_cellvolts0"), config.api_cellvolts);
   webpage += js_radio_helper(F("api2_cellvolts1"), F("api2_cellvolts0"), config.api2_cellvolts);
+  webpage += js_radio_helper(F("api3_cellvolts1"), F("api3_cellvolts0"), config.api3_cellvolts);
+  */
+
   webpage += js_radio_helper(F("api_grid1"), F("api_grid0"), config.api_grid);
 
   //

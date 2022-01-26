@@ -33,28 +33,37 @@ bool mdnscachelookup(String hn, String &ip)
 
 uint8_t new_cell_count = 0; // hacky way of auto detecting cells monitored
 
-uint8_t poller_pos = 0;
+uint8_t poller_pos = 1;
 bool api_poller()
 {
   bool api_result = false;
 
+  /*
   uint8_t posmax = 0;
 
-  if(config.api2_enable)
+  if(config.api3_enable)
+    posmax = 2;
+  else if(config.api2_enable)
     posmax = 1;
+
 
   if(poller_pos == 0)
     api_result = api_sync(1);
-  else
+  else if(poller_pos == 1)
     api_result = api_sync(2);
+  else
+    api_result = api_sync(3);
+  */
+
+  api_result = api_sync(poller_pos);
 
   // increment position if successful.
   if(api_result)
   {
     poller_pos++;
-    if(poller_pos > posmax)
+    if(poller_pos > config.api_server_count)
     {
-      poller_pos = 0;
+      poller_pos = 1;
       api_docalcs();
     }
   }
@@ -79,8 +88,10 @@ void api_docalcs()
 
 bool api_sync(uint8_t serverid)
 {
-  String shn = "";
+  String shn = config.api_server_hostname[serverid];
   String msg_prefix = "API Server ID " + String(serverid) + ", ";
+
+  /*
   if(serverid == 1)
   {
     shn = String(config.api_server1);
@@ -89,11 +100,16 @@ bool api_sync(uint8_t serverid)
   {
     shn = String(config.api_server2);
   }
+  else if(serverid == 3)
+  {
+    shn = String(config.api_server3);
+  }
   else
   {
     log_msg("api_sync ERROR unknown server id: " + String(serverid) );
     return 0;
   }
+  */
 
 
   String msg = "";
