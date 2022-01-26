@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 365
+#define FW_VERSION 367
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -729,7 +729,7 @@ void setup()
   {
     // check config, if volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
 
-    if(config.monitor_battery && !config.api_cellvolts)
+    if(config.monitor_battery && !config.api_cellvolts[0])
     {
       log_msg("monitor_battery enabled but ADC not found");
       flags.adc_config_error = 1;
@@ -832,7 +832,7 @@ void loop()
   // ----------------------------------------------------------------------
   // ADC Error ?
 
-  if(!config.api_cellvolts && flags.adc_config_error)
+  if(!config.api_cellvolts[0] && flags.adc_config_error)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": Config ERROR.\nconfig requires ADC, but ADC not found.";
 
@@ -1372,11 +1372,12 @@ bool check_data_sources()
   }
 
   // ADC poll
-  if(!config.api_cellvolts && config.monitor_battery && millis() > timers.adc_poll)
+  if(!config.api_cellvolts[0] && config.monitor_battery && millis() > timers.adc_poll)
   {
+    log_msg("ADC Poll");
     // wait if pins have been set, go next loop immediately otherwise (dont update timer)
-    if(adsmux.adc_poll())
-      timers.adc_poll = millis() + 10; // be reasonable, also lets mux output settle
+    adsmux.adc_poll();
+    timers.adc_poll = millis() + 10; // be reasonable, also lets mux output settle
 
     // if polling complete, check cells etc
     if(adsmux.polling_complete)
