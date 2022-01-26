@@ -377,31 +377,31 @@ void web_config_submit()
 
       else if(server.argName(i).startsWith("api_enable"))
       {
-        for(uint8_t i = 0; i < max_api_servers; i++)
+        for(uint8_t x = 0; x < max_api_servers; x++)
         {
-          if(server.argName(i) == "api_enable" + String(i+1))
+          if(server.argName(i) == "api_enable" + String(x+1))
           {
-            config.api_enable[i] = server.arg(i).toInt();
+            config.api_enable[x] = server.arg(i).toInt();
           }
         }
       }
       else if(server.argName(i).startsWith("api_server_hostname"))
       {
-        for(uint8_t i = 0; i < max_api_servers; i++)
+        for(uint8_t x = 0; x < max_api_servers; x++)
         {
-          if(server.argName(i) == "api_server" + String(i+1))
+          if(server.argName(i) == "api_server_hostname" + String(x+1))
           {
-            strlcpy(config.api_server_hostname[i], server.arg(i).c_str(), sizeof(config.api_server_hostname[i]));
+            strlcpy(config.api_server_hostname[x], server.arg(i).c_str(), sizeof(config.api_server_hostname[x]));
           }
         }
       }
       else if(server.argName(i).startsWith("api_cellvolts"))
       {
-        for(uint8_t i = 0; i < max_api_servers; i++)
+        for(uint8_t x = 0; x < max_api_servers; x++)
         {
-          if(server.argName(i) == "api_cellvolts" + String(i+1))
+          if(server.argName(i) == "api_cellvolts" + String(x+1))
           {
-            config.api_cellvolts[i] = server.arg(i).toInt();
+            config.api_cellvolts[x] = server.arg(i).toInt();
           }
         }
       }

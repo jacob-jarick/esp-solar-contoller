@@ -64,7 +64,7 @@ SSD1306AsciiWire oled;
 
 // -----------------------------------------------------------------------------------------
 
-#include "libraries/Ads1115_mux/Ads1115_mux.h"
+#include <Ads1115_mux.h>
 const uint8_t pin_asel1 = 26;
 const uint8_t pin_asel2 = 17;
 const uint8_t pin_asel3 = 14;
@@ -85,7 +85,7 @@ uint8_t lm75a_address = 0x4f;
 
 // -----------------------------------------------------------------------------------------
 
-#include "libraries/Mmaths/Mmaths.h"
+#include <Mmaths.h>
 
 Mmaths mmaths;
 
