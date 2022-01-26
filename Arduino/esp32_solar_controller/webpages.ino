@@ -395,48 +395,15 @@ void web_config_submit()
           }
         }
       }
-      else if(server.argName(i).startsWith("api_cellvolts"))
-      {
-        for(uint8_t x = 0; x < max_api_servers; x++)
-        {
-          if(server.argName(i) == "api_cellvolts" + String(x+1))
-          {
-            config.api_cellvolts[x] = server.arg(i).toInt();
-          }
-        }
-      }
 
       else if (server.argName(i) == F("api_lm75a"))
         config.api_lm75a = server.arg(i).toInt();
-
-      /*
-      else if (server.argName(i) == F("api_cellvolts"))
-        config.api_cellvolts = server.arg(i).toInt();
-
-      else if (server.argName(i) == F("api2_cellvolts"))
-        config.api2_cellvolts = server.arg(i).toInt();
-      else if (server.argName(i) == F("api3_cellvolts"))
-        config.api3_cellvolts = server.arg(i).toInt();
-      */
-
-      /*
-      else if (server.argName(i) == F("api_enable"))
-        config.api_enable = server.arg(i).toInt();
-      else if (server.argName(i) == F("api2_enable"))
-        config.api2_enable = server.arg(i).toInt();
-      else if (server.argName(i) == F("api3_enable"))
-        config.api3_enable = server.arg(i).toInt();
-      */
 
       else if (server.argName(i) == F("api_grid"))
         config.api_grid = server.arg(i).toInt();
 
       else if (server.argName(i) == F("api_pollsecs"))
         config.api_pollsecs = server.arg(i).toFloat();
-
-
-
-
 
       // end API stuff
 
@@ -865,32 +832,11 @@ void apiservers()
     webpage += js_helper("api_server_hostname" + String(i+1), String(config.api_server_hostname[i]));
 
     webpage += js_radio_helper("api_enable1" + String(i+1), "api_enable0" + String(i+1), config.api_enable[i]);
-
-    webpage += js_radio_helper("api_cellvolts1" + String(i+1), "api_cellvolts0"  + String(i+1), config.api_cellvolts[i]);
   }
 
-  /*
-  webpage += js_radio_helper(F("api_enable1"), F("api_enable0"), config.api_enable);
-  webpage += js_radio_helper(F("api2_enable1"), F("api2_enable0"), config.api2_enable);
-  webpage += js_radio_helper(F("api3_enable1"), F("api3_enable0"), config.api3_enable);
-  */
-
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
-
-  /*
-  webpage += js_radio_helper(F("api_cellvolts1"), F("api_cellvolts0"), config.api_cellvolts);
-  webpage += js_radio_helper(F("api2_cellvolts1"), F("api2_cellvolts0"), config.api2_cellvolts);
-  webpage += js_radio_helper(F("api3_cellvolts1"), F("api3_cellvolts0"), config.api3_cellvolts);
-  */
-
   webpage += js_radio_helper(F("api_grid1"), F("api_grid0"), config.api_grid);
-
-  //
   webpage += js_helper(F("api_pollsecs"), String(config.api_pollsecs, 1));
-
-  //webpage += js_radio_helper(F("hv_monitor1"), F("hv_monitor0"), config.hv_monitor);
-
-//  webpage += html_create_input(F("idcc"), F("cell_count"), "3", String(config.cell_count), "1-16");
 
   webpage += web_footer();
 

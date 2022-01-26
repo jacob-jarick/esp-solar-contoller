@@ -12,7 +12,8 @@
   <td><input id=api_pollsecs type=text name='api_pollsecs' value="" size=8></td>
 </tr>
 
-<tr><td colspan=2><b>Server 1</b></td></tr>
+<tr><td colspan=2><b>Voltage Server 1</b></td></tr>
+<tr><td colspan=2>For monitoring cells 1 to X</td></tr>
 
 <tr>
   <td>Hostname:</td>
@@ -36,14 +37,6 @@
 </tr>
 
 <tr>
-  <td>Copy Cell Info:</td>
-	<td>
-		<input id=api_cellvolts11 type=radio name="api_cellvolts1" value=1> Yes
-		<input id=api_cellvolts01 type=radio name="api_cellvolts1" value=0> No
-	</td>
-</tr>
-
-<tr>
   <td>Copy Grid Info:</td>
 	<td>
 		<input id=api_grid1 type=radio name="api_grid" value=1> Yes
@@ -52,7 +45,7 @@
 </tr>
 
 <tr><td colspan=2><b>Server 2</b></td></tr>
-<tr><td colspan=2>For monitoring cells 17-32</td></tr>
+<tr><td colspan=2>For monitoring cells X+1 to Y</td></tr>
 <tr>
   <td>Hostname:</td>
   <td><input id=api_server_hostname2 type=text name='api_server_hostname2' value="" size=64></td>
@@ -66,16 +59,8 @@
 	</td>
 </tr>
 
-<tr>
-  <td>Copy Cell Info:</td>
-	<td>
-		<input id=api_cellvolts12 type=radio name="api_cellvolts2" value=1> Yes
-		<input id=api_cellvolts02 type=radio name="api_cellvolts2" value=0> No
-	</td>
-</tr>
-
-<tr><td colspan=2><b>Server 3</b></td></tr>
-<tr><td colspan=2>For monitoring cells 33-48</td></tr>
+<tr><td colspan=2><b>Voltage Server 3</b></td></tr>
+<tr><td colspan=2>For monitoring cells Y+1 to Z</td></tr>
 
 
 <tr>
@@ -88,14 +73,6 @@
 	<td>
 		<input id=api_enable13 type=radio name="api_enable3" value=1> Yes
 		<input id=api_enable03 type=radio name="api_enable3" value=0> No
-	</td>
-</tr>
-
-<tr>
-  <td>Copy Cell Info:</td>
-	<td>
-		<input id=api_cellvolts13 type=radio name="api_cellvolts3" value=1> Yes
-		<input id=api_cellvolts03 type=radio name="api_cellvolts3" value=0> No
 	</td>
 </tr>
 

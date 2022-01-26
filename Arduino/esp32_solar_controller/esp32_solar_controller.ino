@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 369
+#define FW_VERSION 370
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -264,14 +264,6 @@ struct Sconfig
   char api_server_hostname[max_api_servers][ssmall];
 
   bool api_lm75a = 0;
-  /*
-  bool api_cellvolts = 0;
-  bool api2_cellvolts = 0;
-  bool api3_cellvolts = 0;
-  */
-
-  bool api_cellvolts[max_api_servers];
-
   bool api_grid = 0;
 
   float api_pollsecs = 1;
@@ -729,7 +721,7 @@ void setup()
   {
     // check config, if volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
 
-    if(config.monitor_battery && !config.api_cellvolts[0])
+    if(config.monitor_battery && !config.api_enable[0])
     {
       log_msg("monitor_battery enabled but ADC not found");
       flags.adc_config_error = 1;
@@ -832,7 +824,7 @@ void loop()
   // ----------------------------------------------------------------------
   // ADC Error ?
 
-  if(!config.api_cellvolts[0] && flags.adc_config_error)
+  if(!config.api_enable[0] && flags.adc_config_error)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": Config ERROR.\nconfig requires ADC, but ADC not found.";
 
@@ -1372,7 +1364,7 @@ bool check_data_sources()
   }
 
   // ADC poll
-  if(!config.api_cellvolts[0] && config.monitor_battery && millis() > timers.adc_poll)
+  if(!config.api_enable[0] && config.monitor_battery && millis() > timers.adc_poll)
   {
 //     log_msg("ADC Poll");
     // wait if pins have been set, go next loop immediately otherwise (dont update timer)

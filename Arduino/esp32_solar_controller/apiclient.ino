@@ -151,6 +151,7 @@ bool api_sync(uint8_t serverid)
     board_temp_max = doc["lm75a_max"];
   }
 
+  /*
   // update cells
   if(config.api_cellvolts)
   {
@@ -181,6 +182,7 @@ bool api_sync(uint8_t serverid)
 
     adc_poll_time = doc["adc_poll_time"];
   }
+  */
 
   // update grid info
   if(serverid == 1 && config.api_grid)
@@ -274,7 +276,7 @@ bool api_vsync(uint8_t serverid)
   }
 
   // update cells
-  if(config.api_cellvolts)
+
   {
     if(doc["cell_monitor"] == 0)
     {

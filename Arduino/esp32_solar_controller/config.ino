@@ -61,25 +61,9 @@ void save_config()
 
     keyname = "api_enable" + String(i+1);
     doc[keyname] = config.api_enable[i];
-
-    keyname = "api_cellvolts" + String(i+1);
-    doc[keyname] = config.api_cellvolts[i];
   }
 
   doc["api_lm75a"] = config.api_lm75a;
-
-  /*
-  doc["api_cellvolts"] = config.api_cellvolts;
-  doc["api2_cellvolts"] = config.api2_cellvolts;
-  doc["api3_cellvolts"] = config.api3_cellvolts;
-  */
-
-  /*
-  doc["api_enable"] = config.api_enable;
-  doc["api2_enable"] = config.api2_enable;
-  doc["api3_enable"] = config.api3_enable;
-  */
-
   doc["api_grid"] = config.api_grid;
 
   // update server count
@@ -295,26 +279,9 @@ bool load_config()
 
     keyname = "api_enable" + String(i+1);
     config.api_enable[i] = doc[keyname];
-
-    keyname = "api_cellvolts" + String(i+1);
-    config.api_cellvolts[i] = doc[keyname];
-
   }
 
   config.api_lm75a = doc["api_lm75a"];
-
-  /*
-  config.api_cellvolts = doc["api_cellvolts"];
-  config.api2_cellvolts = doc["api2_cellvolts"];
-  config.api3_cellvolts = doc["api3_cellvolts"];
-  */
-
-  /*
-  config.api_enable = doc["api_enable"];
-  config.api2_enable = doc["api2_enable"];
-  config.api3_enable = doc["api3_enable"];
-  */
-
   config.api_grid = doc["api_grid"];
 
   config.api_pollsecs = doc["api_pollsecs"];
@@ -585,7 +552,6 @@ void vars_sanity_check()
       for(uint8_t x = i; x < max_api_servers; x++)
       {
         config.api_enable[x] = false;
-        config.api_cellvolts[x] = false;
       }
       exitloop = true;
       break;
@@ -628,47 +594,8 @@ void vars_sanity_check()
   {
     config.api_lm75a = 0;
     config.api_grid = 0;
-
-    /*
-    config.api2_enable = 0;
-    config.api3_enable = 0;
-
-    config.api_cellvolts = 0;
-    config.api2_cellvolts = 0;
-    config.api3_cellvolts = 0;
-    */
   }
 
-  /*
-  // if server 2 is disabled, disable options and server 3
-  if(!config.api2_enable)
-  {
-    config.api3_enable = 0;
-
-    config.api2_cellvolts = 0;
-    config.api3_cellvolts = 0;
-  }
-
-  // if server 3 is disabled, disable options
-  if(!config.api3_enable)
-  {
-    config.api3_cellvolts = 0;
-  }
-
-
-  // if first server does not monitor voltage, the rest cannot.
-  if(!config.api_cellvolts)
-  {
-    config.api2_cellvolts = 0;
-    config.api3_cellvolts = 0;
-  }
-
-  // if second server does not monitor voltage the third cannot.
-  if(!config.api2_cellvolts)
-  {
-    config.api3_cellvolts = 0;
-  }
-  */
 
   // limit poll time
   if(config.api_pollsecs < 1)
