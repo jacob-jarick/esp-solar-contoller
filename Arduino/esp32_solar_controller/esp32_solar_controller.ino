@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 368
+#define FW_VERSION 369
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1374,7 +1374,7 @@ bool check_data_sources()
   // ADC poll
   if(!config.api_cellvolts[0] && config.monitor_battery && millis() > timers.adc_poll)
   {
-    log_msg("ADC Poll");
+//     log_msg("ADC Poll");
     // wait if pins have been set, go next loop immediately otherwise (dont update timer)
     adsmux.adc_poll();
     timers.adc_poll = millis() + 10; // be reasonable, also lets mux output settle

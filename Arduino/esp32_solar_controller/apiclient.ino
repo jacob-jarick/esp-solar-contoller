@@ -33,7 +33,7 @@ bool mdnscachelookup(String hn, String &ip)
 
 uint8_t new_cell_count = 0; // hacky way of auto detecting cells monitored
 
-uint8_t poller_pos = 1;
+uint8_t poller_pos = 0;
 bool api_poller()
 {
   bool api_result = false;
@@ -44,10 +44,10 @@ bool api_poller()
   if(api_result)
   {
     poller_pos++;
-    if(poller_pos > config.api_server_count)
+    if(poller_pos > config.api_server_count-1)
     {
       flags.api_checked = 1;
-      poller_pos = 1;
+      poller_pos = 0;
       api_docalcs();
     }
   }
@@ -288,7 +288,7 @@ bool api_vsync(uint8_t serverid)
 
     uint8_t doc_cell_count = uint8_t(doc["cell_count"]);
 
-    if(serverid == 1)
+    if(serverid == 0)
     {
       new_cell_count = doc_cell_count;
     }
