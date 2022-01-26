@@ -1374,8 +1374,6 @@ bool check_data_sources()
   // ADC poll
   if(!config.api_cellvolts && config.monitor_battery && millis() > timers.adc_poll)
   {
-
-
     // wait if pins have been set, go next loop immediately otherwise (dont update timer)
     if(adsmux.adc_poll())
       timers.adc_poll = millis() + 10; // be reasonable, also lets mux output settle
@@ -1390,12 +1388,8 @@ bool check_data_sources()
       // wait (adsmux.ain_history_size) full polls a little for voltages to smooth.
       if(adc_pcount > adsmux.ain_history_size)
       {
-        // ignore latest poll if it took too long.
-//         if(adc_poll_time < 0.7)
-//         {
-          cells_update();
-          check_cells();
-//         }
+        cells_update();
+        check_cells();
       }
       else
       {
