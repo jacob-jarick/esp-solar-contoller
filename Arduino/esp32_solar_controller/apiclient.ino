@@ -285,16 +285,19 @@ bool api_vsync(uint8_t serverid)
 
 
     // track total number of cells in json(s)
+
+    uint8_t doc_cell_count = uint8_t(doc["cell_count"]);
+
     if(serverid == 1)
     {
-      new_cell_count = doc["cell_count"];
+      new_cell_count = doc_cell_count;
     }
     else
     {
-      new_cell_count += uint8_t(doc["cell_count"]);
+      new_cell_count += doc_cell_count;
     }
 
-    uint8_t i_offset = new_cell_count;
+    uint8_t i_offset = new_cell_count - doc_cell_count;
 
     for(uint8_t i = 0; i < config.cell_count; i++)
     {
