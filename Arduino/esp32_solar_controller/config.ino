@@ -561,34 +561,6 @@ void vars_sanity_check()
   }
 
 
-  /*
-  String tmp = config.api_server1;
-  if(config.api_enable && tmp.length() == 0)
-  {
-    Serial.println("config error: api_server1 null host");
-    config.api_enable = 0;
-    config.api2_enable = 0;
-    config.api3_enable = 0;
-  }
-
-  // check if server2 hostname is blank
-  tmp = config.api_server2;
-  if(config.api2_enable && tmp.length() == 0)
-  {
-    Serial.println("config error: api_server2 null host");
-    config.api2_enable = 0;
-    config.api3_enable = 0;
-  }
-
-  // check if server3 hostname is blank
-  tmp = config.api_server3;
-  if(config.api3_enable && tmp.length() == 0)
-  {
-    Serial.println("config error: api_server3 null host");
-    config.api3_enable = 0;
-  }
-  */
-
   // if server 1 is disabled, disable extra options
   if(!config.api_enable[0])
   {

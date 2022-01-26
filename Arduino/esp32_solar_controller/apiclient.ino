@@ -151,39 +151,6 @@ bool api_sync(uint8_t serverid)
     board_temp_max = doc["lm75a_max"];
   }
 
-  /*
-  // update cells
-  if(config.api_cellvolts)
-  {
-    if(doc["cell_monitor"] == 0)
-    {
-      msg = msg_prefix + "Server does not have cell monitoring enabled yet config requests it.";
-      log_msg(msg);
-      return false;
-    }
-
-
-    // track total number of cells in json(s)
-    if(serverid == 1)
-    {
-      new_cell_count = doc["cell_count"];
-    }
-    else
-    {
-      new_cell_count += uint8_t(doc["cell_count"]);
-    }
-
-    uint8_t i_offset = new_cell_count;
-
-    for(uint8_t i = 0; i < config.cell_count; i++)
-    {
-      cells_volts_real[i_offset+i] = doc["cell_"+String(i+1)];
-    }
-
-    adc_poll_time = doc["adc_poll_time"];
-  }
-  */
-
   // update grid info
   if(serverid == 1 && config.api_grid)
   {
