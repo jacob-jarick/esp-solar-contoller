@@ -38,24 +38,7 @@ bool api_poller()
 {
   bool api_result = false;
 
-  /*
-  uint8_t posmax = 0;
-
-  if(config.api3_enable)
-    posmax = 2;
-  else if(config.api2_enable)
-    posmax = 1;
-
-
-  if(poller_pos == 0)
-    api_result = api_sync(1);
-  else if(poller_pos == 1)
-    api_result = api_sync(2);
-  else
-    api_result = api_sync(3);
-  */
-
-  api_result = api_sync(poller_pos);
+  api_result = api_vsync(poller_pos);
 
   // increment position if successful.
   if(api_result)
@@ -63,6 +46,7 @@ bool api_poller()
     poller_pos++;
     if(poller_pos > config.api_server_count)
     {
+      flags.api_checked = 1;
       poller_pos = 1;
       api_docalcs();
     }
@@ -90,27 +74,6 @@ bool api_sync(uint8_t serverid)
 {
   String shn = config.api_server_hostname[serverid];
   String msg_prefix = "API Server ID " + String(serverid) + ", ";
-
-  /*
-  if(serverid == 1)
-  {
-    shn = String(config.api_server1);
-  }
-  else if(serverid == 2)
-  {
-    shn = String(config.api_server2);
-  }
-  else if(serverid == 3)
-  {
-    shn = String(config.api_server3);
-  }
-  else
-  {
-    log_msg("api_sync ERROR unknown server id: " + String(serverid) );
-    return 0;
-  }
-  */
-
 
   String msg = "";
   String hostip = "";
@@ -210,22 +173,14 @@ bool api_sync(uint8_t serverid)
       new_cell_count += uint8_t(doc["cell_count"]);
     }
 
-    uint8_t i_offset = 16 * (serverid-1);
+    uint8_t i_offset = new_cell_count;
 
     for(uint8_t i = 0; i < config.cell_count; i++)
     {
       cells_volts_real[i_offset+i] = doc["cell_"+String(i+1)];
     }
 
-//    cell_volt_diff = doc["cell_diff"];
-
-//    pack_total_volts = doc["cell_total"];
-
     adc_poll_time = doc["adc_poll_time"];
-
-//    low_cell = doc["cell_low"];
-//    high_cell = doc["cell_high"];
-
   }
 
   // update grid info
@@ -251,6 +206,106 @@ bool api_sync(uint8_t serverid)
   }
 
   flags.api_checked = 1;
+  timers.api_last_update = millis();
+  return true;
+}
+
+
+
+bool api_vsync(uint8_t serverid)
+{
+  String shn = config.api_server_hostname[serverid];
+  String msg_prefix = "API Server ID " + String(serverid) + ", ";
+
+  String msg = "";
+  String hostip = "";
+
+  if(!mdnscachelookup(shn, hostip))
+  {
+    log_msg(msg_prefix + "MDNS lookup '" + shn + "' error.");
+    return false;
+  }
+
+  String url = "http://" + hostip + "/json_cells";
+
+  String payload = "";
+  bool check = get_url(url, payload);
+
+  if(!check)
+  {
+    msg = msg_prefix + "fetch error, URL: " + url;
+    log_msg(msg);
+
+    return false;
+  }
+
+  DynamicJsonDocument doc(jsonsize);
+
+  DeserializationError error2 = deserializeJson(doc, payload.c_str());
+
+  if (error2)
+  {
+    log_msg(String(msg_prefix + "JSON Decode Error: ") + error2.c_str() );
+
+    return false;
+  }
+
+  // JSON is ready
+
+  // compare api_server1 to json hostname.
+
+
+  if(doc.containsKey("host_name"))
+  {
+    String rhn = doc["host_name"];
+    if(shn != rhn)
+    {
+      log_msg(msg_prefix + "ERROR, hostname mismatch JSON: '" + rhn + "' Config Hostname '" + shn + "'");
+      mdns_hn_cache = ""; // invalidate cache
+
+      return false;
+    }
+  }
+  else
+  {
+    log_msg(msg_prefix + "ERROR: hostname not present in JSON" );
+    Serial.println("XX");
+
+    return false;
+  }
+
+  // update cells
+  if(config.api_cellvolts)
+  {
+    if(doc["cell_monitor"] == 0)
+    {
+      msg = msg_prefix + "Server does not have cell monitoring enabled yet config requests it.";
+      log_msg(msg);
+      return false;
+    }
+
+
+    // track total number of cells in json(s)
+    if(serverid == 1)
+    {
+      new_cell_count = doc["cell_count"];
+    }
+    else
+    {
+      new_cell_count += uint8_t(doc["cell_count"]);
+    }
+
+    uint8_t i_offset = new_cell_count;
+
+    for(uint8_t i = 0; i < config.cell_count; i++)
+    {
+      cells_volts_real[i_offset+i] = doc["cell_"+String(i+1)];
+    }
+
+    adc_poll_time = doc["adc_poll_time"];
+  }
+
+//   flags.api_checked = 1;
   timers.api_last_update = millis();
   return true;
 }
