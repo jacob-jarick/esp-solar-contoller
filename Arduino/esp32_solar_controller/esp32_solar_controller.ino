@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 372
+#define FW_VERSION 373
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -104,6 +104,7 @@ WiFiUDP udp;
 struct SysTimers
 {
   unsigned long api = 0;
+  unsigned long iapi = 0;
   unsigned long api_last_update = 0;
 
   unsigned long mode_check = 0;
@@ -239,6 +240,7 @@ int get_url_code; // global url fetch code, eg 404, 401, 200
 //------------------------------------------------------------------------------
 
 const uint8_t max_api_vservers = 3;
+const uint8_t max_api_iservers = 1;
 
 struct Sconfig
 {
@@ -252,8 +254,11 @@ struct Sconfig
   uint8_t api_vserver_count = 0;
 
 
-  bool api_enable[max_api_vservers];
+  bool api_venable[max_api_vservers];
   char api_vserver_hostname[max_api_vservers][ssmall];
+
+  bool api_ienable[max_api_iservers];
+  char api_iserver_hostname[max_api_iservers][ssmall];
 
   bool api_lm75a = 0;
   bool api_grid = 0;
@@ -713,7 +718,7 @@ void setup()
   {
     // check config, if volt monitoring enabled but no i2c dev - display alert, Force IDLE ALWAYS
 
-    if(config.monitor_battery && !config.api_enable[0])
+    if(config.monitor_battery && !config.api_venable[0])
     {
       log_msg("monitor_battery enabled but ADC not found");
       flags.adc_config_error = 1;
@@ -816,7 +821,7 @@ void loop()
   // ----------------------------------------------------------------------
   // ADC Error ?
 
-  if(!config.api_enable[0] && flags.adc_config_error)
+  if(!config.api_venable[0] && flags.adc_config_error)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": Config ERROR.\nconfig requires ADC, but ADC not found.";
 
@@ -830,7 +835,7 @@ void loop()
   // ----------------------------------------------------------------------
   // waiting on API ?
 
-  if(config.api_enable[0] && !flags.api_checked)
+  if(config.api_venable[0] && !flags.api_checked)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": waiting on first API check.";
     modeset(0);
@@ -1225,7 +1230,7 @@ bool check_system_timers()
   if
     (
       !flags.access_point &&
-      config.api_enable[0] &&
+      config.api_venable[0] &&
       timers.api_last_update != 0 &&
       millis() - timers.api_last_update > (15 * 60 * 1000)
     )
@@ -1332,8 +1337,19 @@ bool check_data_sources()
 
   // API Check
 
+    if(config.api_ienable[0] && millis() > timers.iapi)
+  {
+    bool api_result = api_isync(0);
 
-  if(config.api_enable[0] && millis() > timers.api)
+    if(api_result)
+      timers.iapi = millis() + (1000 * config.api_pollsecs);
+    else
+      timers.iapi = millis() + (httpget_timeout * 3); // if failed, fallback to safe poll time.
+
+    result = 1;
+  }
+
+  if(config.api_venable[0] && millis() > timers.api)
   {
     bool api_result = api_poller();
 
@@ -1356,7 +1372,7 @@ bool check_data_sources()
   }
 
   // ADC poll
-  if(!config.api_enable[0] && config.monitor_battery && millis() > timers.adc_poll)
+  if(!config.api_venable[0] && config.monitor_battery && millis() > timers.adc_poll)
   {
 //     log_msg("ADC Poll");
     // wait if pins have been set, go next loop immediately otherwise (dont update timer)

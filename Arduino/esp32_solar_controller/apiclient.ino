@@ -38,7 +38,7 @@ bool api_poller()
 {
   bool api_result = false;
 
-  api_result = api_vsync(poller_pos);
+  api_result = api_vsync(poller_pos-1);
 
   // increment position if successful.
   if(api_result)
@@ -69,10 +69,10 @@ void api_docalcs()
   check_cells();
 }
 
-bool api_sync(uint8_t serverid)
+bool api_isync(uint8_t serverid)
 {
-  String shn = config.api_vserver_hostname[serverid];
-  String msg_prefix = "API Server ID " + String(serverid) + ", ";
+  String shn = config.api_iserver_hostname[serverid];
+  String msg_prefix = "API Info Server ID " + String(serverid) + ", ";
 
   String msg = "";
   String hostip = "";
@@ -135,7 +135,7 @@ bool api_sync(uint8_t serverid)
   // get amb temp
 
   //config.api_lm75a
-  if(serverid == 1 && config.api_lm75a)
+  if(config.api_lm75a)
   {
     if(doc["lm75a"] == 0)
     {
@@ -152,7 +152,7 @@ bool api_sync(uint8_t serverid)
   }
 
   // update grid info
-  if(serverid == 1 && config.api_grid)
+  if(config.api_grid)
   {
     phase_a_watts = doc["phase_a_watts"];
     phase_b_watts = doc["phase_b_watts"];
@@ -173,8 +173,6 @@ bool api_sync(uint8_t serverid)
     set_power(get_watts(1));
   }
 
-  flags.api_checked = 1;
-  timers.api_last_update = millis();
   return true;
 }
 

@@ -53,8 +53,17 @@ void save_config()
     String keyname = "api_vserver" + String(i+1);
     doc[keyname] = config.api_vserver_hostname[i];
 
-    keyname = "api_enable" + String(i+1);
-    doc[keyname] = config.api_enable[i];
+    keyname = "api_venable" + String(i+1);
+    doc[keyname] = config.api_venable[i];
+  }
+
+    for(uint8_t i = 0; i < max_api_iservers; i++)
+  {
+    String keyname = "api_iserver" + String(i+1);
+    doc[keyname] = config.api_iserver_hostname[i];
+
+    keyname = "api_ienable" + String(i+1);
+    doc[keyname] = config.api_ienable[i];
   }
 
   doc["api_lm75a"] = config.api_lm75a;
@@ -64,7 +73,7 @@ void save_config()
   config.api_vserver_count = 0;
   for(uint8_t i = 0; i < max_api_vservers; i++)
   {
-    if(config.api_enable[i])
+    if(config.api_venable[i])
       config.api_vserver_count++;
   }
 
@@ -216,7 +225,7 @@ void save_config()
 }
 
 // json doc value to char array
-void docv_to_chara(DynamicJsonDocument &doc, String &keyname, char arr[], uint8_t alength, String default_value)
+void docv_to_chara(DynamicJsonDocument &doc, String keyname, char arr[], uint8_t alength, String default_value)
 {
     if(doc.containsKey(keyname))
       strlcpy(arr, doc[keyname], alength);
@@ -267,15 +276,19 @@ bool load_config()
   {
     String keyname = "api_vserver" + String(i+1);
 
-    /*
-    if(doc.containsKey(keyname))
-      strlcpy(config.api_vserver_hostname[i], doc[keyname], sizeof(config.api_vserver_hostname[i]));
-    */
-
     docv_to_chara(doc, keyname, config.api_vserver_hostname[i], sizeof(config.api_vserver_hostname[i]), "");
 
-    keyname = "api_enable" + String(i+1);
-    config.api_enable[i] = doc[keyname];
+    keyname = "api_venable" + String(i+1);
+    config.api_venable[i] = doc[keyname];
+  }
+
+  for(uint8_t i = 0; i < max_api_iservers; i++)
+  {
+    String keyname = "api_iserver" + String(i+1);
+    docv_to_chara(doc, keyname, config.api_iserver_hostname[i], sizeof(config.api_iserver_hostname[i]), "");
+
+    keyname = "api_ienable" + String(i+1);
+    config.api_ienable[i] = doc[keyname];
   }
 
   config.api_lm75a = doc["api_lm75a"];
@@ -288,11 +301,15 @@ bool load_config()
 
 
   // NETWORK
-  if(doc.containsKey("wifi_ssid1"))
-    strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
 
-  if(doc.containsKey("wifi_pass1"))
-    strlcpy(config.wifi_pass1, doc["wifi_pass1"], sizeof(config.wifi_pass1));
+//   if(doc.containsKey("wifi_ssid1"))
+//     strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
+
+  docv_to_chara(doc, "wifi_ssid1", config.wifi_ssid1, sizeof(config.wifi_ssid1), "");
+  docv_to_chara(doc, "wifi_pass1", config.wifi_pass1, sizeof(config.wifi_pass1), "");
+
+//   if(doc.containsKey("wifi_pass1"))
+//     strlcpy(config.wifi_pass1, doc["wifi_pass1"], sizeof(config.wifi_pass1));
 
   if(doc.containsKey("wifi_ssid2"))
     strlcpy(config.wifi_ssid2, doc["wifi_ssid2"], sizeof(config.wifi_ssid2));
@@ -523,23 +540,37 @@ void vars_sanity_check()
   {
     String tmp = config.api_vserver_hostname[i];
 
-    if(config.api_enable[i] && tmp.length() == 0)
+    if(config.api_venable[i] && tmp.length() == 0)
     {
       // disable this server and all following
       for(uint8_t x = i; x < max_api_vservers; x++)
       {
-        config.api_enable[x] = false;
+        config.api_venable[x] = false;
       }
 
     }
   }
 
+  for(uint8_t i = 0; i < max_api_iservers; i++)
+  {
+    String tmp = config.api_iserver_hostname[i];
+
+    if(config.api_ienable[i] && tmp.length() == 0)
+    {
+      // disable this server and all following
+      for(uint8_t x = i; x < max_api_iservers; x++)
+      {
+        config.api_ienable[x] = false;
+      }
+
+    }
+  }
   // count servers, if server N is disabled, disabled all servers after N
   config.api_vserver_count = 0;
   for(uint8_t i = 0; i < max_api_vservers; i++)
   {
     bool exitloop = false;
-    if(config.api_enable[i])
+    if(config.api_venable[i])
     {
       config.api_vserver_count++;
     }
@@ -548,7 +579,7 @@ void vars_sanity_check()
       // disable this server and all following
       for(uint8_t x = i; x < max_api_vservers; x++)
       {
-        config.api_enable[x] = false;
+        config.api_venable[x] = false;
       }
       exitloop = true;
       break;
@@ -559,7 +590,7 @@ void vars_sanity_check()
 
 
   // if server 1 is disabled, disable extra options
-  if(!config.api_enable[0])
+  if(!config.api_venable[0])
   {
     config.api_lm75a = 0;
     config.api_grid = 0;

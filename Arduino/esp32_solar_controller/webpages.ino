@@ -367,13 +367,23 @@ void web_config_submit()
       // API stuff
 
 
-      else if(server.argName(i).startsWith("api_enable"))
+      else if(server.argName(i).startsWith("api_venable"))
       {
         for(uint8_t x = 0; x < max_api_vservers; x++)
         {
-          if(server.argName(i) == "api_enable" + String(x+1))
+          if(server.argName(i) == "api_venable" + String(x+1))
           {
-            config.api_enable[x] = server.arg(i).toInt();
+            config.api_venable[x] = server.arg(i).toInt();
+          }
+        }
+      }
+      else if(server.argName(i).startsWith("api_ienable"))
+      {
+        for(uint8_t x = 0; x < max_api_vservers; x++)
+        {
+          if(server.argName(i) == "api_ienable" + String(x+1))
+          {
+            config.api_ienable[x] = server.arg(i).toInt();
           }
         }
       }
@@ -384,6 +394,16 @@ void web_config_submit()
           if(server.argName(i) == "api_vserver_hostname" + String(x+1))
           {
             strlcpy(config.api_vserver_hostname[x], server.arg(i).c_str(), sizeof(config.api_vserver_hostname[x]));
+          }
+        }
+      }
+      else if(server.argName(i).startsWith("api_iserver_hostname"))
+      {
+        for(uint8_t x = 0; x < max_api_vservers; x++)
+        {
+          if(server.argName(i) == "api_iserver_hostname" + String(x+1))
+          {
+            strlcpy(config.api_iserver_hostname[x], server.arg(i).c_str(), sizeof(config.api_iserver_hostname[x]));
           }
         }
       }
@@ -818,7 +838,13 @@ void apiservers()
   {
     webpage += js_helper("api_vserver_hostname" + String(i+1), String(config.api_vserver_hostname[i]));
 
-    webpage += js_radio_helper("api_enable1" + String(i+1), "api_enable0" + String(i+1), config.api_enable[i]);
+    webpage += js_radio_helper("api_venable1" + String(i+1), "api_venable0" + String(i+1), config.api_venable[i]);
+  }
+  for(uint8_t i = 0; i < max_api_iservers; i++)
+  {
+    webpage += js_helper("api_iserver_hostname" + String(i+1), String(config.api_iserver_hostname[i]));
+
+    webpage += js_radio_helper("api_venable1" + String(i+1), "api_venable0" + String(i+1), config.api_ienable[i]);
   }
 
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);

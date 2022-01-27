@@ -12,21 +12,22 @@
   <td><input id=api_pollsecs type=text name='api_pollsecs' value="" size=8></td>
 </tr>
 
-<tr><td colspan=2><b>Voltage Server 1</b></td></tr>
-<tr><td colspan=2>For monitoring cells 1 to X</td></tr>
+<tr><td colspan=2><b>Info Server 1</b></td></tr>
+<tr><td colspan=2>Grid Info, Ambient temp</td></tr>
 
 <tr>
   <td>Hostname:</td>
-  <td><input id=api_vserver_hostname1 type=text name='api_vserver_hostname1' value="" size=64></td>
+  <td><input id=api_iserver_hostname1 type=text name='api_iserver_hostname1' value="" size=64></td>
 </tr>
 
 <tr>
   <td>Enable:</td>
 	<td>
-		<input id=api_enable11 type=radio name="api_enable1" value=1> Yes
-		<input id=api_enable01 type=radio name="api_enable1" value=0> No
+		<input id=api_ienable11 type=radio name="api_ienable1" value=1> Yes
+		<input id=api_ienable01 type=radio name="api_ienable1" value=0> No
 	</td>
 </tr>
+
 
 <tr>
   <td>Copy Ambient Temp:</td>
@@ -44,6 +45,23 @@
 	</td>
 </tr>
 
+
+<tr><td colspan=2><b>Voltage Server 1</b></td></tr>
+<tr><td colspan=2>For monitoring cells 1 to X</td></tr>
+
+<tr>
+  <td>Hostname:</td>
+  <td><input id=api_vserver_hostname1 type=text name='api_vserver_hostname1' value="" size=64></td>
+</tr>
+
+<tr>
+  <td>Enable:</td>
+	<td>
+		<input id=api_venable11 type=radio name="api_venable1" value=1> Yes
+		<input id=api_venable01 type=radio name="api_venable1" value=0> No
+	</td>
+</tr>
+
 <tr><td colspan=2><b>Voltage Server 2</b></td></tr>
 <tr><td colspan=2>For monitoring cells X+1 to Y</td></tr>
 <tr>
@@ -54,8 +72,8 @@
 <tr>
   <td>Enable:</td>
 	<td>
-		<input id=api_enable12 type=radio name="api_enable2" value=1> Yes
-		<input id=api_enable02 type=radio name="api_enable2" value=0> No
+		<input id=api_venable12 type=radio name="api_venable2" value=1> Yes
+		<input id=api_venable02 type=radio name="api_venable2" value=0> No
 	</td>
 </tr>
 
@@ -71,8 +89,8 @@
 <tr>
   <td>Enable:</td>
 	<td>
-		<input id=api_enable13 type=radio name="api_enable3" value=1> Yes
-		<input id=api_enable03 type=radio name="api_enable3" value=0> No
+		<input id=api_venable13 type=radio name="api_venable3" value=1> Yes
+		<input id=api_venable03 type=radio name="api_venable3" value=0> No
 	</td>
 </tr>
 
