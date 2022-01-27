@@ -38,7 +38,7 @@ bool api_poller()
 {
   bool api_result = false;
 
-  api_result = api_vsync(poller_pos-1);
+  api_result = api_vsync(poller_pos);
 
   // increment position if successful.
   if(api_result)
