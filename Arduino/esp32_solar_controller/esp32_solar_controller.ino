@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 376
+#define FW_VERSION 377
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1421,7 +1421,7 @@ bool check_data_sources()
 
 void check_cells()
 {
-  flags.cells_checked = 1;
+  flags.cells_checked = true;
 
   cell_volt_low = 10000;
   cell_volt_high = 0;
@@ -1440,7 +1440,7 @@ void check_cells()
   pack_total_volts = 0;
   for(byte i = 0; i < config.cell_count; i++)
   {
-    pack_total_volts += cells_volts[i];
+    pack_total_volts += cells_volts[i]; // calculate pack total.
 
     if(cells_volts[i] < cell_volt_low)
     {

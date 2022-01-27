@@ -8,9 +8,7 @@ void cells_update()
   for(uint8_t x = 0; x < local_cell_count; x++)
     read_cell_volts(x);
 
-  flags.cells_checked = true;
-
-  pack_total_volts = cells_volts_real[local_cell_count-1];
+  //pack_total_volts = cells_volts_real[local_cell_count-1];
 }
 
 double read_cell_volts(const byte cell)
