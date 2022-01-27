@@ -215,6 +215,15 @@ void save_config()
   file.close();
 }
 
+// json doc value to char array
+void docv_to_chara(DynamicJsonDocument &doc, String &keyname, char arr[], uint8_t alength, String default_value)
+{
+    if(doc.containsKey(keyname))
+      strlcpy(arr, doc[keyname], alength);
+    else
+      strlcpy(arr, default_value.c_str(), alength);
+
+}
 
 bool load_config()
 {
@@ -258,8 +267,12 @@ bool load_config()
   {
     String keyname = "api_vserver" + String(i+1);
 
+    /*
     if(doc.containsKey(keyname))
       strlcpy(config.api_vserver_hostname[i], doc[keyname], sizeof(config.api_vserver_hostname[i]));
+    */
+
+    docv_to_chara(doc, keyname, config.api_vserver_hostname[i], sizeof(config.api_vserver_hostname[i]), "");
 
     keyname = "api_enable" + String(i+1);
     config.api_enable[i] = doc[keyname];
