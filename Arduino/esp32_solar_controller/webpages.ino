@@ -844,7 +844,7 @@ void apiservers()
   {
     webpage += js_helper("api_iserver_hostname" + String(i+1), String(config.api_iserver_hostname[i]));
 
-    webpage += js_radio_helper("api_venable1" + String(i+1), "api_venable0" + String(i+1), config.api_ienable[i]);
+    webpage += js_radio_helper("api_ienable1" + String(i+1), "api_ienable0" + String(i+1), config.api_ienable[i]);
   }
 
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
