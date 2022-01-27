@@ -44,7 +44,7 @@ bool api_poller()
   if(api_result)
   {
     poller_pos++;
-    if(poller_pos > config.api_server_count-1)
+    if(poller_pos > config.api_vserver_count-1)
     {
       flags.api_checked = 1;
       poller_pos = 0;
@@ -71,7 +71,7 @@ void api_docalcs()
 
 bool api_sync(uint8_t serverid)
 {
-  String shn = config.api_server_hostname[serverid];
+  String shn = config.api_vserver_hostname[serverid];
   String msg_prefix = "API Server ID " + String(serverid) + ", ";
 
   String msg = "";
@@ -109,7 +109,7 @@ bool api_sync(uint8_t serverid)
 
   // JSON is ready
 
-  // compare api_server1 to json hostname.
+  // compare api_vserver1 to json hostname.
 
 
   if(doc.containsKey("host_name"))
@@ -182,7 +182,7 @@ bool api_sync(uint8_t serverid)
 
 bool api_vsync(uint8_t serverid)
 {
-  String shn = config.api_server_hostname[serverid];
+  String shn = config.api_vserver_hostname[serverid];
   String msg_prefix = "API Server ID " + String(serverid) + ", ";
 
   String msg = "";
@@ -220,7 +220,7 @@ bool api_vsync(uint8_t serverid)
 
   // JSON is ready
 
-  // compare api_server1 to json hostname.
+  // compare api_vserver1 to json hostname.
 
 
   if(doc.containsKey("host_name"))

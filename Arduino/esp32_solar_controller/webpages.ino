@@ -366,18 +366,10 @@ void web_config_submit()
 
       // API stuff
 
-      /*
-      else if (server.argName(i) == F("api_server1"))
-        strlcpy(config.api_server1, server.arg(i).c_str(), sizeof(config.api_server1));
-      else if (server.argName(i) == F("api_server2"))
-        strlcpy(config.api_server2, server.arg(i).c_str(), sizeof(config.api_server2));
-      else if (server.argName(i) == F("api_server3"))
-        strlcpy(config.api_server3, server.arg(i).c_str(), sizeof(config.api_server3));
-      */
 
       else if(server.argName(i).startsWith("api_enable"))
       {
-        for(uint8_t x = 0; x < max_api_servers; x++)
+        for(uint8_t x = 0; x < max_api_vservers; x++)
         {
           if(server.argName(i) == "api_enable" + String(x+1))
           {
@@ -385,13 +377,13 @@ void web_config_submit()
           }
         }
       }
-      else if(server.argName(i).startsWith("api_server_hostname"))
+      else if(server.argName(i).startsWith("api_vserver_hostname"))
       {
-        for(uint8_t x = 0; x < max_api_servers; x++)
+        for(uint8_t x = 0; x < max_api_vservers; x++)
         {
-          if(server.argName(i) == "api_server_hostname" + String(x+1))
+          if(server.argName(i) == "api_vserver_hostname" + String(x+1))
           {
-            strlcpy(config.api_server_hostname[x], server.arg(i).c_str(), sizeof(config.api_server_hostname[x]));
+            strlcpy(config.api_vserver_hostname[x], server.arg(i).c_str(), sizeof(config.api_vserver_hostname[x]));
           }
         }
       }
@@ -821,15 +813,10 @@ void apiservers()
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F(" API Servers")) );
 
-  /*
-  webpage += js_helper(F("api_server1"), String(config.api_server1));
-  webpage += js_helper(F("api_server2"), String(config.api_server2));
-  webpage += js_helper(F("api_server3"), String(config.api_server3));
-  */
 
-  for(uint8_t i = 0; i < max_api_servers; i++)
+  for(uint8_t i = 0; i < max_api_vservers; i++)
   {
-    webpage += js_helper("api_server_hostname" + String(i+1), String(config.api_server_hostname[i]));
+    webpage += js_helper("api_vserver_hostname" + String(i+1), String(config.api_vserver_hostname[i]));
 
     webpage += js_radio_helper("api_enable1" + String(i+1), "api_enable0" + String(i+1), config.api_enable[i]);
   }

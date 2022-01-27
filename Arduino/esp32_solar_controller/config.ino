@@ -48,16 +48,10 @@ void save_config()
 
   // API
 
-  /*
-  doc["api_server1"] = config.api_server1;
-  doc["api_server2"] = config.api_server2;
-  doc["api_server3"] = config.api_server3;
-  */
-
-  for(uint8_t i = 0; i < max_api_servers; i++)
+  for(uint8_t i = 0; i < max_api_vservers; i++)
   {
-    String keyname = "api_server" + String(i+1);
-    doc[keyname] = config.api_server_hostname[i];
+    String keyname = "api_vserver" + String(i+1);
+    doc[keyname] = config.api_vserver_hostname[i];
 
     keyname = "api_enable" + String(i+1);
     doc[keyname] = config.api_enable[i];
@@ -67,11 +61,11 @@ void save_config()
   doc["api_grid"] = config.api_grid;
 
   // update server count
-  config.api_server_count = 0;
-  for(uint8_t i = 0; i < max_api_servers; i++)
+  config.api_vserver_count = 0;
+  for(uint8_t i = 0; i < max_api_vservers; i++)
   {
     if(config.api_enable[i])
-      config.api_server_count++;
+      config.api_vserver_count++;
   }
 
 
@@ -260,22 +254,12 @@ bool load_config()
   config.fwver = doc["fwver"];
 
   // API
-
-  /*
-  if(doc.containsKey("api_server1"))
-    strlcpy(config.api_server1, doc["api_server1"], sizeof(config.api_server1));
-  if(doc.containsKey("api_server2"))
-    strlcpy(config.api_server2, doc["api_server2"], sizeof(config.api_server2));
-  if(doc.containsKey("api_server3"))
-    strlcpy(config.api_server3, doc["api_server3"], sizeof(config.api_server3));
-  */
-
-  for(uint8_t i = 0; i < max_api_servers; i++)
+  for(uint8_t i = 0; i < max_api_vservers; i++)
   {
-    String keyname = "api_server" + String(i+1);
+    String keyname = "api_vserver" + String(i+1);
 
     if(doc.containsKey(keyname))
-      strlcpy(config.api_server_hostname[i], doc[keyname], sizeof(config.api_server_hostname[i]));
+      strlcpy(config.api_vserver_hostname[i], doc[keyname], sizeof(config.api_vserver_hostname[i]));
 
     keyname = "api_enable" + String(i+1);
     config.api_enable[i] = doc[keyname];
@@ -522,14 +506,14 @@ void vars_sanity_check()
 
   // check if server1 hostname is blank
 
-  for(uint8_t i = 0; i < max_api_servers; i++)
+  for(uint8_t i = 0; i < max_api_vservers; i++)
   {
-    String tmp = config.api_server_hostname[i];
+    String tmp = config.api_vserver_hostname[i];
 
     if(config.api_enable[i] && tmp.length() == 0)
     {
       // disable this server and all following
-      for(uint8_t x = i; x < max_api_servers; x++)
+      for(uint8_t x = i; x < max_api_vservers; x++)
       {
         config.api_enable[x] = false;
       }
@@ -538,18 +522,18 @@ void vars_sanity_check()
   }
 
   // count servers, if server N is disabled, disabled all servers after N
-  config.api_server_count = 0;
-  for(uint8_t i = 0; i < max_api_servers; i++)
+  config.api_vserver_count = 0;
+  for(uint8_t i = 0; i < max_api_vservers; i++)
   {
     bool exitloop = false;
     if(config.api_enable[i])
     {
-      config.api_server_count++;
+      config.api_vserver_count++;
     }
     else
     {
       // disable this server and all following
-      for(uint8_t x = i; x < max_api_servers; x++)
+      for(uint8_t x = i; x < max_api_vservers; x++)
       {
         config.api_enable[x] = false;
       }

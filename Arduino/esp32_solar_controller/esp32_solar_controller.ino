@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 370
+#define FW_VERSION 371
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -238,7 +238,7 @@ int get_url_code; // global url fetch code, eg 404, 401, 200
 
 //------------------------------------------------------------------------------
 
-const uint8_t max_api_servers = 3;
+const uint8_t max_api_vservers = 3;
 
 struct Sconfig
 {
@@ -249,19 +249,11 @@ struct Sconfig
 
   // API
 
-  uint8_t api_server_count = 0;
+  uint8_t api_vserver_count = 0;
 
-  /*
-  char api_server1[ssmall];
-  char api_server2[ssmall];
-  char api_server3[ssmall];
-  bool api_enable = 0;
-  bool api2_enable = 0;
-  bool api3_enable = 0;
-  */
 
-  bool api_enable[max_api_servers];
-  char api_server_hostname[max_api_servers][ssmall];
+  bool api_enable[max_api_vservers];
+  char api_vserver_hostname[max_api_vservers][ssmall];
 
   bool api_lm75a = 0;
   bool api_grid = 0;
