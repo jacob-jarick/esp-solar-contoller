@@ -827,6 +827,11 @@ void apiservers()
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + String(F(" API Servers")) );
 
+  // create table rows first
+  for(uint8_t i = 0; i < max_api_vservers; i++)
+  {
+    webpage += "table_add(" + String(i+1) + ");";
+  }
 
   for(uint8_t i = 0; i < max_api_vservers; i++)
   {
