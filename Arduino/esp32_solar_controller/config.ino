@@ -302,56 +302,18 @@ bool load_config()
 
   // NETWORK
 
-//   if(doc.containsKey("wifi_ssid1"))
-//     strlcpy(config.wifi_ssid1, doc["wifi_ssid1"], sizeof(config.wifi_ssid1));
-
   docv_to_chara(doc, "wifi_ssid1", config.wifi_ssid1, sizeof(config.wifi_ssid1), "");
   docv_to_chara(doc, "wifi_pass1", config.wifi_pass1, sizeof(config.wifi_pass1), "");
-
-//   if(doc.containsKey("wifi_pass1"))
-//     strlcpy(config.wifi_pass1, doc["wifi_pass1"], sizeof(config.wifi_pass1));
-
-//   if(doc.containsKey("wifi_ssid2"))
-//     strlcpy(config.wifi_ssid2, doc["wifi_ssid2"], sizeof(config.wifi_ssid2));
   docv_to_chara(doc, "wifi_ssid2", config.wifi_ssid2, sizeof(config.wifi_ssid2), "");
-
-//   if(doc.containsKey("wifi_pass2"))
-//     strlcpy(config.wifi_pass2, doc["wifi_pass2"], sizeof(config.wifi_pass2));
   docv_to_chara(doc, "wifi_pass2", config.wifi_pass2, sizeof(config.wifi_pass2), "");
-
-//   if(doc.containsKey("hostn"))
-//     strlcpy(config.hostn, doc["hostn"], sizeof(config.hostn));
-
-    docv_to_chara(doc, "hostn", config.hostn, sizeof(config.hostn), "");
-
-
-//   if(doc.containsKey("description"))
-//     strlcpy(config.description, doc["description"], sizeof(config.description));
-
-    docv_to_chara(doc, "description", config.description, sizeof(config.description), "");
+  docv_to_chara(doc, "hostn", config.hostn, sizeof(config.hostn), "");
+  docv_to_chara(doc, "description", config.description, sizeof(config.description), "");
 
   // URLS
-//   if(doc.containsKey("3p_push_url"))
-//     strlcpy(config.threephase_push_url, doc["3p_push_url"], sizeof(config.threephase_push_url));
-    docv_to_chara(doc, "3p_push_url", config.threephase_push_url, sizeof(config.threephase_push_url), "");
-
-//   if(doc.containsKey("3p_direct_url"))
-//     strlcpy(config.threephase_direct_url, doc["3p_direct_url"], sizeof(config.threephase_direct_url));
-
-    docv_to_chara(doc, "3p_direct_url", config.threephase_direct_url, sizeof(config.threephase_direct_url), "");
-
-//   strlcpy(config.pub_url, doc["pub_url"], sizeof(config.pub_url));
-    docv_to_chara(doc, "pub_url", config.pub_url, sizeof(config.pub_url), "");
-
-  // HOSTS
-//   if(doc.containsKey("ntp_server"))
-//     strlcpy(config.ntp_server, doc["ntp_server"], sizeof(config.ntp_server));
-
-    docv_to_chara(doc, "ntp_server", config.ntp_server, sizeof(config.ntp_server), "0.au.pool.ntp.org");
-
-//   if(doc.containsKey("update_host"))
-//     strlcpy(config.update_host, doc["update_host"], sizeof(config.update_host));
-    docv_to_chara(doc, "update_host", config.update_host, sizeof(config.update_host), "");
+  docv_to_chara(doc, "3p_direct_url", config.threephase_direct_url, sizeof(config.threephase_direct_url), "");
+  docv_to_chara(doc, "pub_url", config.pub_url, sizeof(config.pub_url), "");
+  docv_to_chara(doc, "ntp_server", config.ntp_server, sizeof(config.ntp_server), "0.au.pool.ntp.org");
+  docv_to_chara(doc, "update_host", config.update_host, sizeof(config.update_host), "");
 
   for(uint8_t i = 0; i < adsmux.ain_count; i++)
     config.battery_volt_mod[i] = doc["volt_mod" + String(i+1)];

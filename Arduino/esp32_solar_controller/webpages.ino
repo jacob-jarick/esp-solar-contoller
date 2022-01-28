@@ -516,12 +516,6 @@ void web_config_submit()
       else if (server.argName(i) == F("cpkwh"))
         config.cpkwh = server.arg(i).toFloat();
 
-//       else if (server.argName(i) == F("inverter_url"))
-//         strlcpy(config.inverter_url, server.arg(i).c_str(), sizeof(config.inverter_url));
-
-//       else if (server.argName(i) == F("inverter_push_url"))
-//         strlcpy(config.inverter_push_url, server.arg(i).c_str(), sizeof(config.inverter_push_url));
-
       else if (server.argName(i) == F("pub_url"))
         strlcpy(config.pub_url, server.arg(i).c_str(), sizeof(config.pub_url));
 
