@@ -4,20 +4,23 @@ function table_add(id)
 {
   var table = document.getElementById("apitable");
   var row = table.insertRow(-1);
-  row.innerHTML = "<td colspan=2><b>Voltage Server "+id+"</b></td>";
+  row.innerHTML = "  <td colspan=2><b>Voltage Server "+id+"</b></td>";
 
   var row = table.insertRow(-1);
-  row.innerHTML = `<td>Hostname:</td>
-  <td><input id=api_vserver_hostname`+id+` type=text value="" size=64></td>`;
+  row.innerHTML =
+`
+  <td>Hostname:</td>
+  <td><input id=api_vserver_hostname`+id+` name=api_vserver_hostname`+id+`  type=text value="" size=64></td>`;
 
   var row = table.insertRow(-1);
-  row.innerHTML = `<td>Enable:</td>
-	<td>
-		<input id=api_venable1`+id+` type=radio name="api_venable`+id+`" value=1> Yes
-		<input id=api_venable0`+id+` type=radio name="api_venable`+id+`" value=0> No
-	</td>`
-
-
+  row.innerHTML =
+`
+  <td>Enable:</td>
+  <td>
+    <input id=api_venable1`+id+` type=radio name="api_venable`+id+`" value=1> Yes
+    <input id=api_venable0`+id+` type=radio name="api_venable`+id+`" value=0> No
+  </td>
+`;
 }
 
 </script>
@@ -68,56 +71,7 @@ function table_add(id)
 	</td>
 </tr>
 
-<!--
-<tr><td colspan=2><b>Voltage Server 1</b></td></tr>
-<tr><td colspan=2>For monitoring cells 1 to X</td></tr>
-
-<tr>
-  <td>Hostname:</td>
-  <td><input id=api_vserver_hostname1 type=text name='api_vserver_hostname1' value="" size=64></td>
-</tr>
-
-<tr>
-  <td>Enable:</td>
-	<td>
-		<input id=api_venable11 type=radio name="api_venable1" value=1> Yes
-		<input id=api_venable01 type=radio name="api_venable1" value=0> No
-	</td>
-</tr>
-
-<tr><td colspan=2><b>Voltage Server 2</b></td></tr>
-<tr><td colspan=2>For monitoring cells X+1 to Y</td></tr>
-<tr>
-  <td>Hostname:</td>
-  <td><input id=api_vserver_hostname2 type=text name='api_vserver_hostname2' value="" size=64></td>
-</tr>
-
-<tr>
-  <td>Enable:</td>
-	<td>
-		<input id=api_venable12 type=radio name="api_venable2" value=1> Yes
-		<input id=api_venable02 type=radio name="api_venable2" value=0> No
-	</td>
-</tr>
-
-<tr><td colspan=2><b>Voltage Server 3</b></td></tr>
-<tr><td colspan=2>For monitoring cells Y+1 to Z</td></tr>
-
-
-<tr>
-  <td>Hostname:</td>
-  <td><input id=api_vserver_hostname3 type=text name='api_vserver_hostname3' value="" size=64></td>
-</tr>
-
-<tr>
-  <td>Enable:</td>
-	<td>
-		<input id=api_venable13 type=radio name="api_venable3" value=1> Yes
-		<input id=api_venable03 type=radio name="api_venable3" value=0> No
-	</td>
-</tr>-->
-
-<tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr>
+<!-- <tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr> -->
 
 
 </table>

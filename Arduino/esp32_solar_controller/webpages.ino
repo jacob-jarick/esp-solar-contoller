@@ -830,7 +830,7 @@ void apiservers()
   // create table rows first
   for(uint8_t i = 0; i < max_api_vservers; i++)
   {
-    webpage += "table_add(" + String(i+1) + ");";
+    webpage += "table_add(" + String(i+1) + ");\n";
   }
 
   for(uint8_t i = 0; i < max_api_vservers; i++)
@@ -849,6 +849,8 @@ void apiservers()
   webpage += js_radio_helper(F("api_lm75a1"), F("api_lm75a0"), config.api_lm75a);
   webpage += js_radio_helper(F("api_grid1"), F("api_grid0"), config.api_grid);
   webpage += js_helper(F("api_pollsecs"), String(config.api_pollsecs, 1));
+
+  webpage += "table_add_submit('apitable');\n";
 
   webpage += web_footer();
 
