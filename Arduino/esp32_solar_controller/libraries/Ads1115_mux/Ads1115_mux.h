@@ -52,8 +52,8 @@ class Ads1115_mux
 
     void update_adc_val(uint8_t index, uint16_t value);
 
-    const static uint8_t _sample_count = 9; // how many times a ADC value is read for the median array
-    const static uint8_t _mcp_sample_count = 42; // how many times a ADC value is read for the median array
+    const static uint8_t _sample_count = 7; // how many times a ADC value is read for the median array
+    const static uint8_t _mcp_sample_count = 31; // how many times a ADC value is read for the median array
 
     uint8_t _mcpaddr;
 
