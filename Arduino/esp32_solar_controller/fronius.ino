@@ -10,14 +10,14 @@ bool update_p_grid()
 
   String url = String(config.threephase_direct_url);
 
-  // Direct 3phase URL
+  // Direct URL
   if(timers.use_fallback < millis() && strlen(config.threephase_direct_url) )
   {
     bool check = get_url(url, payload);
 
     if(!check)
     {
-      log_msg("Fronius 3p Direct URL fetch Error");
+      log_msg("Fronius Direct URL fetch Error");
       fellback = 1;
     }
 
@@ -52,7 +52,7 @@ bool update_p_grid()
 
     if(!check)
     {
-      log_msg("Fronius 3p Fallback fetch Error");
+      log_msg("Fronius Fallback fetch Error");
       return 0;
     }
 
@@ -60,19 +60,19 @@ bool update_p_grid()
 
     if (error2)
     {
-      if(flags.f3p_error1) // failed prior attempt, log message and clear flag
+      if(flags.fronius_error) // failed prior attempt, log message and clear flag
       {
-        log_msg(String("Fronius 3p Fallback JSON Decode Error: ") + error2.c_str() );
-        flags.f3p_error1 = 0;
+        log_msg(String("Fronius Fallback JSON Decode Error: ") + error2.c_str() );
+        flags.fronius_error = 0;
       }
       else
       {
-        flags.f3p_error1 = 1; // set error flag, if happens next time log message
+        flags.fronius_error = 1; // set error flag, if happens next time log message
       }
       return 0;
     }
   }
-  flags.f3p_error1 = 0; // clear error flag as no error found
+  flags.fronius_error = 0; // clear error flag as no error found
 
   JsonObject root = doc.as<JsonObject>();
   JsonObject Body_0;
@@ -90,9 +90,7 @@ bool update_p_grid()
 
     if (time_diff > fronius_min_sync_seconds)
     {
-//       Serial.println("time check: Local: " + String(local_s) + ", JSON: " + String(json_secs) + ", Diff: " + String(time_diff) );
-
-      log_msg("3p: json time " + String(time_diff) + "+ seconds out of sync");
+      log_msg("fronius: json time " + String(time_diff) + "+ seconds out of sync");
       return 0;
     }
   }
@@ -103,13 +101,11 @@ bool update_p_grid()
 
     unsigned long json_secs = fronius_time_str_to_secs(tmp);
 
+    // dont proceed if json files time is same as last check
     if(json_secs <= fronius_last_time)
-    {
-//       log_msg("3p: json not updated yet.");
       return 0;
-    }
+
     fronius_last_time = json_secs;
-//     log_msg("3p: updated.");
   }
 
   // --------------------------------------------------------------------------

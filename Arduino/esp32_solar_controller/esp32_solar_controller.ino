@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 377
+#define FW_VERSION 378
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -415,7 +415,7 @@ struct SysFlags
 
   bool lm75a = 0;
 
-  bool f3p_error1 = 0; // Fronius 3p Fallback JSON Decode Error:
+  bool fronius_error = 0; // Fronius 3p Fallback JSON Decode Error:
 
   bool adc_config_error = 0;
   bool boot_success = 0;
