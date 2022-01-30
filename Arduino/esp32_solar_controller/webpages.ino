@@ -737,20 +737,24 @@ void json_cells()
   doc["api_version"] = 1;
 
   doc["cell_monitor"] = config.monitor_battery;
-  doc["cell_count"] = config.cell_count;
 
-  doc["cell_low"] = low_cell;
-  doc["cell_high"] = high_cell;
-
-  doc["adc_poll_time"] = adc_poll_time;
-
-  for(uint8_t i = 0; i < config.cell_count; i++)
+  if(config.monitor_battery)
   {
-    doc["cell_"+String(i+1)] = cells_volts[i];
-  }
-  doc["cell_diff"] = cell_volt_diff;
+    doc["cell_count"] = config.cell_count;
 
-  doc["cell_total"] = pack_total_volts;
+    doc["cell_low"] = low_cell;
+    doc["cell_high"] = high_cell;
+
+    doc["adc_poll_time"] = adc_poll_time;
+
+    for(uint8_t i = 0; i < config.cell_count; i++)
+    {
+      doc["cell_"+String(i+1)] = cells_volts[i];
+    }
+    doc["cell_diff"] = cell_volt_diff;
+
+    doc["cell_total"] = pack_total_volts;
+  }
 
   serializeJsonPretty(doc, webpage);
 
