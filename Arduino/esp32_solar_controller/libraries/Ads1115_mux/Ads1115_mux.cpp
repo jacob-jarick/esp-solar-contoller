@@ -96,7 +96,7 @@ void Ads1115_mux::setup()
 
     _mcpaddr = addr;
 
-    muxtype = 1;
+//     muxtype = 1;
 
     if(mcptype == 0)
     {
@@ -119,7 +119,7 @@ void Ads1115_mux::setup()
     Serial.println("MCP3x21 found at 0x4e.");
 
     _mcpaddr = addr;
-    muxtype = 1;
+//     muxtype = 1;
 
     if(mcptype == 0)
     {
@@ -169,7 +169,7 @@ bool Ads1115_mux::adc_poll()
   /// will reset polling loop and mark polling complete IF all inputs have been polled.
   {
     uint8_t mpcount = 16; // 16 for new boards (v4+), 8 for old boards
-    if(muxtype == 0)
+    if(muxtype == 0 || muxtype == 2)
       mpcount = 8;
 
     // pol reset check 1. polled all AINs, 1-16
@@ -193,7 +193,8 @@ bool Ads1115_mux::adc_poll()
       if
       (
         (muxtype == 0 && (adc_enable[i] || adc_enable[i+8])) || // muxtype 0, check both
-        (muxtype == 1 && adc_enable[i])
+        (muxtype == 1 && adc_enable[i]) ||
+        (muxtype == 2 && adc_enable[i])
       )
       {
         remaining = 1;
@@ -233,18 +234,24 @@ bool Ads1115_mux::adc_poll()
     const bool value_c = bitRead(_adc_poll_pos, 2);
     const bool value_d = bitRead(_adc_poll_pos, 3);
 
-    if(muxtype == 1) // new board
+    if(muxtype == 0) // old board
+    {
+      digital_write(0, value_a);
+      digital_write(2, value_b);
+      digital_write(3, value_c);
+    }
+    else if(muxtype == 1) // new board
     {
       digital_write(0, value_a);
       digital_write(1, value_b);
       digital_write(2, value_c);
       digital_write(3, value_d);
     }
-    else // old board
+    else if(muxtype == 2) // precission board
     {
       digital_write(0, value_a);
-      digital_write(2, value_b);
-      digital_write(3, value_c);
+      digital_write(1, value_b);
+      digital_write(2, value_c);
     }
 
     _adc_mpins_set = 1;

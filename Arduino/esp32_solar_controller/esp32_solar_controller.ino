@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 379
+#define FW_VERSION 380
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -382,7 +382,7 @@ struct Sconfig
 
   bool mcptype = 0; // 0 = MCP3021, 1 = MCP3221
   bool ads1x15type = 0; // 0 = ADS1015, 1 = ADS1115
-  bool muxtype = 0; // 0 = old board (2* 8-1), 1 = new boards (16-1)
+  uint8_t muxtype = 0; // 0 = old board (2* 8-1), 1 = new boards (16-1), 2 = high precision board
 
   bool dumbsystem = 0; // 1 dont check fronius, turn on SSRs etc
 };

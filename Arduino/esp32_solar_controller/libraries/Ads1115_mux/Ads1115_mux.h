@@ -29,7 +29,7 @@ class Ads1115_mux
 
     bool mcptype = 0;
     bool ads1x15type = 0;
-    bool muxtype = 0; // 0 = 8-2 (old style), 1 = 16-1 (new style)
+    uint8_t muxtype = 0; // 0 = 8-2 (old style), 1 = 16-1 (new style)
 
     bool avg_ain = 0;
 

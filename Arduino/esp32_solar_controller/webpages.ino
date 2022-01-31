@@ -287,7 +287,8 @@ void advance_config()
 
   webpage += js_radio_helper(F("mcptype1"), F("mcptype0"), config.mcptype);
   webpage += js_radio_helper(F("ads1x15type1"), F("ads1x15type0"), config.ads1x15type);
-  webpage += js_radio_helper(F("muxtype1"), F("muxtype0"), config.muxtype);
+//   webpage += js_radio_helper(F("muxtype1"), F("muxtype0"), config.muxtype);
+  webpage += js_select_helper(F("muxtype"), String(config.muxtype));
 
   webpage += js_radio_helper(F("dumbsystem1"), F("dumbsystem0"), config.dumbsystem);
 

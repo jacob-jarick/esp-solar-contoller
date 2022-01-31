@@ -44,7 +44,7 @@ double read_cell_volts(const byte cell)
 
   cells_volts_real[cell] = cells_volts[cell] = v;
 
-  if(cell > 0)
+  if(config.muxtype != 2 && cell > 0)
     cells_volts[cell] -= cells_volts_real[cell-1];
 
   return cells_volts[cell];
