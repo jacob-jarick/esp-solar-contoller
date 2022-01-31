@@ -780,22 +780,6 @@ void jsonapi()
   doc["lm75a_min"] = board_temp_min;
   doc["lm75a_max"] = board_temp_max;
 
-//   doc["cell_monitor"] = config.monitor_battery;
-//   doc["cell_count"] = config.cell_count;
-
-//   doc["cell_low"] = low_cell;
-//   doc["cell_high"] = high_cell;
-
-//   doc["adc_poll_time"] = adc_poll_time;
-
-//   for(uint8_t i = 0; i < config.cell_count; i++)
-//   {
-//     doc["cell_"+String(i+1)] = cells_volts[i];
-//   }
-//   doc["cell_diff"] = cell_volt_diff;
-//
-//   doc["cell_total"] = pack_total_volts;
-
   // grid info
 
   doc["phase_a_watts"] = phase_a_watts;
@@ -814,10 +798,7 @@ void jsonapi()
   doc["phase_b_voltage_high"] = phase_b_voltage_high;
   doc["phase_c_voltage_high"] = phase_c_voltage_high;
 
-
-
   serializeJsonPretty(doc, webpage);
-
 
   server.send(200, mime_json, webpage);
 }
@@ -867,7 +848,6 @@ void info_raw()
   webpage += ",";
   webpage += phase_sum;
   webpage += "\n";
-
 
   server.send(200, mime_txt, webpage);
 }
@@ -1065,8 +1045,6 @@ void ac_info()
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " AC Info");
 
-
-
   webpage += web_footer();
 
   server.send(200, mime_html, webpage);
@@ -1233,7 +1211,6 @@ void inverter_on()
     mode_reason = "Manual Inverter On";
     old_night_reason = mode_reason;
     webpage += js_helper_innerhtml(title_str, mode_reason);
-
   }
   else
     webpage += js_helper_innerhtml(title_str, denied_str);
@@ -1346,8 +1323,6 @@ void charger_on()
 String web_footer()
 {
   String webpage;
-
-
 
   webpage += F("</script>");
 
