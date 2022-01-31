@@ -35,7 +35,7 @@ void save_config()
 
 //   doc["inverter_url"] = config.inverter_url;
 //   doc["inverter_push_url"] = config.inverter_push_url;
-  doc["3p_push_url"] = config.threephase_push_url;
+  doc["fronius_push_url"] = config.fronius_push_url;
   doc["3p_direct_url"] = config.threephase_direct_url;
 
   doc["pub_url"] = config.pub_url;
@@ -231,7 +231,6 @@ void docv_to_chara(DynamicJsonDocument &doc, String keyname, char arr[], uint8_t
       strlcpy(arr, doc[keyname], alength);
     else
       strlcpy(arr, default_value.c_str(), alength);
-
 }
 
 bool load_config()
@@ -311,6 +310,10 @@ bool load_config()
 
   // URLS
   docv_to_chara(doc, "3p_direct_url", config.threephase_direct_url, sizeof(config.threephase_direct_url), "");
+
+  docv_to_chara(doc, "fronius_push_url", config.fronius_push_url, sizeof(config.fronius_push_url), "");
+
+
   docv_to_chara(doc, "pub_url", config.pub_url, sizeof(config.pub_url), "");
   docv_to_chara(doc, "ntp_server", config.ntp_server, sizeof(config.ntp_server), "0.au.pool.ntp.org");
   docv_to_chara(doc, "update_host", config.update_host, sizeof(config.update_host), "");

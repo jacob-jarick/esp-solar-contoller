@@ -44,10 +44,10 @@ bool update_p_grid()
   {
     timers.use_fallback = millis() + (60 * 1000);
 
-    if(!strlen(config.threephase_push_url))
+    if(!strlen(config.fronius_push_url))
       return 0;
 
-    url = String(config.threephase_push_url);
+    url = String(config.fronius_push_url);
     bool check = get_url(url, payload);
 
     if(!check)

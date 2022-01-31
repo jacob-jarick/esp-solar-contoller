@@ -146,7 +146,7 @@ void datasrcs()
 //   webpage += js_helper(F("inverter_url"), String(config.inverter_url));
 //   webpage += js_helper(F("inverter_push_url"), String(config.inverter_push_url));
   webpage += js_helper(F("pub_url"), String(config.pub_url));
-  webpage += js_helper(F("threephase_push_url"), String(config.threephase_push_url));
+  webpage += js_helper(F("fronius_push_url"), String(config.fronius_push_url));
 
   webpage += js_helper(F("threephase_direct_url"), String(config.threephase_direct_url));
 
@@ -572,8 +572,8 @@ void web_config_submit()
       else if (server.argName(i) == F("monitor_phase_c"))
         config.monitor_phase_c = server.arg(i).toInt();
 
-      else if (server.argName(i) == F("threephase_push_url"))
-        strlcpy(config.threephase_push_url, server.arg(i).c_str(), sizeof(config.threephase_push_url));
+      else if (server.argName(i) == F("fronius_push_url"))
+        strlcpy(config.fronius_push_url, server.arg(i).c_str(), sizeof(config.fronius_push_url));
       else if (server.argName(i) == F("threephase_direct_url"))
         strlcpy(config.threephase_direct_url, server.arg(i).c_str(), sizeof(config.threephase_direct_url));
 

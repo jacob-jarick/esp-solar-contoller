@@ -268,7 +268,7 @@ struct Sconfig
   // END of API
 
   char threephase_direct_url[smedium];
-  char threephase_push_url[smedium];
+  char fronius_push_url[smedium];
   char pub_url[smedium];
 
   // sortme
