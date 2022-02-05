@@ -317,12 +317,17 @@ struct Sconfig
 
   char ntp_server[ssmall];
 
+  // battery stuff
+
+  bool monitor_battery = 0;
   float pack_volt_min;
   float battery_volt_min;
   float battery_volt_rec;
   float battery_volt_max;
 
-  float cpkwh;
+  // END battery stuff
+
+  float cpkwh; // cost per kwh
 
   char description[smedium];
 
@@ -350,12 +355,11 @@ struct Sconfig
   bool c_enable = 0;
   bool day_is_timer = 0;
   bool night_is_timer = 0;
-  bool monitor_battery = 0;
 
   bool serial_off = 0;
 
-  bool c_offd;
-  bool c_amot;
+  bool c_offd; // charger custom off delay
+  bool c_amot; // charger idle after min on time
 
 
   bool prefer_dc = 0;
