@@ -12,7 +12,6 @@ class Mmaths
 
     double dirty_average(const double oldv, const double newv, uint8_t count);
 
-
     uint8_t mmax(const uint8_t a, const uint8_t b);
     uint16_t mmax(const uint16_t a, const uint16_t b);
     unsigned long mmax(const unsigned long a, const unsigned long b);
