@@ -61,7 +61,12 @@ console.log("vsavg v="+v+" cells="+cells);
   {
     tcell = i+1;
     console.log("cell " + tcell + " voltage: " + vtemp);
+
+    if(muxtype==2)
+      vtemp=v;
+    else
     vtemp+=v;
+
     document.getElementById("bv"+tcell).value = vtemp;
     battery_calc(tcell);
   }

@@ -718,11 +718,6 @@ void get_config_and_save(const String target_ip)
   oled_println(target_ip);
 
 
-  //WiFiClient client;
-  //HTTPClient http;
-  //http.setTimeout(httpget_timeout * 2);
-
-
   String url = http_str + target_ip + "/config_raw";
   String file_dest = json_config_file;
 

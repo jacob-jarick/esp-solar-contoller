@@ -249,6 +249,8 @@ void battery_calibrate()
   webpage += get_file(html_calibrate);
   webpage += js_header();
 
+  webpage += "muxtype = " + String(config.muxtype) + ";\n";
+
   uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
 
   for(uint8_t i = 0; i < local_cell_count; i++)

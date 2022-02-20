@@ -86,21 +86,28 @@ x
 
 <tr><td colspan=2><b>Chipsets</b></td></tr>
 
-<tr><td>i2c bus maxspeed</td><td>
-	<select id=i2cmaxspeed name='i2cmaxspeed'>
-	<option value=0>400000 (fast)</option>
-	<option value=1>1000000 (fast plus)</option>
-	<option value=2>3400000 (highspeed)</option>
-
-	</select>
-</td>
+<tr>
+  <td>i2c bus maxspeed</td><td>
+    <select id=i2cmaxspeed name='i2cmaxspeed'>
+      <option value=0>400000 (fast)</option>
+      <option value=1>1000000 (fast plus)</option>
+      <option value=2>3400000 (highspeed)</option>
+    </select>
+  </td>
 </tr>
 
 <tr>
 	<td>Mux Type</td>
 	<td>
-		<input id=muxtype0 type=radio name="muxtype" value=0> old board (v3 and lower)
-		<input id=muxtype1 type=radio name="muxtype" value=1> new boards (v4+)
+<!--		<input id=muxtype0 type=radio name="muxtype" value=0> old board (v3 and lower)
+		<input id=muxtype1 type=radio name="muxtype" value=1> new boards (v4+)-->
+
+    <select id=muxtype name='muxtype'>
+      <option value=0>0: old board (v3 and lower)</option>
+      <option value=1>1: new boards (v4+)</option>
+      <option value=2>2: precisison module</option>
+    </select>
+
 	</td>
 </tr>
 
@@ -120,8 +127,6 @@ x
 		<input id=ads1x15type1 type=radio name="ads1x15type" value=1> ADS1115 (16bit)
 	</td>
 </tr>
-
-
 
 
 <tr><td colspan=2><b>Web Settings Password</b></td></tr>

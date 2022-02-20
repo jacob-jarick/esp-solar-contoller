@@ -1,1 +1,20 @@
-"" 
+     HEAD~0	af83229 whitespace
+     HEAD~1	d4198c9 Update esp32_solar_controller.ino
+     HEAD~2	f0460f7 fw 381
+     HEAD~3	b9b7d4e fix absent fronius_push_url from config
+     HEAD~4	d3f868c fw 380 - muxtype 2
+     HEAD~5	1d07ccc Update webpages.ino
+     HEAD~6	df837e0 Update webpages.ino
+     HEAD~7	7aeb9d7 adc poll tweaks
+     HEAD~8	c222ddc 378 - cleanup fronius
+     HEAD~9	a83a6ad Delete config.jsn
+    HEAD~10	52207da function table_add_submit(id)
+    HEAD~11	ce336e3 update api page
+    HEAD~12	a4e206f Update api.htm
+    HEAD~13	232249f cleanup
+    HEAD~14	92671fd 377 - pack_total_volts fixup
+    HEAD~15	f4b3a29 376
+    HEAD~16	147f938 push update to public
+    HEAD~17	f34e62c 375 - config - docv_to_chara
+    HEAD~18	45c360f 374 - bugfix
+    HEAD~19	5b92aef split grid and temp api servers to own group

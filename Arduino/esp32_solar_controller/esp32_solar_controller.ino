@@ -14,13 +14,10 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 381
+#define FW_VERSION 383
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
-
-// 10 min
-#define check_timeout 600000
 
 #define OPT_DISABLE -2
 #define OPT_DEFAULT -1
@@ -1218,7 +1215,7 @@ bool check_system_timers()
     !config.api_grid &&
     !flags.access_point &&
     timers.pgrid_last_update != 0 &&
-    millis() - timers.pgrid_last_update > check_timeout
+    millis() - timers.pgrid_last_update > 600000 // 10 min
   )
   {
     oled_clear();
