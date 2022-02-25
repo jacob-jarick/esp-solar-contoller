@@ -46,7 +46,7 @@ bool api_poller()
     poller_pos++;
     if(poller_pos > config.api_vserver_count-1)
     {
-      flags.api_checked = 1;
+      flags.vapi_checked = 1;
       poller_pos = 0;
       api_docalcs();
     }
@@ -183,7 +183,7 @@ bool api_vsync(uint8_t serverid)
   String shn = config.api_vserver_hostname[serverid];
   String msg_prefix = "API Server ID " + String(serverid) + ", ";
 
-  String msg = "";
+//   String msg = "";
   String hostip = "";
 
   if(!mdnscachelookup(shn, hostip))
@@ -199,8 +199,8 @@ bool api_vsync(uint8_t serverid)
 
   if(!check)
   {
-    msg = msg_prefix + "fetch error, URL: " + url;
-    log_msg(msg);
+//     msg = ;
+    log_msg(msg_prefix + "fetch error, URL: " + url);
 
     return false;
   }
@@ -226,7 +226,7 @@ bool api_vsync(uint8_t serverid)
     String rhn = doc["host_name"];
     if(shn != rhn)
     {
-      log_msg(msg_prefix + "ERROR, hostname mismatch JSON: '" + rhn + "' Config Hostname '" + shn + "'");
+      log_msg(msg_prefix + "ERROR, hostname mismatch JSON: '" + rhn + "'");
       mdns_hn_cache = ""; // invalidate cache
 
       return false;
@@ -235,9 +235,17 @@ bool api_vsync(uint8_t serverid)
   else
   {
     log_msg(msg_prefix + "ERROR: hostname not present in JSON" );
-    Serial.println("XX");
-
     return false;
+  }
+
+  /// check if cmon has an adc
+  if(doc.containsKey("adc_found"))
+  {
+    if(!doc["adc_found"])
+    {
+      log_msg(msg_prefix + "ERROR: host adc_found == 0");
+      return false;
+    }
   }
 
   // update cells
@@ -245,8 +253,8 @@ bool api_vsync(uint8_t serverid)
   {
     if(doc["cell_monitor"] == 0)
     {
-      msg = msg_prefix + "Server does not have cell monitoring enabled yet config requests it.";
-      log_msg(msg);
+//       msg = ;
+      log_msg(msg_prefix + "Server does not have cell monitoring enabled yet config requests it.");
       return false;
     }
 
@@ -274,7 +282,6 @@ bool api_vsync(uint8_t serverid)
     adc_poll_time = doc["adc_poll_time"];
   }
 
-//   flags.api_checked = 1;
   timers.api_last_update = millis();
   return true;
 }

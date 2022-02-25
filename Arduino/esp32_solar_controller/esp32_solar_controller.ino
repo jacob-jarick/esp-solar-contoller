@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 383
+#define FW_VERSION 389
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -145,6 +145,11 @@ float pack_total_volts = 0;
 // uint8_t cell_lh[2] = {0, 0};
 uint8_t low_cell = 0;
 uint8_t high_cell = 0;
+
+//------------------------------------------------------------------------------
+
+uint8_t vapi_errors = 0;
+
 
 //------------------------------------------------------------------------------
 
@@ -427,7 +432,7 @@ struct SysFlags
 
   bool ambient_temp = 0;
 
-  bool api_checked = 0;
+  bool vapi_checked = 0;
 };
 
 SysFlags flags;
@@ -594,6 +599,8 @@ void setup()
     ap_start();
   }
 
+  log_issue("Wifi Connected");
+
   // --------------------------------------------------------------------------------------
   // Network Services
 
@@ -721,7 +728,7 @@ void setup()
 
     if(config.monitor_battery && !config.api_venable[0])
     {
-      log_msg("monitor_battery enabled but ADC not found");
+      log_issue("monitor_battery enabled but ADC not found");
       flags.adc_config_error = 1;
     }
   }
@@ -731,14 +738,14 @@ void setup()
 
   if(config.fwver != FW_VERSION)
   {
-    log_msg("Config FW version " + String(config.fwver) + " != FW version " + String(FW_VERSION) + ". Downloading HTML.");
+    log_issue("Config FW version " + String(config.fwver) + " != FW version " + String(FW_VERSION) + ". Downloading HTML.");
     flags.download_html = 1;
 
     config.fwver = FW_VERSION;
     save_config();
   }
 
-  log_msg("system startup finished OK.");
+  log_issue("system startup finished OK.");
 
   // turn off serial if set in config.
 
@@ -836,13 +843,14 @@ void loop()
   // ----------------------------------------------------------------------
   // waiting on API ?
 
-  if(config.api_venable[0] && !flags.api_checked)
+  if(config.api_venable[0] && !flags.vapi_checked)
   {
     mode_reason = datetime_str(3, '/', ' ', ':') + ": waiting on first API check.";
     modeset(0);
 
     return;
   }
+
 
   // ----------------------------------------------------------------------
   // Waiting on ADC fist complete poll.
@@ -883,11 +891,29 @@ void loop()
   }
 
 
+  // ----------------------------------------------------------------------
   // finish loop unless its time to update
+
+  // all checks following happen after min update time.
+
   if (timers.mode_check > millis())
     return;
 
   mode_reason = datetime_str(3, '/', ' ', ':') + ": ";
+
+
+  // ----------------------------------------------------------------------
+  // api server issue ?
+
+
+  if(config.api_venable[0] && vapi_errors >= 10)
+  {
+    mode_reason += ": API voltage server error.";
+    modeset(0);
+
+    return;
+  }
+
 
   // ----------------------------------------------------------------------
   // environment to hot check
@@ -1283,6 +1309,14 @@ bool check_system_timers()
     if(i2cdevcount != i2c_enum())
     {
       log_issue("i2c error. triggering restart.");
+
+      // lower i2c speed
+      if(config.i2cmaxspeed >= 1)
+      {
+        config.i2cmaxspeed--;
+        save_config();
+      }
+
       flags.restart = 1;
       result = 1;
     }
@@ -1331,14 +1365,13 @@ unsigned long adc_pps_ms = millis(); // time of last complete poll
 float adc_poll_time = 0;
 
 
-
 bool check_data_sources()
 {
   bool result = 0;
 
   // API Check
 
-    if(config.api_ienable[0] && millis() > timers.iapi)
+  if(config.api_ienable[0] && millis() > timers.iapi)
   {
     bool api_result = api_isync(0);
 
@@ -1355,9 +1388,16 @@ bool check_data_sources()
     bool api_result = api_poller();
 
     if(api_result)
+    {
+      vapi_errors = 0;
       timers.api = millis() + (1000 * config.api_pollsecs);
+    }
     else
+    {
+      vapi_errors++;
+      vapi_errors = mmaths.mmin(200, vapi_errors); // prevent overflow
       timers.api = millis() + (httpget_timeout * 3); // if failed, fallback to safe poll time.
+    }
 
     result = 1;
   }

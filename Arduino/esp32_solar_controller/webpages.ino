@@ -739,6 +739,8 @@ void json_cells()
 
   doc["api_version"] = 1;
 
+  doc["adc_found"] = adsmux.adc_found;
+
   doc["cell_monitor"] = config.monitor_battery;
 
   if(config.monitor_battery)
