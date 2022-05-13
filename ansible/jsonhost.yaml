@@ -1,0 +1,125 @@
+# =============================================================================
+# Google Perfkit Ansible Playbook.
+# Jacob Jarick, 18/11/2019
+# Target: Ansible 2.9 - Ubuntu 18.04
+# =============================================================================
+- hosts: 127.0.0.1
+
+# =============================================================================
+# playbook variables
+# =============================================================================
+
+  vars:
+
+    ftp_user: fronius
+
+    html_path: /var/www/html/inverter
+    opt_path: /opt/nansen
+
+    basePackages:
+    - open-vm-tools
+    - build-essential
+    - git
+    - unp
+    - curl
+    - vim
+    - iotop
+    - nginx
+    - software-properties-common
+    - net-tools
+    - unzip
+    - vsftpd
+
+# =============================================================================
+# playbook tasks
+# =============================================================================
+
+  tasks:
+# =============================================================================
+# install Files and set permissions
+
+  - name: create inverter html dir
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "root"
+      group: "html"
+      mode: '1775'
+    loop:
+      - "{{ html_path }}"
+    tags:
+      - setup
+
+# =============================================================================
+# user_create
+
+  - name: Add Group
+    ansible.builtin.group:
+      name: "{{ ftp_user }}"
+      state: present
+    tags:
+      - user_create
+
+  - name: Add User
+    ansible.builtin.user:
+      name: "{{ ftp_user }}"
+      shell: /bin/bash
+      state: present
+      groups: "{{ ftp_user }}",html
+      password: secretFRONIUS2022
+    tags:
+      - user_create
+
+
+
+# =============================================================================
+# apt update and upgrade
+
+  - name: apt update cache
+    apt:
+      update_cache: yes
+    tags:
+      - aptUpdate
+
+  - name: apt dist-upgrade
+    apt:
+      upgrade: dist
+    tags:
+      - aptUpdate
+
+# =============================================================================
+# apt install deps
+
+  - name: Install base packages
+    apt:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    loop: "{{ basePackages }}"
+    tags:
+      - aptInstall
+      - base
+
+
+# =============================================================================
+# configure ngnix
+
+
+#restart nginx
+
+- name: Enable service nginx, and not touch the state
+  ansible.builtin.service:
+    name: nginx
+    enabled: yes
+    tags:
+      - nginx
+
+
+  - name: start nginx
+    ansible.builtin.systemd:
+      state: started
+      name: nginx
+    tags:
+      - nginx-start
+      - never
+
