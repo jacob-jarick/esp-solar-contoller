@@ -82,15 +82,16 @@ void save_config()
   // END of API
 
   // PINS
+  // note: int8_8t not uint8_t as we use negative numbers for some defaults and pin range isnt higher than 127
 
-  doc["pin_led"] = config.pin_led;
-  doc["pin_charger"] = config.pin_charger;
-  doc["pin_inverter"] = config.pin_inverter;
-  doc["pin_wd"] = config.pin_wd;
-  doc["pin_flash"] = config.pin_flash;
-  doc["pin_sda"] = config.pin_sda;
-  doc["pin_scl"] = config.pin_scl;
-  doc["pin_buzzer"] = config.pin_buzzer;
+  doc["pin_led"]        = (int8_t) config.pin_led;
+  doc["pin_charger"]    = (int8_t) config.pin_charger;
+  doc["pin_inverter"]   = (int8_t) config.pin_inverter;
+  doc["pin_wd"]         = (int8_t) config.pin_wd;
+  doc["pin_flash"]      = (int8_t) config.pin_flash;
+  doc["pin_sda"]        = (int8_t) config.pin_sda;
+  doc["pin_scl"]        = (int8_t) config.pin_scl;
+  doc["pin_buzzer"]     = (int8_t) config.pin_buzzer;
 
   doc["api_pollsecs"] = config.api_pollsecs;
 
@@ -109,7 +110,7 @@ void save_config()
 
   // i2c dev char addresses
 
-  doc["oled_addr"] = config.oled_addr;
+  doc["oled_addr"] = (uint8_t) config.oled_addr;
 
   // bools
   doc["prefer_dc"] = (int)config.prefer_dc;
@@ -346,7 +347,7 @@ bool load_config()
 
   // i2c dev addresses
 
-  config.oled_addr = doc["oled_addr"];
+  config.oled_addr = (int8_t) doc["oled_addr"];
 
   // Fronius
 

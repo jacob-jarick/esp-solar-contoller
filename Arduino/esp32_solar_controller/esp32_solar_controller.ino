@@ -31,7 +31,7 @@ this seems to resolve OTA issues.
 
 // ======================================
 
-#include <Arduino.h>
+// #include <Arduino.h>
 #include <SD.h>
 
 #include <WiFi.h>
