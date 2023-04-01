@@ -3,15 +3,16 @@
 HTMLDIR=/var/www/html/esp32v5
 PROJDIR=/home/mem/git/esp-solar-contoller/Arduino/esp32_solar_controller
 PUBUPDIR=/home/mem/git/esp-solar-contoller/updates/esp32v5
-HTML_HOST=jacob@10.1.1.207
+HTML_HOST=mem@10.1.1.215
 
-# mkdir -p $HTMLDIR/data
+ssh $HTML_HOST mkdir -p $HTMLDIR/data
 mkdir -p "$PUBUPDIR"/data
 
 scp    "$PROJDIR"/data/* "$HTML_HOST":"$HTMLDIR"/data
 cp -rv "$PROJDIR"/data/* "$PUBUPDIR"/data
 
-latest=`ls -Art \`find /tmp -name esp32_solar_controller.ino.bin 2>/dev/null\` | tail -n1`
+#latest=`ls -Art \`find /tmp -name esp32_solar_controller.ino.bin 2>/dev/null\` | tail -n1`
+latest=$(ls -Art $(find /tmp -name esp32_solar_controller.ino.bin 2>/dev/null) | tail -n1)
 
 scp "$latest" "$HTML_HOST":"$HTMLDIR"/firmware.bin
 

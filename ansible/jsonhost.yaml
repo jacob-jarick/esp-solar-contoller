@@ -1,8 +1,8 @@
 # =============================================================================
-# Google Perfkit Ansible Playbook.
-# Jacob Jarick, 18/11/2019
-# Target: Ansible 2.9 - Ubuntu 18.04
+# run locally with:
+# ansible-playbook -c local -i localhost, /tmp/jsonhost.yaml
 # =============================================================================
+
 - hosts: 127.0.0.1
 
 # =============================================================================
@@ -12,9 +12,10 @@
   vars:
 
     ftp_user: fronius
+    my_user: mem
 
     html_path: /var/www/html/inverter
-    opt_path: /opt/nansen
+    esp32_path: /var/www/html/esp32v5
 
     basePackages:
     - open-vm-tools
@@ -35,28 +36,17 @@
 # =============================================================================
 
   tasks:
-# =============================================================================
-# install Files and set permissions
-
-  - name: create inverter html dir
-    ansible.builtin.file:
-      path: "{{ item }}"
-      state: directory
-      owner: "root"
-      group: "html"
-      mode: '1775'
-    loop:
-      - "{{ html_path }}"
-    tags:
-      - setup
 
 # =============================================================================
 # user_create
 
-  - name: Add Group
+  - name: Add Groups
     ansible.builtin.group:
-      name: "{{ ftp_user }}"
+      name: "{{ item }}"
       state: present
+    loop:
+      - "{{ ftp_user }}"
+      - html
     tags:
       - user_create
 
@@ -65,12 +55,61 @@
       name: "{{ ftp_user }}"
       shell: /bin/bash
       state: present
-      groups: "{{ ftp_user }}",html
-      password: secretFRONIUS2022
+      groups: "{{ ftp_user }},html"
+      # password: secretFRONIUS2022
+      password: 6$mysecretsalt$4Kei0tqG5uEiKCGFQ06egG5uv3oO3HdQkDKNXyTcZuKsmasdOk48kk9h514lDAi1vIMPIs8xfupRZPYcxySrz/
     tags:
       - user_create
 
+  - name: setting up my user
+    user:
+      name: "{{ my_user }}"
+      groups: sudo,html
+      append: yes
 
+# =============================================================================
+# install Files and set permissions
+
+
+# =============================================================================
+# apt install deps
+
+  - name: Install acl
+    apt:
+      name: acl
+      state: latest
+    tags:
+      - aptInstall
+      - base
+      - setup
+
+  - name: create html dirs
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "root"
+      group: "html"
+      mode: "2775"
+    loop:
+      - "{{ html_path }}"
+      - "{{ esp32_path }}"
+    tags:
+      - setup
+
+  - name: Grant group rw read access to html dirs
+    ansible.posix.acl:
+      path: "{{ item }}"
+      entity: html
+      etype: group
+      permissions: rw
+      state: present
+      default: true
+      recursive: true
+    loop:
+      - "{{ html_path }}"
+      - "{{ esp32_path }}"
+    tags:
+      - setup
 
 # =============================================================================
 # apt update and upgrade
@@ -107,16 +146,17 @@
 
 #restart nginx
 
-- name: Enable service nginx, and not touch the state
-  ansible.builtin.service:
-    name: nginx
-    enabled: yes
-    tags:
-      - nginx
-
+  # - name: Enable service nginx, and not touch the state
+  #   ansible.builtin.service:
+  #     name: nginx
+  #     enabled: yes
+  #     tags:
+  #       - nginx
+  #
 
   - name: start nginx
     ansible.builtin.systemd:
+      enabled: true
       state: started
       name: nginx
     tags:
