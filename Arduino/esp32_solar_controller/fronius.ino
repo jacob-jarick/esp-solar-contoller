@@ -86,7 +86,7 @@ bool update_p_grid()
 
     unsigned long local_s = local_secs();
     unsigned long json_secs = fronius_time_str_to_secs(tmp);
-    unsigned long time_diff = mmaths.mdiff(json_secs, local_s);
+    unsigned long time_diff = mmaths.mdiff<unsigned long>(json_secs, local_s);
 
     if (time_diff > fronius_min_sync_seconds)
     {
@@ -124,19 +124,19 @@ bool update_p_grid()
   phase_b_voltage = Body_0["Voltage_AC_Phase_2"];
   phase_c_voltage = Body_0["Voltage_AC_Phase_3"];
 
-  phase_a_voltage_high = mmaths.mmax(phase_a_voltage, phase_a_voltage_high);
-  phase_b_voltage_high = mmaths.mmax(phase_b_voltage, phase_b_voltage_high);
-  phase_c_voltage_high = mmaths.mmax(phase_c_voltage, phase_c_voltage_high);
+  phase_a_voltage_high = mmaths.mmax<float>(phase_a_voltage, phase_a_voltage_high);
+  phase_b_voltage_high = mmaths.mmax<float>(phase_b_voltage, phase_b_voltage_high);
+  phase_c_voltage_high = mmaths.mmax<float>(phase_c_voltage, phase_c_voltage_high);
 
   // check if voltage is greater than 0. we dont want min to be when grid is offline (ie 0)
   if(phase_a_voltage > 0)
-    phase_a_voltage_low = mmaths.mmin(phase_a_voltage, phase_a_voltage_low);
+    phase_a_voltage_low = mmaths.mmin<float>(phase_a_voltage, phase_a_voltage_low);
 
   if(phase_b_voltage > 0)
-    phase_b_voltage_low = mmaths.mmin(phase_b_voltage, phase_b_voltage_low);
+    phase_b_voltage_low = mmaths.mmin<float>(phase_b_voltage, phase_b_voltage_low);
 
   if(phase_c_voltage > 0)
-  phase_c_voltage_low = mmaths.mmin(phase_c_voltage, phase_c_voltage_low);
+  phase_c_voltage_low = mmaths.mmin<float>(phase_c_voltage, phase_c_voltage_low);
 
   if(!inverter_synced)
     inverter_synced = 1;

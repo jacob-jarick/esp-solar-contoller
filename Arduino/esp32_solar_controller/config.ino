@@ -623,7 +623,7 @@ void vars_sanity_check()
   }
   if(config.battery_volt_rec >= config.battery_volt_max)
   {
-    config.battery_volt_rec = config.battery_volt_min + mmaths.mdiff(config.battery_volt_min, config.battery_volt_max) / 2;
+    config.battery_volt_rec = config.battery_volt_min + mmaths.mdiff<float>(config.battery_volt_min, config.battery_volt_max) / 2;
     log_msg("config fix: battery_volt_rec >= battery_volt_max");
     flags.save_config = 1;
   }
@@ -646,7 +646,7 @@ void vars_sanity_check()
   // enable battery channels
   if(config.monitor_battery)
   {
-    uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+    uint8_t local_cell_count = mmaths.mmin<uint8_t>(config.cell_count, (uint8_t) MAX_CELLS);
 
     for(byte i = 0; i < local_cell_count; i++)
       adsmux.adc_enable[i] = 1;

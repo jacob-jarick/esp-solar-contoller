@@ -251,7 +251,7 @@ void battery_calibrate()
 
   webpage += "muxtype = " + String(config.muxtype) + ";\n";
 
-  uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+  uint8_t local_cell_count = mmaths.mmin<uint8_t>(config.cell_count, (uint8_t) MAX_CELLS);
 
   for(uint8_t i = 0; i < local_cell_count; i++)
   {
@@ -1651,7 +1651,7 @@ void bms_raw_info()
 {
   String webpage = datetime_str(0, '-', 'T', ':') + String(",");
 
-  uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+  uint8_t local_cell_count = mmaths.mmin<uint8_t>(config.cell_count, (uint8_t) MAX_CELLS);
 
   for(byte i = 0; i< local_cell_count; i++)
     webpage += String(cells_volts[i], 6) + ",";
@@ -1690,7 +1690,7 @@ void port_info()
 //     webpage += "\nlow volt shutdown: " + String(flags.shutdown_lvolt ) + "\n";
 //     webpage += "high volt shutdown: " + String(flags.shutdown_hvolt ) + "\n\n";
 
-    uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+    uint8_t local_cell_count = mmaths.mmin<uint8_t>(config.cell_count, (uint8_t) MAX_CELLS);
 
     webpage += "Cell Series Volts:\n";
     for(byte i = 0; i< local_cell_count; i++)

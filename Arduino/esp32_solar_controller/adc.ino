@@ -3,7 +3,7 @@ void cells_update()
   if(!adsmux.adc_found)
     return;
 
-  uint8_t local_cell_count = mmaths.mmin(config.cell_count, MAX_CELLS);
+  uint8_t local_cell_count = mmaths.mmin<uint8_t>(config.cell_count, (uint8_t) MAX_CELLS);
 
   for(uint8_t x = 0; x < local_cell_count; x++)
     read_cell_volts(x);

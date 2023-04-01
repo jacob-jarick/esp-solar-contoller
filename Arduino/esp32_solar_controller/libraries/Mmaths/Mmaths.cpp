@@ -27,8 +27,9 @@ double Mmaths::dirty_average(const double oldv, const double newv, uint8_t count
   return result;
 }
 
-
 // max
+
+/*
 
 // if I understand my C++ right, you can define function names multiple times and it will send to the function matching the arguments...
 
@@ -72,8 +73,11 @@ double Mmaths::mmax(const double a, const double b)
   return b;
 }
 
+*/
+
 // Min
 
+/*
 uint8_t Mmaths::mmin(const uint8_t a, const uint8_t b)
 {
   if(a < b)
@@ -118,24 +122,26 @@ unsigned long Mmaths::mmin(const unsigned long a, const unsigned long b)
 
 uint8_t Mmaths::mdiff(const uint8_t a, const uint8_t b)
 {
-  return mmax(a, b) - mmin(a, b);
+  return mmax<uint8_t>(a, b) - mmin(a, b);
 }
 
 
 uint16_t Mmaths::mdiff(const uint16_t a, const uint16_t b)
 {
-  return mmax(a, b) - mmin(a, b);
+  return mmax<uint16_t>(a, b) - mmin(a, b);
 }
 
 unsigned long Mmaths::mdiff(const unsigned long a, const unsigned long b)
 {
-  return mmax(a, b) - mmin(a, b);
+  return mmax<unsigned long>(a, b) - mmin(a, b);
 }
 
 float Mmaths::mdiff(const float a, const float b)
 {
-  return mmax(a, b) - mmin(a, b);
+  return mmax<float>(a, b) - mmin(a, b);
 }
+
+*/
 
 
 // time stuff

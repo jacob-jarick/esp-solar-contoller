@@ -6,3 +6,9 @@ Patched to disable warning starts at line 212 in file M2M_LM75A.cpp
     uint16_t temp = part1 << 8 | part2;
 
     #pragma GCC diagnostic pop
+
+Patched mmaths
+
+    now users templates for mdiff, mmax, mmin
+
+FW ver bump

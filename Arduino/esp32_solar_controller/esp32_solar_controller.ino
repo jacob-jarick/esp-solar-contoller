@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 389
+#define FW_VERSION 393
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -1395,7 +1395,7 @@ bool check_data_sources()
     else
     {
       vapi_errors++;
-      vapi_errors = mmaths.mmin(200, vapi_errors); // prevent overflow
+      vapi_errors = mmaths.mmin<uint8_t>(200, vapi_errors); // prevent overflow
       timers.api = millis() + (httpget_timeout * 3); // if failed, fallback to safe poll time.
     }
 
@@ -1451,8 +1451,8 @@ bool check_data_sources()
     else if(lm75a_address == 0x4f)
       board_temp = lm75a.getTemperature();
 
-    board_temp_max = mmaths.mmax(board_temp_max, board_temp);
-    board_temp_min = mmaths.mmin(board_temp_min, board_temp);
+    board_temp_max = mmaths.mmax<float>(board_temp_max, board_temp);
+    board_temp_min = mmaths.mmin<float>(board_temp_min, board_temp);
 
     timers.lm75a_poll = millis() + 666;
 
