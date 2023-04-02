@@ -1,28 +1,40 @@
 <centre>
 
 <table border=1>
+
 <tr>
-<form  action='/charger_on' method='POST'>
+<form  action='/idle' method='POST'>
+<input type=hidden name='mode' value=0>
+<td>Idle for</td><td><input name=manual_duration size=20 value=0> Minutes <input type=submit value="Submit">
+</form>
+</tr>
+
+<tr>
+<form  action='/mode_set' method='POST'>
+<input type=hidden name='mode' value=1>
 <td>Charger on for</td><td><input name=manual_duration size=20 value=0> Minutes <input type=submit value="Submit">
 </form>
 </tr>
 
 <tr>
 <form  action='/inverter_on' method='POST'>
+<input type=hidden name='mode' value=2>
 <td>Inverter on for</td><td><input name=manual_duration size=20 value=0> Minutes <input type=submit value="Submit">
 </form>
 </tr>
 
 <tr>
 <form  action='/both_on' method='POST'>
+<input type=hidden name='mode' value=3>
 <td>Both on for</td><td><input name=manual_duration size=20 value=0> Minutes <input type=submit value="Submit">
 </form>
 </tr>
 
-<tr>
-<form  action='/idle' method='POST'>
-<td>Idle for</td><td><input name=manual_duration size=20 value=0> Minutes <input type=submit value="Submit">
-</form>
-</tr></table>
+</table>
 
 <centre>
+<br>
+
+<pre>
+0 minutes = default on time
+</pre>

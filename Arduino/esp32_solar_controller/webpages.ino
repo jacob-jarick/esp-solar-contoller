@@ -1209,6 +1209,90 @@ void modet()
   server.send(200, mime_html, webpage);
 }
 
+void mode_set()
+{
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_mode);
+  webpage += js_header();
+
+  uint8_t mode_temp = 0;  // default to idle
+  uint16_t manual_duration = 0;
+
+  if (server.args() > 0 )
+  {
+    for ( uint8_t i = 0; i < server.args(); i++ )
+    {
+      if (server.argName(i) == F("mode"))
+        mode_temp = server.arg(i).toInt();
+      else if (server.argName(i) == F("manual_duration"))
+        manual_duration = server.arg(i).toInt();
+    }
+  }
+
+  if(config.webc_mode)
+  {
+    String mode_type;
+
+    if(mode_temp == 0)
+    {
+      old_night_reason = mode_reason;
+      old_day_reason = mode_reason;
+
+      mode_type = "Idle";
+    }
+    else if(mode_temp == 1)
+    {
+      old_day_reason = mode_reason;
+      mode_type = "Charge";
+
+      flags.shutdown_hvolt = 0;
+      flags.shutdown_lvolt = 0;
+      timers.charger_off = 0;
+    }
+    else if(mode_temp == 2)
+    {
+      old_night_reason = mode_reason;
+      mode_type = "Drain";
+
+      flags.shutdown_hvolt = 0;
+      flags.shutdown_lvolt = 0;
+      timers.inverter_off = 0;
+    }
+    else if(mode_temp == 3)
+    {
+      old_day_reason = mode_reason;
+      old_night_reason = mode_reason;
+      mode_type = "Both";
+
+      flags.shutdown_hvolt = 0;
+      flags.shutdown_lvolt = 0;
+      timers.inverter_off = 0;
+      timers.charger_off = 0;
+    }
+    else
+    {
+      mode_type = "Idle";
+      mode_temp = 0;
+    }
+
+    mode_reason = "Manual "+ mode_type +" On";
+
+    webpage += js_helper_innerhtml(title_str, mode_reason);
+
+    modeset(mode_temp, 1, manual_duration);
+  }
+  else
+  {
+    webpage += js_helper_innerhtml(title_str, denied_str);
+  }
+
+  webpage += "\nredir(\"/\", \"15\");\n";
+  webpage += web_footer();
+
+  server.send(200, mime_html, webpage);
+}
+
+/*
 void inverter_on()
 {
   String webpage =  get_file(html_header);
@@ -1372,6 +1456,7 @@ void charger_on()
     modeset(1, 1, manual_duration);
   }
 }
+*/
 
 String web_footer()
 {

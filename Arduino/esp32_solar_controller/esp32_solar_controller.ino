@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 398
+#define FW_VERSION 399
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -637,10 +637,11 @@ void setup()
     server.on("/result", web_config_submit);
 
     server.on("/modet", modet);
-    server.on("/inverter_on", inverter_on);
-    server.on("/idle", idle_on);
-    server.on("/charger_on", charger_on);
-    server.on("/both_on", both_on);
+    server.on("/mode_set", mode_set);
+    // server.on("/inverter_on", inverter_on);
+    // server.on("/idle", idle_on);
+    // server.on("/charger_on", charger_on);
+    // server.on("/both_on", both_on);
 
 
     server.on("/config_raw", config_raw);
