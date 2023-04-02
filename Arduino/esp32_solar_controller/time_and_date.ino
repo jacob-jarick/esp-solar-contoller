@@ -109,11 +109,29 @@ String next_update_string(const byte len) // ; len = length
     int nu_seconds = (next_update / 1000) % 60;
 
     if (len == 0)
+    {
       nu_string = String(nu_minutes) + " minutes " + String(nu_seconds) + " seconds";
+    }
     else if (len == 1)
+    {
       nu_string = String(nu_minutes) + " min " + String(nu_seconds) + " sec";
+    }
     if (len == 2)
+    {
       nu_string = String(nu_hours) + "h "  +  String(nu_minutes) + "m " + String(nu_seconds) + "s";
+    }
+    if (len == 3) // auto
+    {
+      nu_string = "";
+
+      if(nu_hours > 0)
+        nu_string += String(nu_hours) + "h ";
+
+      if(nu_minutes > 0)
+        nu_string += String(nu_minutes) + "m ";
+
+      nu_string += String(nu_seconds) + "s";
+    }
   }
   else
   {

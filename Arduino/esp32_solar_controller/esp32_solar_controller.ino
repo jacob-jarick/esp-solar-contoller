@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 395
+#define FW_VERSION 398
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -173,6 +173,7 @@ const String html_acinfo          = "/acinfo" + dothtml;
 const String html_cpconfig        = "/cpconfig" + dothtml;
 const String html_stats           = "/stats" + dothtml;
 const String html_mode            = "/mode" + dothtml;
+const String html_modet            = "/modet" + dothtml;
 const String html_apiservers      = "/api" + dothtml;
 const String html_advance_config  = "/advance" + dothtml;
 const String html_footer          = "/footer" + dothtml;
@@ -635,6 +636,7 @@ void setup()
     server.on("/config", web_config);
     server.on("/result", web_config_submit);
 
+    server.on("/modet", modet);
     server.on("/inverter_on", inverter_on);
     server.on("/idle", idle_on);
     server.on("/charger_on", charger_on);
@@ -1975,7 +1977,7 @@ void modeset(byte m, bool manual, uint16_t manual_duration)
   system_mode = m;
 
   if(manual_duration > 0)
-      timers.mode_check = millis() + manual_duration * 60 * 1000; //
+      timers.mode_check = millis() + manual_duration * 60 * 1000;
   else if(idle_forced)
     timers.mode_check = millis() + random(1000, 5000); // 1 - 5 secs
   else if(same_mode)

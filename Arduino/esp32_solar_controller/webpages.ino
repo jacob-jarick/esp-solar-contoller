@@ -24,8 +24,6 @@ String js_helper(const String n, const String v)
   return "sv('" + n + "', `" + v + "`);\n";
 }
 
-// html_create_input("hvrd", "config.hv_shutdown_delay", "3", "10", "...")
-// add_input("html_id", "input_id", "input_length", "input_value", "input_note");
 String html_create_input(const String html_id, const String input_id, const String input_length, const String input_value, const String input_note)
 {
   return "add_input('" + html_id + "', '" + input_id + "', '" + input_length + "', '" + input_value + "', '" + input_note + "');\n";
@@ -192,8 +190,6 @@ void net_config()
   server.send(200, mime_html, webpage);
 }
 
-
-
 void battery_info()
 {
   String webpage = get_file(html_header);
@@ -231,8 +227,6 @@ void battery_info()
     webpage += js_table_add_row("battery_table", String("*"), String(adc_poll_time, 3) + String(" sec"),  "ADC Complete poll time duration");
 
     webpage += js_table_add_row("battery_table", String("*"), String(pack_total_volts, 4),  "SUM");
-
-
   }
 
   webpage += js_helper_innerhtml(title_str, String(config.hostn) + " Battery Info");
@@ -289,13 +283,11 @@ void advance_config()
 
   webpage += js_radio_helper(F("mcptype1"), F("mcptype0"), config.mcptype);
   webpage += js_radio_helper(F("ads1x15type1"), F("ads1x15type0"), config.ads1x15type);
-//   webpage += js_radio_helper(F("muxtype1"), F("muxtype0"), config.muxtype);
   webpage += js_select_helper(F("muxtype"), String(config.muxtype));
 
   webpage += js_radio_helper(F("dumbsystem1"), F("dumbsystem0"), config.dumbsystem);
 
 
-//   webpage += js_radio_helper(F("display_phases1"), F("display_phases0"), config.display_phases);
   webpage += js_select_helper(F("display_mode"), String(config.display_mode));
 
   // BOARD Revision
@@ -918,7 +910,7 @@ void stats()
 
   webpage += js_helper_innerhtml(F("modereason"), "<pre>" + mode_reason + "</pre>");
 
-  String nu_string = next_update_string(1);
+  String nu_string = next_update_string(3);
 
   // ----------------------------------------------------------------------
 
@@ -1203,6 +1195,18 @@ void led_blink()
 
   if(config.webc_mode)
     config.blink_led = 1;
+}
+
+// mode time
+void modet()
+{
+  String webpage =  get_file(html_header);
+  webpage += get_file(html_modet);
+  webpage += js_header();
+
+  webpage += web_footer();
+
+  server.send(200, mime_html, webpage);
 }
 
 void inverter_on()

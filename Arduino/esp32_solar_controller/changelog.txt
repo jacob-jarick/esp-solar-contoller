@@ -1,20 +1,20 @@
-     HEAD~0	bf6c44e ansible fixes
-     HEAD~1	7c51523 anisble fixes and updates
-     HEAD~2	5bc649b mmaths patch
-     HEAD~3	675e265 clean compile on latest versions of esp32 base and arduinojson
-     HEAD~4	824c890 update shell
-     HEAD~5	5279eb4 Update esp32 board.png
-     HEAD~6	8bd8ca2 Create jsonhost.yaml
-     HEAD~7	588f0c8 fw 389
-     HEAD~8	c1864f5 batcal for precision board
-     HEAD~9	af83229 whitespace
-    HEAD~10	d4198c9 Update esp32_solar_controller.ino
-    HEAD~11	f0460f7 fw 381
-    HEAD~12	b9b7d4e fix absent fronius_push_url from config
-    HEAD~13	d3f868c fw 380 - muxtype 2
-    HEAD~14	1d07ccc Update webpages.ino
-    HEAD~15	df837e0 Update webpages.ino
-    HEAD~16	7aeb9d7 adc poll tweaks
-    HEAD~17	c222ddc 378 - cleanup fronius
-    HEAD~18	a83a6ad Delete config.jsn
-    HEAD~19	52207da function table_add_submit(id)
+     HEAD~0	b9c7f2f merging branch.
+     HEAD~1	bf6c44e ansible fixes
+     HEAD~2	7c51523 anisble fixes and updates
+     HEAD~3	5bc649b mmaths patch
+     HEAD~4	675e265 clean compile on latest versions of esp32 base and arduinojson
+     HEAD~5	824c890 update shell
+     HEAD~6	5279eb4 Update esp32 board.png
+     HEAD~7	8bd8ca2 Create jsonhost.yaml
+     HEAD~8	588f0c8 fw 389
+     HEAD~9	c1864f5 batcal for precision board
+    HEAD~10	af83229 whitespace
+    HEAD~11	d4198c9 Update esp32_solar_controller.ino
+    HEAD~12	f0460f7 fw 381
+    HEAD~13	b9b7d4e fix absent fronius_push_url from config
+    HEAD~14	d3f868c fw 380 - muxtype 2
+    HEAD~15	1d07ccc Update webpages.ino
+    HEAD~16	df837e0 Update webpages.ino
+    HEAD~17	7aeb9d7 adc poll tweaks
+    HEAD~18	c222ddc 378 - cleanup fronius
+    HEAD~19	a83a6ad Delete config.jsn
