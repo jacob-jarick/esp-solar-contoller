@@ -1225,12 +1225,23 @@ void inverter_on()
 
   server.send(200, mime_html, webpage);
 
+  uint16_t manual_duration = 0;
+
+  if (server.args() > 0 )
+  {
+      for ( uint8_t i = 0; i < server.args(); i++ )
+      {
+          if (server.argName(i) == F("manual_duration"))
+              manual_duration = server.arg(i).toInt();
+      }
+  }
+
   if(config.webc_mode)
   {
     flags.shutdown_hvolt = 0;
     flags.shutdown_lvolt = 0;
     timers.inverter_off = 0;
-    modeset(2, 1);
+    modeset(2, 1, manual_duration);
   }
 }
 
@@ -1257,6 +1268,17 @@ void both_on() // TODO check charger and inverter are enabled
 
   server.send(200, mime_html, webpage);
 
+  uint16_t manual_duration = 0;
+
+  if (server.args() > 0 )
+  {
+      for ( uint8_t i = 0; i < server.args(); i++ )
+      {
+          if (server.argName(i) == F("manual_duration"))
+              manual_duration = server.arg(i).toInt();
+      }
+  }
+
   if(config.webc_mode)
   {
     flags.shutdown_hvolt = 0;
@@ -1264,7 +1286,7 @@ void both_on() // TODO check charger and inverter are enabled
     timers.inverter_off = 0;
     timers.charger_off = 0;
 
-    modeset(3, 1);
+    modeset(3, 1, manual_duration);
   }
 }
 
@@ -1290,9 +1312,20 @@ void idle_on()
 
   server.send(200, mime_html, webpage);
 
+  uint16_t manual_duration = 0;
+
+  if (server.args() > 0 )
+  {
+      for ( uint8_t i = 0; i < server.args(); i++ )
+      {
+          if (server.argName(i) == F("manual_duration"))
+              manual_duration = server.arg(i).toInt();
+      }
+  }
+
   if(config.webc_mode)
   {
-    modeset(0, 1);
+    modeset(0, 1, manual_duration);
   }
 }
 
@@ -1317,11 +1350,22 @@ void charger_on()
 
   server.send(200, mime_html, webpage);
 
+  uint16_t manual_duration = 0;
+
+  if (server.args() > 0 )
+  {
+      for ( uint8_t i = 0; i < server.args(); i++ )
+      {
+          if (server.argName(i) == F("manual_duration"))
+              manual_duration = server.arg(i).toInt();
+      }
+  }
+
   if(config.webc_mode)
   {
     flags.shutdown_hvolt = 0;
     timers.charger_off = 0;
-    modeset(1, 1);
+    modeset(1, 1, manual_duration);
   }
 }
 

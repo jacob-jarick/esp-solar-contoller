@@ -1,0 +1,81 @@
+<script type="text/javascript">
+
+function table_add(id)
+{
+  var table = document.getElementById("apitable");
+  var row = table.insertRow(-1);
+  row.innerHTML = "  <td colspan=2><b>Voltage Server "+id+"</b></td>";
+
+  var row = table.insertRow(-1);
+  row.innerHTML =
+`
+  <td>Hostname:</td>
+  <td><input id=api_vserver_hostname`+id+` name=api_vserver_hostname`+id+`  type=text value="" size=64></td>`;
+
+  var row = table.insertRow(-1);
+  row.innerHTML =
+`
+  <td>Enable:</td>
+  <td>
+    <input id=api_venable1`+id+` type=radio name="api_venable`+id+`" value=1> Yes
+    <input id=api_venable0`+id+` type=radio name="api_venable`+id+`" value=0> No
+  </td>
+`;
+}
+
+</script>
+
+<center>
+
+<form action='/result' method='POST'>
+
+<table border=1 id=apitable>
+
+<tr><td colspan=2><b>API</b></td></tr>
+
+<tr>
+  <td>Poll Time (seconds):</td>
+  <td><input id=api_pollsecs type=text name='api_pollsecs' value="" size=8></td>
+</tr>
+
+<tr><td colspan=2><b>Info Server 1</b></td></tr>
+<tr><td colspan=2>Grid Info, Ambient temp</td></tr>
+
+<tr>
+  <td>Hostname:</td>
+  <td><input id=api_iserver_hostname1 type=text name='api_iserver_hostname1' value="" size=64></td>
+</tr>
+
+<tr>
+  <td>Enable:</td>
+	<td>
+		<input id=api_ienable11 type=radio name="api_ienable1" value=1> Yes
+		<input id=api_ienable01 type=radio name="api_ienable1" value=0> No
+	</td>
+</tr>
+
+
+<tr>
+  <td>Copy Ambient Temp:</td>
+	<td>
+		<input id=api_lm75a1 type=radio name="api_lm75a" value=1> Yes
+		<input id=api_lm75a0 type=radio name="api_lm75a" value=0> No
+	</td>
+</tr>
+
+<tr>
+  <td>Copy Grid Info:</td>
+	<td>
+		<input id=api_grid1 type=radio name="api_grid" value=1> Yes
+		<input id=api_grid0 type=radio name="api_grid" value=0> No
+	</td>
+</tr>
+
+<!-- <tr><td>Password:</td><td><input id=passwd type=password name='passwd' value=''> <input type=submit value=submit></td></tr> -->
+
+
+</table>
+</form>
+
+
+</center>

@@ -31,10 +31,6 @@ void save_config()
 
   doc["description"] = config.description;
 
-
-
-//   doc["inverter_url"] = config.inverter_url;
-//   doc["inverter_push_url"] = config.inverter_push_url;
   doc["fronius_push_url"] = config.fronius_push_url;
   doc["3p_direct_url"] = config.threephase_direct_url;
 

@@ -33,7 +33,6 @@
     - net-tools
     - unzip
     - vsftpd
-    - whois
 
 # =============================================================================
 # playbook tasks
@@ -74,10 +73,6 @@
 # =============================================================================
 # install Files and set permissions
 
-
-# =============================================================================
-# apt install deps
-
   - name: Install acl
     apt:
       name: acl
@@ -99,6 +94,7 @@
       - "{{ esp32_path }}"
     tags:
       - setup
+      - dirs
 
   - name: Grant group rw read access to html dirs
     ansible.posix.acl:
@@ -114,6 +110,7 @@
       - "{{ esp32_path }}"
     tags:
       - setup
+      - dirs
 
 # =============================================================================
 # apt update and upgrade
@@ -151,6 +148,14 @@
     ansible.builtin.lineinfile:
       path: /etc/vsftpd.conf
       line: write_enable=YES
+      create: yes
+    tags:
+      - vsftpd
+
+  - name: config vsftpd
+    ansible.builtin.lineinfile:
+      path: /etc/vsftpd.conf
+      line: local_root=/
       create: yes
     tags:
       - vsftpd

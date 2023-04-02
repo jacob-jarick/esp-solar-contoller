@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 393
+#define FW_VERSION 395
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -438,6 +438,8 @@ struct SysFlags
 SysFlags flags;
 
 // =================================================================================================
+
+void modeset(byte m = 0, bool manual = 0, uint16_t manual_duration = 0);
 
 void setup()
 {
@@ -1877,11 +1879,7 @@ void calc_next_update()
   timers.mode_check = millis() + (rest_s * 1000);
 }
 
-void modeset(byte m) // overload helper
-{
-  modeset(m, 0);
-}
-void modeset(byte m, bool manual)
+void modeset(byte m, bool manual, uint16_t manual_duration)
 {
   // if swapping direct from one device to another, force a n Second idle in between
   bool idle_forced = 0;
@@ -1976,7 +1974,9 @@ void modeset(byte m, bool manual)
 
   system_mode = m;
 
-  if(idle_forced)
+  if(manual_duration > 0)
+      timers.mode_check = millis() + manual_duration * 60 * 1000; //
+  else if(idle_forced)
     timers.mode_check = millis() + random(1000, 5000); // 1 - 5 secs
   else if(same_mode)
     timers.mode_check = millis() + random(500, 4000); // 0.5 to x secs
