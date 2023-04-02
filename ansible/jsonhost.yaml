@@ -1,6 +1,9 @@
 # =============================================================================
 # run locally with:
 # ansible-playbook -c local -i localhost, /tmp/jsonhost.yaml
+#
+# generate password using command:
+#   ansible all -i localhost, -m debug -a "msg={{ 'fronius' | password_hash('sha512', 'mysecretsalt') }}"
 # =============================================================================
 
 - hosts: 127.0.0.1
@@ -30,6 +33,7 @@
     - net-tools
     - unzip
     - vsftpd
+    - whois
 
 # =============================================================================
 # playbook tasks
@@ -56,8 +60,8 @@
       shell: /bin/bash
       state: present
       groups: "{{ ftp_user }},html"
-      # password: secretFRONIUS2022
-      password: 6$mysecretsalt$4Kei0tqG5uEiKCGFQ06egG5uv3oO3HdQkDKNXyTcZuKsmasdOk48kk9h514lDAi1vIMPIs8xfupRZPYcxySrz/
+      # password: fronius
+      password: $6$mysecretsalt$2NxuoV7DAudNHwi7YBl00XRIVYmUP4Z0vG3Rkw/go9bM82nzgB3Eky4ERCaiHXNWqfjqM7n2AdUhnN0AkUq/2/
     tags:
       - user_create
 
@@ -141,18 +145,24 @@
 
 
 # =============================================================================
+# vsftpd setup
+
+  - name: config vsftpd
+    ansible.builtin.lineinfile:
+      path: /etc/vsftpd.conf
+      line: write_enable=YES
+      create: yes
+    tags:
+      - vsftpd
+
+  - name: Restart vsftpd
+    ansible.builtin.systemd:
+      state: restarted
+      daemon_reload: true
+      name: vsftpd
+
+# =============================================================================
 # configure ngnix
-
-
-#restart nginx
-
-  # - name: Enable service nginx, and not touch the state
-  #   ansible.builtin.service:
-  #     name: nginx
-  #     enabled: yes
-  #     tags:
-  #       - nginx
-  #
 
   - name: start nginx
     ansible.builtin.systemd:
