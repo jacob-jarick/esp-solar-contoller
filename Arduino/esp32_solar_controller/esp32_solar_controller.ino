@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 399
+#define FW_VERSION 403
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -91,9 +91,11 @@ Mmaths mmaths;
 #include <TimeLib.h>
 
 const unsigned int localPort = 2390;      // local port to listen for UDP packets
-const byte NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
-byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packets
-WiFiUDP udp;
+
+const int NTP_PACKET_SIZE = 48; // NTP time is in the first 48 bytes of message
+byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming & outgoing packets
+
+WiFiUDP Udp;
 
 // -----------------------------------------------------------------------------------------
 // timers
@@ -149,7 +151,6 @@ uint8_t high_cell = 0;
 //------------------------------------------------------------------------------
 
 uint8_t vapi_errors = 0;
-
 
 //------------------------------------------------------------------------------
 
@@ -407,7 +408,6 @@ struct SysFlags
   bool restart = 0;
   bool access_point = 0;
   bool update_self = 0;
-  bool time_synced = 0;
   bool night = 0;
   bool day = 0;
   bool shutdown_lvolt = 0;
@@ -611,9 +611,10 @@ void setup()
   oled_set1X();
 
   both_println(F("UDP"));
-  udp.begin(localPort);
+  Udp.begin(localPort);
 
-//   oled_clear();
+  setSyncProvider(getNtpTime);
+  setSyncInterval(300);
 
   // --------------------------------------------------------------------------------------
   both_println(F("MDNS"));
@@ -685,7 +686,7 @@ void setup()
 
     server.on("/datasrcs", datasrcs);
 
-    server.on("/forcentp", force_ntp_sync);
+    //server.on("/forcentp", force_ntp_sync);
 
     server.on("/port_info", port_info);
 
@@ -962,7 +963,7 @@ void loop()
   // ----------------------------------------------------------------------
   // update mode
 
-  if(!flags.time_synced)
+  if(timeStatus() == timeNotSet)
   {
     mode_reason = "time unsynced";
     return;
@@ -1329,7 +1330,9 @@ bool check_system_timers()
   }
 
   // auto update timer
-  if(config.auto_update && millis() > timers.update_check)
+  //if(config.auto_update && millis() > timers.update_check)
+  // updated to check for updates at specific hour (~7pm seems ideal for me)
+  if(config.auto_update && hour() == 19 && millis() > timers.update_check)
   {
     if(timers.update_check > 0) // dont trigger on fist boot
     {
@@ -1341,20 +1344,7 @@ bool check_system_timers()
       do_update();
     }
 
-    timers.update_check = millis() + 86400000; // every 24h
-    result = 1;
-  }
-
-  // NTP sync timer
-  if(!flags.access_point && millis() > timers.ntp_sync)
-  {
-    sync_time();
-
-    if(flags.time_synced)
-      timers.ntp_sync = millis() + 21600000; // 6 hours
-    else
-      timers.ntp_sync = millis() + 20000; // 20 s
-
+    timers.update_check = millis() + SECS_PER_DAY * 1000; // dont check for another 24h
     result = 1;
   }
 

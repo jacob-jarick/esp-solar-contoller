@@ -49,24 +49,6 @@ String js_table_add_row(const String id, const String cell1, const String cell2,
 // HTML Pages
 // =================================================================================================================
 
-// reget html trigger page flags.download_html
-
-void force_ntp_sync()
-{
-  String webpage =  get_file(html_header);
-  webpage += get_file(html_mode);
-  webpage += js_header();
-
-  webpage += js_helper_innerhtml(title_str, F("Force NTP Sync"));
-  webpage += "\nredir(\"/\", \"15\");\n";
-
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage);
-  timers.ntp_sync = 0;
-}
-
-
 void web_html_redownload()
 {
   String webpage =  get_file(html_header);
@@ -1292,172 +1274,6 @@ void mode_set()
   server.send(200, mime_html, webpage);
 }
 
-/*
-void inverter_on()
-{
-  String webpage =  get_file(html_header);
-  webpage += get_file(html_mode);
-  webpage += js_header();
-
-  if(config.webc_mode)
-  {
-    mode_reason = "Manual Inverter On";
-    old_night_reason = mode_reason;
-    webpage += js_helper_innerhtml(title_str, mode_reason);
-  }
-  else
-    webpage += js_helper_innerhtml(title_str, denied_str);
-
-  webpage += "\nredir(\"/\", \"15\");\n";
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage);
-
-  uint16_t manual_duration = 0;
-
-  if (server.args() > 0 )
-  {
-      for ( uint8_t i = 0; i < server.args(); i++ )
-      {
-          if (server.argName(i) == F("manual_duration"))
-              manual_duration = server.arg(i).toInt();
-      }
-  }
-
-  if(config.webc_mode)
-  {
-    flags.shutdown_hvolt = 0;
-    flags.shutdown_lvolt = 0;
-    timers.inverter_off = 0;
-    modeset(2, 1, manual_duration);
-  }
-}
-
-
-void both_on() // TODO check charger and inverter are enabled
-{
-  String webpage =  get_file(html_header);
-  webpage += get_file(html_mode);
-  webpage += js_header();
-
-  if(config.webc_mode)
-  {
-    mode_reason = "Manual Both On";
-    old_night_reason = mode_reason;
-    old_day_reason = mode_reason;
-
-    webpage += js_helper_innerhtml(title_str, mode_reason);
-  }
-  else
-    webpage += js_helper_innerhtml(title_str, denied_str);
-
-  webpage += "\nredir(\"/\", \"15\");\n";
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage);
-
-  uint16_t manual_duration = 0;
-
-  if (server.args() > 0 )
-  {
-      for ( uint8_t i = 0; i < server.args(); i++ )
-      {
-          if (server.argName(i) == F("manual_duration"))
-              manual_duration = server.arg(i).toInt();
-      }
-  }
-
-  if(config.webc_mode)
-  {
-    flags.shutdown_hvolt = 0;
-    flags.shutdown_lvolt = 0;
-    timers.inverter_off = 0;
-    timers.charger_off = 0;
-
-    modeset(3, 1, manual_duration);
-  }
-}
-
-void idle_on()
-{
-  String webpage =  get_file(html_header);
-  webpage += get_file(html_mode);
-  webpage += js_header();
-
-  if(config.webc_mode)
-  {
-    mode_reason = "Manual Idle";
-    old_night_reason = mode_reason;
-    old_day_reason = mode_reason;
-
-    webpage += js_helper_innerhtml(title_str, mode_reason);
-  }
-  else
-    webpage += js_helper_innerhtml(title_str, denied_str);
-
-  webpage += "\nredir(\"/\", \"15\");\n";
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage);
-
-  uint16_t manual_duration = 0;
-
-  if (server.args() > 0 )
-  {
-      for ( uint8_t i = 0; i < server.args(); i++ )
-      {
-          if (server.argName(i) == F("manual_duration"))
-              manual_duration = server.arg(i).toInt();
-      }
-  }
-
-  if(config.webc_mode)
-  {
-    modeset(0, 1, manual_duration);
-  }
-}
-
-void charger_on()
-{
-  String webpage =  get_file(html_header);
-  webpage += get_file(html_mode);
-  webpage += js_header();
-
-  if(config.webc_mode)
-  {
-    mode_reason = "Manual Charger ON";
-    old_day_reason = mode_reason;
-
-    webpage += js_helper_innerhtml(title_str, mode_reason);
-  }
-  else
-    webpage += js_helper_innerhtml(title_str, denied_str);
-
-  webpage += "\nredir(\"/\", \"15\");\n";
-  webpage += web_footer();
-
-  server.send(200, mime_html, webpage);
-
-  uint16_t manual_duration = 0;
-
-  if (server.args() > 0 )
-  {
-      for ( uint8_t i = 0; i < server.args(); i++ )
-      {
-          if (server.argName(i) == F("manual_duration"))
-              manual_duration = server.arg(i).toInt();
-      }
-  }
-
-  if(config.webc_mode)
-  {
-    flags.shutdown_hvolt = 0;
-    timers.charger_off = 0;
-    modeset(1, 1, manual_duration);
-  }
-}
-*/
-
 String web_footer()
 {
   String webpage;
@@ -1507,7 +1323,7 @@ void force_refresh()
     timers.inverter_off = 0;
 
 
-    sync_time();
+    // sync_time();
   }
 }
 
@@ -1520,7 +1336,7 @@ void software_reset()
 
   // avoid restarts being triggered after boot.
   time_t timetmp = now();
-  if (!flags.time_synced ||  (hour(timetmp) < 1 && minute(timetmp) < 2))
+  if (timeStatus() == timeNotSet ||  (hour(timetmp) < 1 && minute(timetmp) < 2))
   {
     webpage += js_helper_innerhtml(title_str, F("System Just Booted"));
     server.send(200, mime_html, webpage);

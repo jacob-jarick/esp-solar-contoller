@@ -154,7 +154,7 @@ void calc_energy_usage()
 {
   // calculate actual usage here
   // track energy consumed
-  if(timers.calc_energy_usage != 0 && flags.time_synced)
+  if(timers.calc_energy_usage != 0 && timeStatus() == timeNotSet )
   {
     float tmp_phase_sum = get_watts(3);
 

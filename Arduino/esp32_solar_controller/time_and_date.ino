@@ -2,95 +2,64 @@
 // Time Functions
 // =================================================================================================================
 
-bool sync_time()
+time_t getNtpTime()
 {
-  const String ntp_prefix = "NTP: ";
+  IPAddress ntpServerIP; // NTP server's ip address
 
-  oled_clear();
-  oled_set2X();
-  both_println(ntp_prefix + "Sync");
-  oled_set1X();
-
-  IPAddress timeServerIP;
-
-  WiFi.hostByName(config.ntp_server, timeServerIP);
-  sendNTPpacket(timeServerIP);
-  unsigned long stime = millis() + 2000;
-
-  while (stime >= millis())
-  {
-    server.handleClient();
-    yield();
+  while (Udp.parsePacket() > 0) ; // discard any previously received packets
+  Serial.println("Transmit NTP Request");
+  // get a random server from the pool
+  WiFi.hostByName(config.ntp_server, ntpServerIP);
+  Serial.print(config.ntp_server);
+  Serial.print(": ");
+  Serial.println(ntpServerIP);
+  sendNTPpacket(ntpServerIP);
+  uint32_t beginWait = millis();
+  while (millis() - beginWait < 1500) {
+    int size = Udp.parsePacket();
+    if (size >= NTP_PACKET_SIZE) {
+      Serial.println("Receive NTP Response");
+      Udp.read(packetBuffer, NTP_PACKET_SIZE);  // read packet into the buffer
+      unsigned long secsSince1900;
+      // convert four bytes starting at location 40 to a long integer
+      secsSince1900 =  (unsigned long)packetBuffer[40] << 24;
+      secsSince1900 |= (unsigned long)packetBuffer[41] << 16;
+      secsSince1900 |= (unsigned long)packetBuffer[42] << 8;
+      secsSince1900 |= (unsigned long)packetBuffer[43];
+      return secsSince1900 - 2208988800UL + (int_to_gmt(config.gmt) * SECS_PER_HOUR);
+    }
   }
-
-  int size = udp.parsePacket();
-  if (size < NTP_PACKET_SIZE)
-  {
-    const String tmp = "undersized packet";
-    log_msg(ntp_prefix + tmp);
-    both_println(tmp);
-    return 0;
-  }
-
-  udp.read(packetBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
-
-  if(packetBuffer[40] == 0 && packetBuffer[41] == 0 && packetBuffer[42] == 0 && packetBuffer[43] == 0)
-  {
-    const String tmp = "null packets";
-    both_println(tmp);
-    log_msg(ntp_prefix + tmp);
-    return 0;
-  }
-
-  unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
-  unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);
-
-  unsigned long secsSince1900 = highWord << 16 | lowWord; // combine the four bytes (two words) into a long integer
-  unsigned long epoch = secsSince1900 - 2208988800UL;
-  epoch += (60 * 60 * int_to_gmt(config.gmt));
-
-  secsSince1900 = now(); // reuse var
-  if(epoch < secsSince1900 || epoch < 1567099782)
-  {
-    const String tmp = "bad epoch";
-    both_println(tmp);
-    log_msg(ntp_prefix + tmp);
-    return 0;
-  }
-
-  setTime(epoch);
-
-  const String tmp = "Success";
-  both_println(tmp);
-  log_msg(ntp_prefix + tmp);
-
-  flags.time_synced = 1;
-  return 1;
+  //Serial.println("No NTP Response :-(");
+  log_msg("No NTP Response");
+  return 0; // return 0 if unable to get the time
 }
 
 // send an NTP request to the time server at the given address
-void sendNTPpacket(IPAddress & address)
+void sendNTPpacket(IPAddress &address)
 {
+  // set all bytes in the buffer to 0
   memset(packetBuffer, 0, NTP_PACKET_SIZE);
+  // Initialize values needed to form NTP request
+  // (see URL above for details on the packets)
   packetBuffer[0] = 0b11100011;   // LI, Version, Mode
   packetBuffer[1] = 0;     // Stratum, or type of clock
   packetBuffer[2] = 6;     // Polling Interval
   packetBuffer[3] = 0xEC;  // Peer Clock Precision
   // 8 bytes of zero for Root Delay & Root Dispersion
-  packetBuffer[12]  = 49;
-  packetBuffer[13]  = 0x4E;
-  packetBuffer[14]  = 49;
-  packetBuffer[15]  = 52;
-
+  packetBuffer[12] = 49;
+  packetBuffer[13] = 0x4E;
+  packetBuffer[14] = 49;
+  packetBuffer[15] = 52;
   // all NTP fields have been given values, now
   // you can send a packet requesting a timestamp:
-  udp.beginPacket(address, 123); //NTP requests are to port 123
-  udp.write(packetBuffer, NTP_PACKET_SIZE);
-  udp.endPacket();
+  Udp.beginPacket(address, 123); //NTP requests are to port 123
+  Udp.write(packetBuffer, NTP_PACKET_SIZE);
+  Udp.endPacket();
 }
 
+
 // used to convert int to GMT offset
-float int_to_gmt(const int v)
+float int_to_gmt(const uint8_t v)
 {
   float tmp = float(v) / 2.0;
   tmp -= 12;
