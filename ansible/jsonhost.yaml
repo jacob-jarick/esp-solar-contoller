@@ -6,7 +6,7 @@
 #   ansible all -i localhost, -m debug -a "msg={{ 'fronius' | password_hash('sha512', 'mysecretsalt') }}"
 # =============================================================================
 
-- hosts: 127.0.0.1
+- hosts: all
 
 # =============================================================================
 # playbook variables

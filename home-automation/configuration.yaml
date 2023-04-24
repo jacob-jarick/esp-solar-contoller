@@ -1,0 +1,99 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+
+rest:
+  - resource: http://10.1.1.229/json_cells
+    scan_interval: 60
+    sensor:
+      - name: "Pack Voltage"
+        value_template: "{{ value_json.cell_total }}"
+        unit_of_measurement: "V"
+      - name: "Cell 01"
+        value_template: "{{ value_json.cell_1 }}"
+        unit_of_measurement: "V"          
+      - name: "Cell 02"
+        value_template: "{{ value_json.cell_2 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 03"
+        value_template: "{{ value_json.cell_3 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 04"
+        value_template: "{{ value_json.cell_4 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 05"
+        value_template: "{{ value_json.cell_5 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 06"
+        value_template: "{{ value_json.cell_6 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 07"
+        value_template: "{{ value_json.cell_7 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 08"
+        value_template: "{{ value_json.cell_8 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 09"
+        value_template: "{{ value_json.cell_9 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 10"
+        value_template: "{{ value_json.cell_10 }}"
+        unit_of_measurement: "V"          
+      - name: "Cell 11"
+        value_template: "{{ value_json.cell_11 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 12"
+        value_template: "{{ value_json.cell_12 }}"
+        unit_of_measurement: "V"          
+      - name: "Cell 13"
+        value_template: "{{ value_json.cell_13 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 14"
+        value_template: "{{ value_json.cell_14 }}"
+        unit_of_measurement: "V"
+      - name: "Cell 15"
+        value_template: "{{ value_json.cell_15 }}"
+        unit_of_measurement: "V"          
+      - name: "Cell 16"
+        value_template: "{{ value_json.cell_16 }}"
+        unit_of_measurement: "V"
+
+  - resource: http://10.1.1.229/jsonapi
+    scan_interval: 60
+    sensor:
+      - name: "Temp"
+        value_template: "{{ value_json.lm75a_now }}"
+        unit_of_measurement: "C"
+      - name: "Watts A"
+        value_template: "{{ value_json.phase_a_watts }}"
+        unit_of_measurement: "W"
+      - name: "Watts B"
+        value_template: "{{ value_json.phase_b_watts }}"
+        unit_of_measurement: "W"
+      - name: "Watts C"
+        value_template: "{{ value_json.phase_c_watts }}"
+        unit_of_measurement: "W"          
+      - name: "Volts A"
+        value_template: "{{ value_json.phase_a_voltage }}"
+        unit_of_measurement: "V"          
+      - name: "Volts B"
+        value_template: "{{ value_json.phase_b_voltage }}"
+        unit_of_measurement: "V"
+      - name: "Volts C"
+        value_template: "{{ value_json.phase_c_voltage }}"
+        unit_of_measurement: "V"          
+
+
