@@ -18,23 +18,61 @@ switch:
   - platform: command_line
     switches:
       office_ups:
-        command_on: "curl http://10.1.1.227/mode_set?mode=0&manual_duration=0"
-        command_off: "curl http://10.1.1.227/mode_set?mode=2&manual_duration=0"
-        command_state: "curl -s http://10.1.1.227/jsonapi | grep '\"system_mode\": 0,'"
+        command_on: "curl -s http://10.1.1.227/mode_set?mode=0&manual_duration=0"
+        command_off: "curl -s http://10.1.1.227/mode_set?mode=2&manual_duration=0"
+        command_state: "curl -s http://10.1.1.227/jsonapi | grep '\"i_pinmode\": true'"
         command_timeout: 5
-        friendly_name: "Office UPS Mains Connection"          
+        friendly_name: "Phase A: Office UPS Mains Connection"
       office_charge_b:
-        command_on: "curl http://10.1.1.229/mode_set?mode=1&manual_duration=0"
-        command_off: "curl http://10.1.1.229/mode_set?mode=0&manual_duration=0"
-        command_state: "curl -s http://10.1.1.229/jsonapi | grep '\"system_mode\": 1,'"
+        command_on: "curl -s http://10.1.1.229/mode_set?mode=1&manual_duration=0"
+        command_off: "curl -s http://10.1.1.229/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.229/jsonapi | grep '\"c_pinmode\": true'"
         command_timeout: 5
-        friendly_name: "Office Phase B Charger"          
+        friendly_name: "Phase B: Office Charger"
       office_inv_c:
-        command_on: "curl http://10.1.1.196/mode_set?mode=2&manual_duration=0"
-        command_off: "curl http://10.1.1.196/mode_set?mode=0&manual_duration=0"
-        command_state: "curl -s http://10.1.1.196/jsonapi | grep '\"system_mode\": 2,'"
+        command_on: "curl -s http://10.1.1.196/mode_set?mode=2&manual_duration=0"
+        command_off: "curl -s http://10.1.1.196/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.196/jsonapi | grep '\"i_pinmode\": true'"
         command_timeout: 5
-        friendly_name: "Office Phase C Grid Tie Inverter"          
+        friendly_name: "Phase C: Office Grid Tie Inverter"
+
+      network_b_ups:
+        command_on: "curl -s http://10.1.1.212/mode_set?mode=0&manual_duration=0"
+        command_off: "curl -s http://10.1.1.212/mode_set?mode=2&manual_duration=0"
+        command_state: "curl -s http://10.1.1.212/jsonapi | grep '\"i_pinmode\": true'"
+        command_timeout: 5
+        friendly_name: "Phase B: Network UPS Mains Connection"
+      network_b_chg:
+        command_on: "curl -s http://10.1.1.212/mode_set?mode=1&manual_duration=0"
+        command_off: "curl -s http://10.1.1.212/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.212/jsonapi | grep '\"c_pinmode\": true'"
+        command_timeout: 5
+        friendly_name: "Phase B: Network Charger"
+      network_c_chg:
+        command_on: "curl -s http://10.1.1.189/mode_set?mode=1&manual_duration=0"
+        command_off: "curl -s http://10.1.1.189/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.189/jsonapi | grep '\"c_pinmode\": true'"
+        command_timeout: 5
+        friendly_name: "Phase C: Network Charger"
+
+      lounge_a_chg:
+        command_on: "curl -s http://10.1.1.191/mode_set?mode=1&manual_duration=0"
+        command_off: "curl -s http://10.1.1.191/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.191/jsonapi | grep '\"c_pinmode\": true'"
+        command_timeout: 5
+        friendly_name: "Phase A: Lounge Charger"
+      lounge_b_chg:
+        command_on: "curl -s http://10.1.1.190/mode_set?mode=1&manual_duration=0"
+        command_off: "curl -s http://10.1.1.190/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.190/jsonapi | grep '\"c_pinmode\": true'"
+        command_timeout: 5
+        friendly_name: "Phase B: Lounge Charger"
+      lounge_c_chg:
+        command_on: "curl -s http://10.1.1.198/mode_set?mode=1&manual_duration=0"
+        command_off: "curl -s http://10.1.1.198/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.198/jsonapi | grep '\"c_pinmode\": true'"
+        command_timeout: 5
+        friendly_name: "Phase C: Lounge Charger"          
 
 rest:
   - resource: http://10.1.1.42/inverter/realtime.json
@@ -47,97 +85,184 @@ rest:
           - PowerReal_P_Phase_1
           - PowerReal_P_Phase_2
           - PowerReal_P_Phase_3
-      - name: "Phase A"
+          - Voltage_AC_Phase_1
+          - Voltage_AC_Phase_2
+          - Voltage_AC_Phase_3
+      - name: "Watts Phase A"
         value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_1') }}"
         unit_of_measurement: "W"
-      - name: "Phase B"
+      - name: "Watts Phase B"
         value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_2') }}"
         unit_of_measurement: "W"
-      - name: "Phase C"
+      - name: "Watts Phase C"
         value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_3') }}"
         unit_of_measurement: "W"          
-      
+      - name: "Voltage Phase A"
+        value_template: "{{ state_attr('sensor.fronius_1', 'Voltage_AC_Phase_1') }}"
+        unit_of_measurement: "V"
+      - name: "Voltage Phase B"
+        value_template: "{{ state_attr('sensor.fronius_1', 'Voltage_AC_Phase_2') }}"
+        unit_of_measurement: "V"
+      - name: "Voltage Phase C"
+        value_template: "{{ state_attr('sensor.fronius_1', 'Voltage_AC_Phase_3') }}"
+        unit_of_measurement: "V"          
+      - name: "Amps Phase A"
+        value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_1') / state_attr('sensor.fronius_1', 'Voltage_AC_Phase_1') | float }}"
+        unit_of_measurement: "A"          
+      - name: "Amps Phase B"
+        value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_2') / state_attr('sensor.fronius_1', 'Voltage_AC_Phase_2') | float }}"
+        unit_of_measurement: "A"
+      - name: "Amps Phase C"
+        value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_3') / state_attr('sensor.fronius_1', 'Voltage_AC_Phase_3') | float }}"
+        unit_of_measurement: "A"          
 
-
-
-  - resource: http://10.1.1.229/json_cells
+# NOTE: I fetch the API data from the esp32 and store on a local webserver.
+# you can fetch direct, in that case the URL would be: http://10.1.1.227/json_cells
+  - resource: http://10.1.1.42/esp32_json/office.cells.json
     scan_interval: 60
     sensor:
-      - name: "Pack Voltage"
-        value_template: "{{ value_json.cell_total }}"
+      - name: "office_cells"
+        value_template: "OK"
+        json_attributes:
+          - cell_1
+          - cell_2
+          - cell_3
+          - cell_4
+          - cell_5
+          - cell_6
+          - cell_7
+          - cell_8
+          - cell_9
+          - cell_10
+          - cell_11
+          - cell_12
+          - cell_13
+          - cell_14          
+          - cell_15
+          - cell_16
+          - cell_total
+      - name: "Office Cell 1"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_1') }}"            
         unit_of_measurement: "V"
-      - name: "Cell 01"
-        value_template: "{{ value_json.cell_1 }}"
-        unit_of_measurement: "V"          
-      - name: "Cell 02"
-        value_template: "{{ value_json.cell_2 }}"
+      - name: "Office Cell 2"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_2') }}"
         unit_of_measurement: "V"
-      - name: "Cell 03"
-        value_template: "{{ value_json.cell_3 }}"
+      - name: "Office Cell 3"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_3') }}"
         unit_of_measurement: "V"
-      - name: "Cell 04"
-        value_template: "{{ value_json.cell_4 }}"
+      - name: "Office Cell 4"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_4') }}"
         unit_of_measurement: "V"
-      - name: "Cell 05"
-        value_template: "{{ value_json.cell_5 }}"
+      - name: "Office Cell 5"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_5') }}"
         unit_of_measurement: "V"
-      - name: "Cell 06"
-        value_template: "{{ value_json.cell_6 }}"
+      - name: "Office Cell 6"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_6') }}"          
         unit_of_measurement: "V"
-      - name: "Cell 07"
-        value_template: "{{ value_json.cell_7 }}"
+      - name: "Office Cell 7"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_7') }}"
         unit_of_measurement: "V"
-      - name: "Cell 08"
-        value_template: "{{ value_json.cell_8 }}"
+      - name: "Office Cell 8"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_8') }}"
         unit_of_measurement: "V"
-      - name: "Cell 09"
-        value_template: "{{ value_json.cell_9 }}"
+      - name: "Office Cell 9"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_9') }}"
         unit_of_measurement: "V"
-      - name: "Cell 10"
-        value_template: "{{ value_json.cell_10 }}"
-        unit_of_measurement: "V"          
-      - name: "Cell 11"
-        value_template: "{{ value_json.cell_11 }}"
+      - name: "Office Cell 10"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_10') }}"          
         unit_of_measurement: "V"
-      - name: "Cell 12"
-        value_template: "{{ value_json.cell_12 }}"
-        unit_of_measurement: "V"          
-      - name: "Cell 13"
-        value_template: "{{ value_json.cell_13 }}"
+      - name: "Office Cell 11"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_11') }}"
         unit_of_measurement: "V"
-      - name: "Cell 14"
-        value_template: "{{ value_json.cell_14 }}"
+      - name: "Office Cell 12"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_12') }}"
         unit_of_measurement: "V"
-      - name: "Cell 15"
-        value_template: "{{ value_json.cell_15 }}"
-        unit_of_measurement: "V"          
-      - name: "Cell 16"
-        value_template: "{{ value_json.cell_16 }}"
+      - name: "Office Cell 13"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_13') }}"          
         unit_of_measurement: "V"
+      - name: "Office Cell 14"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_14') }}"
+        unit_of_measurement: "V"
+      - name: "Office Cell 15"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_15') }}"
+        unit_of_measurement: "V"
+      - name: "Office Cell 16"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_16') }}"
+        unit_of_measurement: "V"
+      - name: "Office Pack"
+        value_template: "{{ state_attr('sensor.office_cells', 'cell_total') }}"          
+        unit_of_measurement: "V"
+          
 
-  - resource: http://10.1.1.229/jsonapi
-    scan_interval: 120
+# NOTE: I fetch the API data from the esp32 and store on a local webserver.
+# you can fetch direct, in that case the URL would be: http://10.1.1.227/jsonapi
+#
+  - resource: http://10.1.1.42/esp32_json/office.api.json
+    scan_interval: 60
     sensor:
-      - name: "Temp"
-        value_template: "{{ value_json.lm75a_now }}"
+      - name: "office_api"
+        value_template: "OK"
+        json_attributes:
+          - lm75a_now
+          - lm75a_min
+          - lm75a_max
+          - system_mode
+      - name: "Office Temp Now"
+        value_template: "{{ state_attr('sensor.office_api', 'lm75a_now') }}"
         unit_of_measurement: "C"
-      - name: "Watts A"
-        value_template: "{{ value_json.phase_a_watts }}"
-        unit_of_measurement: "W"
-      - name: "Watts B"
-        value_template: "{{ value_json.phase_b_watts }}"
-        unit_of_measurement: "W"
-      - name: "Watts C"
-        value_template: "{{ value_json.phase_c_watts }}"
-        unit_of_measurement: "W"          
-      - name: "Volts A"
-        value_template: "{{ value_json.phase_a_voltage }}"
-        unit_of_measurement: "V"          
-      - name: "Volts B"
-        value_template: "{{ value_json.phase_b_voltage }}"
+      - name: "Office Temp Lowest"
+        value_template: "{{ state_attr('sensor.office_api', 'lm75a_min') }}"
+        unit_of_measurement: "C"
+      - name: "Office Temp Highest"
+        value_template: "{{ state_attr('sensor.office_api', 'lm75a_max') }}"
+        unit_of_measurement: "C"          
+      - name: "Office Mode"
+        value_template: "{{ state_attr('sensor.office_api', 'system_mode') }}"
+
+
+# NOTE: I fetch the API data from the esp32 and store on a local webserver.
+# you can fetch direct, in that case the URL would be: http://10.1.1.212/json_cells
+  - resource: http://10.1.1.42/esp32_json/network.cells.json
+    scan_interval: 60
+    sensor:
+      - name: "network_cells"
+        value_template: "OK"
+        json_attributes:
+          - cell_1
+          - cell_2
+          - cell_3
+          - cell_4
+          - cell_5
+          - cell_6
+          - cell_7
+          - cell_8
+          - cell_total
+      - name: "Network Cell 1"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_1') }}"
         unit_of_measurement: "V"
-      - name: "Volts C"
-        value_template: "{{ value_json.phase_c_voltage }}"
-        unit_of_measurement: "V"          
+      - name: "Network Cell 2"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_2') }}"
+        unit_of_measurement: "V"
+      - name: "Network Cell 3"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_3') }}"
+        unit_of_measurement: "V"
+      - name: "Network Cell 4"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_4') }}"
+        unit_of_measurement: "V"
+      - name: "Network Cell 5"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_5') }}"
+        unit_of_measurement: "V"
+      - name: "Network Cell 6"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_6') }}"
+        unit_of_measurement: "V"
+      - name: "Network Cell 7"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_7') }}"
+        unit_of_measurement: "V"
+      - name: "Network Cell 8"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_8') }}"
+        unit_of_measurement: "V"
+      - name: "Network Pack"
+        value_template: "{{ state_attr('sensor.network_cells', 'cell_total') }}"
+        unit_of_measurement: "V"
 
 
