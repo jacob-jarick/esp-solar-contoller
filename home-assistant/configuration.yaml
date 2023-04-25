@@ -14,6 +14,15 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
+# Example configuration.yaml entry
+switch:
+  - platform: command_line
+    switches:
+      office_ups:
+        command_on: "curl http://10.1.1.227/mode_set?mode=0&manual_duration=0"
+        command_off: "curl http://10.1.1.227/mode_set?mode=2&manual_duration=0"
+        friendly_name: "Office UPS Mains Connection"          
+
 
 rest:
   - resource: http://10.1.1.229/json_cells
