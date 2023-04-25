@@ -21,9 +21,45 @@ switch:
         command_on: "curl http://10.1.1.227/mode_set?mode=0&manual_duration=0"
         command_off: "curl http://10.1.1.227/mode_set?mode=2&manual_duration=0"
         command_state: "curl -s http://10.1.1.227/jsonapi | grep '\"system_mode\": 0,'"
+        command_timeout: 5
         friendly_name: "Office UPS Mains Connection"          
+      office_charge_b:
+        command_on: "curl http://10.1.1.229/mode_set?mode=1&manual_duration=0"
+        command_off: "curl http://10.1.1.229/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.229/jsonapi | grep '\"system_mode\": 1,'"
+        command_timeout: 5
+        friendly_name: "Office Phase B Charger"          
+      office_inv_c:
+        command_on: "curl http://10.1.1.196/mode_set?mode=2&manual_duration=0"
+        command_off: "curl http://10.1.1.196/mode_set?mode=0&manual_duration=0"
+        command_state: "curl -s http://10.1.1.196/jsonapi | grep '\"system_mode\": 2,'"
+        command_timeout: 5
+        friendly_name: "Office Phase C Grid Tie Inverter"          
 
 rest:
+  - resource: http://10.1.1.42/inverter/realtime.json
+    scan_interval: 10
+    sensor:
+      - name: "Fronius 1"
+        value_template: "OK"
+        json_attributes_path: "$.Body['0']"
+        json_attributes:
+          - PowerReal_P_Phase_1
+          - PowerReal_P_Phase_2
+          - PowerReal_P_Phase_3
+      - name: "Phase A"
+        value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_1') }}"
+        unit_of_measurement: "W"
+      - name: "Phase B"
+        value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_2') }}"
+        unit_of_measurement: "W"
+      - name: "Phase C"
+        value_template: "{{ state_attr('sensor.fronius_1', 'PowerReal_P_Phase_3') }}"
+        unit_of_measurement: "W"          
+      
+
+
+
   - resource: http://10.1.1.229/json_cells
     scan_interval: 60
     sensor:
@@ -80,7 +116,7 @@ rest:
         unit_of_measurement: "V"
 
   - resource: http://10.1.1.229/jsonapi
-    scan_interval: 60
+    scan_interval: 120
     sensor:
       - name: "Temp"
         value_template: "{{ value_json.lm75a_now }}"
