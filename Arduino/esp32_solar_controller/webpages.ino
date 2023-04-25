@@ -777,6 +777,9 @@ void jsonapi()
   doc["phase_b_voltage_high"] = phase_b_voltage_high;
   doc["phase_c_voltage_high"] = phase_c_voltage_high;
 
+  doc["c_pinmode"] = flags.c_pinmode;
+  doc["i_pinmode"] = flags.i_pinmode;
+
   serializeJsonPretty(doc, webpage);
 
   server.send(200, mime_json, webpage);

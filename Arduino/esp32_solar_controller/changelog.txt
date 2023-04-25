@@ -1,20 +1,20 @@
-     HEAD~0	dd7f7e1 cleanup
-     HEAD~1	946876f mode setting update 2
-     HEAD~2	1d25c04 added Adams feature request
-     HEAD~3	b9c7f2f merging branch.
-     HEAD~4	bf6c44e ansible fixes
-     HEAD~5	7c51523 anisble fixes and updates
-     HEAD~6	5bc649b mmaths patch
-     HEAD~7	675e265 clean compile on latest versions of esp32 base and arduinojson
-     HEAD~8	824c890 update shell
-     HEAD~9	5279eb4 Update esp32 board.png
-    HEAD~10	8bd8ca2 Create jsonhost.yaml
-    HEAD~11	588f0c8 fw 389
-    HEAD~12	c1864f5 batcal for precision board
-    HEAD~13	af83229 whitespace
-    HEAD~14	d4198c9 Update esp32_solar_controller.ino
-    HEAD~15	f0460f7 fw 381
-    HEAD~16	b9b7d4e fix absent fronius_push_url from config
-    HEAD~17	d3f868c fw 380 - muxtype 2
-    HEAD~18	1d07ccc Update webpages.ino
-    HEAD~19	df837e0 Update webpages.ino
+     HEAD~0	5f34a1a Update configuration.yaml
+     HEAD~1	f50d760 Create JSONPath Expression Tester.url
+     HEAD~2	27d5b2b Update configuration.yaml
+     HEAD~3	b6071d5 added switch for HASS
+     HEAD~4	deb101d home automation stuff
+     HEAD~5	da855ae NTP update
+     HEAD~6	dd7f7e1 cleanup
+     HEAD~7	946876f mode setting update 2
+     HEAD~8	1d25c04 added Adams feature request
+     HEAD~9	b9c7f2f merging branch.
+    HEAD~10	bf6c44e ansible fixes
+    HEAD~11	7c51523 anisble fixes and updates
+    HEAD~12	5bc649b mmaths patch
+    HEAD~13	675e265 clean compile on latest versions of esp32 base and arduinojson
+    HEAD~14	824c890 update shell
+    HEAD~15	5279eb4 Update esp32 board.png
+    HEAD~16	8bd8ca2 Create jsonhost.yaml
+    HEAD~17	588f0c8 fw 389
+    HEAD~18	c1864f5 batcal for precision board
+    HEAD~19	af83229 whitespace

@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 403
+#define FW_VERSION 404
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -434,6 +434,9 @@ struct SysFlags
   bool ambient_temp = 0;
 
   bool vapi_checked = 0;
+
+  bool c_pinmode = 0;
+  bool i_pinmode = 0;
 };
 
 SysFlags flags;
@@ -639,11 +642,6 @@ void setup()
 
     server.on("/modet", modet);
     server.on("/mode_set", mode_set);
-    // server.on("/inverter_on", inverter_on);
-    // server.on("/idle", idle_on);
-    // server.on("/charger_on", charger_on);
-    // server.on("/both_on", both_on);
-
 
     server.on("/config_raw", config_raw);
     server.on("/whatami", whatami);
@@ -1925,29 +1923,29 @@ void modeset(byte m, bool manual, uint16_t manual_duration)
     }
   }
 
-  bool c_pinmode = 0;
-  bool i_pinmode = 0;
+  flags.c_pinmode = 0;
+  flags.i_pinmode = 0;
 
   if (m == 0) // idle
   {
-    i_pinmode = 0;
-    c_pinmode = 0;
+    flags.i_pinmode = 0;
+    flags.c_pinmode = 0;
   }
   else if (m == 1)  // charge
   {
-    i_pinmode = 0;
-    c_pinmode = 1;
+    flags.i_pinmode = 0;
+    flags.c_pinmode = 1;
   }
 
   else if (m == 2)  // drain (inverter)
   {
-    i_pinmode = 1;
-    c_pinmode = 0;
+    flags.i_pinmode = 1;
+    flags.c_pinmode = 0;
   }
   else if (m == 3)  // BOTH SYSTEMS ON (used for prefer DC)
   {
-    i_pinmode = 1;
-    c_pinmode = 1;
+    flags.i_pinmode = 1;
+    flags.c_pinmode = 1;
   }
 
   else // BAD MODE !!!
@@ -1977,15 +1975,15 @@ void modeset(byte m, bool manual, uint16_t manual_duration)
     calc_next_update();
 
   if(config.flip_cpin)
-    c_pinmode = !c_pinmode;
+    flags.c_pinmode = !flags.c_pinmode;
   if(config.flip_ipin)
-    i_pinmode = !i_pinmode;
+    flags.i_pinmode = !flags.i_pinmode;
 
 
   // set pin modes and return
   if(config.pin_charger != OPT_DISABLE)
-    digitalWrite(config.pin_charger, c_pinmode);
+    digitalWrite(config.pin_charger, flags.c_pinmode);
 
   if(config.pin_inverter != OPT_DISABLE)
-    digitalWrite(config.pin_inverter, i_pinmode);
+    digitalWrite(config.pin_inverter, flags.i_pinmode);
 }
