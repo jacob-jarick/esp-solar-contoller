@@ -33,6 +33,7 @@
           - python3-virtualenv
           - acl
           - plocate
+          - screen
         state: present
 
     - name: Create homeassistant user
@@ -69,7 +70,21 @@
       become: true
       become_user: homeassistant
 
-
-# TODO:
+# =============================================================================
 # create auto start script
 # add to cron
+
+    - name: Copy script
+      ansible.builtin.copy:
+        src:  "{{ playbook_dir }}/scripts/start.hass.sh"
+        dest: "/home/homeassistant/start.hass.sh"
+        owner: homeassistant
+        group: homeassistant
+        mode: '0740'
+
+
+    - name: create cronjob
+      ansible.builtin.cron:
+        name: "start hass"
+        special_time: reboot
+        job: "su - homeassistant -c \"screen -d -m  /home/homeassistant/start.hass.sh\""

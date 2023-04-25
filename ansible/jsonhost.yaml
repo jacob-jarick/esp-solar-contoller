@@ -6,7 +6,9 @@
 #   ansible all -i localhost, -m debug -a "msg={{ 'fronius' | password_hash('sha512', 'mysecretsalt') }}"
 # =============================================================================
 
-- hosts: all
+- name: Setup json host
+  hosts: all
+  become: true
 
 # =============================================================================
 # playbook variables
@@ -33,6 +35,7 @@
     - net-tools
     - unzip
     - vsftpd
+    - screen
 
 # =============================================================================
 # playbook tasks
@@ -177,4 +180,31 @@
     tags:
       - nginx-start
       - never
+
+# =============================================================================
+# copy json fetch script
+
+  - name: create /root/bin
+    ansible.builtin.file:
+      path: "{{ item }}"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0770"
+    loop:
+      - "/root/bin"
+
+  - name: Copy script
+    ansible.builtin.copy:
+      src:  "{{ playbook_dir }}/scripts/fetch.json.sh"
+      dest: "/root/bin/fetch.json.sh"
+      owner: root
+      group: root
+      mode: '0700'
+
+
+  - name: create cronjob
+    ansible.builtin.cron:
+      name: "fetch json"
+      job: "/root/bin/fetch.json.sh &> /dev/null"
 
