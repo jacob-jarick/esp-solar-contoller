@@ -219,6 +219,28 @@ rest:
       - name: "Office Mode"
         value_template: "{{ state_attr('sensor.office_api', 'system_mode') }}"
 
+  - resource: http://10.1.1.42/esp32_json/lounge.api.json
+    scan_interval: 60
+    sensor:
+      - name: "lounge_api"
+        value_template: "OK"
+        json_attributes:
+          - lm75a_now
+          - lm75a_min
+          - lm75a_max
+          - system_mode
+      - name: "Lounge Temp Now"
+        value_template: "{{ state_attr('sensor.lounge_api', 'lm75a_now') }}"
+        unit_of_measurement: "C"
+      - name: "Lounge Temp Lowest"
+        value_template: "{{ state_attr('sensor.lounge_api', 'lm75a_min') }}"
+        unit_of_measurement: "C"
+      - name: "Lounge Temp Highest"
+        value_template: "{{ state_attr('sensor.lounge_api', 'lm75a_max') }}"
+        unit_of_measurement: "C"
+      - name: "Lounge Mode"
+        value_template: "{{ state_attr('sensor.lounge_api', 'system_mode') }}"
+
 
 # NOTE: I fetch the API data from the esp32 and store on a local webserver.
 # you can fetch direct, in that case the URL would be: http://10.1.1.212/json_cells
