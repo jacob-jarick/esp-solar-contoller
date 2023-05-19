@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 404
+#define FW_VERSION 405
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -79,6 +79,11 @@ M2M_LM75A lm75a(0x4f);
 M2M_LM75A lm75a2(0x48); // used on micro boards
 
 uint8_t lm75a_address = 0x4f;
+
+float board_temp = 0;
+float board_temp_min = 9999999;
+float board_temp_max = 0;
+float board_temp_old = 0; // only used to track changes in temp to prevent message spam.
 
 // -----------------------------------------------------------------------------------------
 
@@ -197,10 +202,7 @@ const String json_config_file     = "/config.jsn";
 const uint16_t size_system_msgs = 1024;
 String system_msgs = "";
 
-float board_temp = 0;
-float board_temp_min = 9999999;
-float board_temp_max = 0;
-float board_temp_old = 0; // only used to track changes in temp to prevent message spam.
+
 
 float phase_a_watts = 0;
 float phase_b_watts = 0;
@@ -683,8 +685,6 @@ void setup()
     server.on("/network", net_config);
 
     server.on("/datasrcs", datasrcs);
-
-    //server.on("/forcentp", force_ntp_sync);
 
     server.on("/port_info", port_info);
 
