@@ -23,6 +23,7 @@
     esp32_path: /var/www/html/esp32v5
 
     basePackages:
+    - cron
     - open-vm-tools
     - unp
     - curl
