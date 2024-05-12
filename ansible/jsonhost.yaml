@@ -24,8 +24,6 @@
 
     basePackages:
     - open-vm-tools
-    - build-essential
-    - git
     - unp
     - curl
     - vim
