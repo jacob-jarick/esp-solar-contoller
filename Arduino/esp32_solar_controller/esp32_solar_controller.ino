@@ -29,7 +29,42 @@ this seems to resolve OTA issues.
 
 #define MAX_CELLS 16
 
-// ======================================
+// ================================================================================================
+/*
+ *  Print last reset reason of ESP32
+ *  =================================
+ *
+ *  Use either of the methods print_reset_reason
+ *  or verbose_print_reset_reason to display the
+ *  cause for the last reset of this device.
+ *
+ *  Public Domain License.
+ *
+ *  Author:
+ *  Evandro Luis Copercini - 2017
+ */
+
+#if CONFIG_IDF_TARGET_ESP32  // ESP32/PICO-D4
+#include "esp32/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32S2
+#include "esp32s2/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32C2
+#include "esp32c2/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32C3
+#include "esp32c3/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32S3
+#include "esp32s3/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32C6
+#include "esp32c6/rom/rtc.h"
+#elif CONFIG_IDF_TARGET_ESP32H2
+#include "esp32h2/rom/rtc.h"
+#else
+#error Target CONFIG_IDF_TARGET is not supported
+#endif
+
+#define uS_TO_S_FACTOR 1000000 /* Conversion factor for micro seconds to seconds */
+
+// ================================================================================================
 
 // #include <Arduino.h>
 #include <SD.h>
@@ -452,9 +487,17 @@ void setup()
   const uint8_t toneinc = 45;
   uint16_t tone = 90;
 
-  ledcAttach(config.pin_buzzer, 1000, 8);  // setup buzzer pin
+  ledcAttach(16, 1000, 8);  // setup buzzer pin (need to enable before config is loaded....)
 
   Serial.begin(115200);
+
+  Serial.println("CPU0 reset reason:");
+  print_reset_reason(rtc_get_reset_reason(0));
+  verbose_print_reset_reason(rtc_get_reset_reason(0));
+
+  Serial.println("CPU1 reset reason:");
+  print_reset_reason(rtc_get_reset_reason(1));
+  verbose_print_reset_reason(rtc_get_reset_reason(1));
 
   sd_setup(tone);
 
@@ -604,10 +647,24 @@ void setup()
   tone += toneinc; beep_helper(tone, 250);
   if (!wifi_start())
   {
-    ap_start();
-  }
+    if(!ap_start())
+    {
+      oled_clear();
+      oled_set2X();
+      oled_println(F("ACCESS\nPOINT\nERROR"));
 
-  log_issue("Wifi Connected");
+      delay(3000);
+      while(1) {};
+    }
+    else
+    {
+      log_issue("AP Started");
+    }
+  }
+  else
+  {
+    log_issue("Wifi Connected");
+  }
 
   // --------------------------------------------------------------------------------------
   // Network Services
@@ -615,17 +672,18 @@ void setup()
   oled_clear();
   oled_set1X();
 
-  both_println(F("UDP"));
-  Udp.begin(localPort);
+  if(!flags.access_point)
+  {
+    both_println(F("UDP"));
+    Udp.begin(localPort);
 
-  setSyncProvider(getNtpTime);
-  setSyncInterval(300);
+    setSyncProvider(getNtpTime);
+    setSyncInterval(300);
+  }
 
-  // --------------------------------------------------------------------------------------
+  // both_println(F("MDNS http add"));
   both_println(F("MDNS"));
   MDNS.begin(config.hostn);
-
-//   both_println(F("MDNS http add"));
   MDNS.addService("http", "tcp", 80);
 
   // --------------------------------------------------------------------------------------
@@ -749,16 +807,20 @@ void setup()
     save_config();
   }
 
-  log_issue("system startup finished OK.");
+  log_issue("system startup OK");
 
   // turn off serial if set in config.
 
   if(config.serial_off)
   {
-    Serial.end();
+    Serial.println("Disabling serial printing.");
+    delay(1000);
+    //Serial.end();
   }
-
-
+  else
+  {
+    Serial.println("Serial is still enabled.");
+  }
 }
 
 void set_pins()
@@ -1647,10 +1709,24 @@ void set_led(const char m)
 void both_print_ip()
 {
   oled_set1X();
-  oled_print(F("IP:    "));
-  oled_println(WiFi.localIP().toString());
+  oled_print(F("IP:   "));
 
-  Serial.println("IP: " + WiFi.localIP().toString());
+  if(flags.access_point)
+  {
+    //oled_println(WiFi.softAPIP().toString());
+    IPAddress myIP = WiFi.softAPIP();
+    Serial.print("AP IP address: ");
+    Serial.println(myIP);
+
+    oled_println(String(String(myIP[0]) + "." + myIP[1] + "." + myIP[2] + "." + myIP[3]));
+  }
+  else
+  {
+    Serial.println("IP: " + WiFi.localIP().toString());
+    oled_println(WiFi.localIP().toString());
+  }
+
+
 }
 
 void oled_print_info()

@@ -7,17 +7,23 @@ bool ap_start()
   /* You can remove the password parameter if you want the AP to be open. */
 //   WiFi.setSleepMode(WIFI_NONE_SLEEP); // always put AP in high power mode
 
-  WiFi.softAP("SolarAP");
+  bool result = WiFi.softAP("SolarAP");
+
+  if(!result)
+  {
+    return result;
+  }
 
   flags.access_point = 1;
-  return 1;
+
+  return result;
 }
 
 bool wifi_start()
 {
   if (flags.access_point)
   {
-    Serial.println("wifi_start: AP Mode");
+    Serial.println("IN AP Mode (this shouldnt be called)");
     return 0;
   }
 
@@ -29,7 +35,7 @@ bool wifi_start()
 
   Serial.println("wifi init");
 //   WiFi.persistent( false ); // dont save wifi settings
-  WiFi.mode(WIFI_STA);
+  //WiFi.mode(WIFI_STA);
 
   Serial.println("wifi connect " + String(config.wifi_ssid1) );
   if(wifi_connect(config.wifi_ssid1, config.wifi_pass1) )
@@ -80,6 +86,10 @@ bool wifi_connect(const char s[ssmall], const char p[ssmall])
       set_led(3);
 
     Serial.print(F("."));
+    if(recon % 25 == 0)
+    {
+      Serial.println(String(s));
+    }
 
     if(oled_enabled())
     {
@@ -87,7 +97,7 @@ bool wifi_connect(const char s[ssmall], const char p[ssmall])
       oled_set2X();
       oled_println(F("Wifi\nConnect"));
       oled_set1X();
-      both_println(String(s) + " " + String(recon) );
+      oled_println(String(s) + " " + String(recon) );
       oled_set2X();
 
       // spinner
