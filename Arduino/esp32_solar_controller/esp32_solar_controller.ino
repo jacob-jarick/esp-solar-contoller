@@ -451,8 +451,8 @@ void setup()
 {
   const uint8_t toneinc = 45;
   uint16_t tone = 90;
-  ledcSetup(0, 1000, 8);
-  ledcAttachPin(16, 0);
+
+  ledcAttach(config.pin_buzzer, 1000, 8);  // setup buzzer pin
 
   Serial.begin(115200);
 
