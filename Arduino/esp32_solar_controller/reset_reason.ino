@@ -1,3 +1,5 @@
+
+
 void print_reset_reason(int reason) {
   switch (reason) {
     case 1:  Serial.println("POWERON_RESET"); break;          /**<1,  Vbat power on reset*/
@@ -38,4 +40,16 @@ void verbose_print_reset_reason(int reason) {
     case 16: Serial.println("RTC Watch dog reset digital core and rtc module"); break;
     default: Serial.println("NO_MEAN");
   }
+}
+
+
+void serial_print_reset_reason()
+{
+  Serial.println("CPU0 reset reason:");
+  print_reset_reason(rtc_get_reset_reason(0));
+  verbose_print_reset_reason(rtc_get_reset_reason(0));
+
+  Serial.println("CPU1 reset reason:");
+  print_reset_reason(rtc_get_reset_reason(1));
+  verbose_print_reset_reason(rtc_get_reset_reason(1));
 }

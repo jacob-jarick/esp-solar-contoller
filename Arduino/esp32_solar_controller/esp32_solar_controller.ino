@@ -14,7 +14,7 @@ this seems to resolve OTA issues.
 
 */
 
-#define FW_VERSION 405
+#define FW_VERSION 406
 
 // to longer timeout = esp weirdness
 #define httpget_timeout 5000
@@ -28,6 +28,7 @@ this seems to resolve OTA issues.
 #define slarge 257
 
 #define MAX_CELLS 16
+
 
 // ================================================================================================
 /*
@@ -491,13 +492,7 @@ void setup()
 
   Serial.begin(115200);
 
-  Serial.println("CPU0 reset reason:");
-  print_reset_reason(rtc_get_reset_reason(0));
-  verbose_print_reset_reason(rtc_get_reset_reason(0));
-
-  Serial.println("CPU1 reset reason:");
-  print_reset_reason(rtc_get_reset_reason(1));
-  verbose_print_reset_reason(rtc_get_reset_reason(1));
+  serial_print_reset_reason();
 
   sd_setup(tone);
 
