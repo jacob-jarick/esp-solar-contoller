@@ -6,7 +6,7 @@ bool update_p_grid()
   bool fellback = 0;
 
   String payload;
-  DynamicJsonDocument doc(jsonsize);
+  JsonDocument doc;
 
   String url = String(config.threephase_direct_url);
 

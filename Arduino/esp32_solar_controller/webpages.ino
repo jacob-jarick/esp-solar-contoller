@@ -707,7 +707,7 @@ void json_cells()
 {
   String webpage = "";
 
-  DynamicJsonDocument doc(config_json_size);
+  JsonDocument doc;
 
   doc["host_name"] = String(config.hostn);
 
@@ -745,7 +745,7 @@ void jsonapi()
 {
   String webpage = "";
 
-  DynamicJsonDocument doc(config_json_size);
+  JsonDocument doc;
 
   doc["host_name"] = String(config.hostn);
 
@@ -1361,6 +1361,8 @@ void software_reset()
   oled_println(F("Software\nRESTART"));
 
   flags.restart = 1;
+
+  return;
 }
 
 

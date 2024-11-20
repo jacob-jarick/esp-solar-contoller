@@ -96,7 +96,7 @@ bool api_isync(uint8_t serverid)
     return false;
   }
 
-  DynamicJsonDocument doc(jsonsize);
+  JsonDocument doc;
 
   DeserializationError error2 = deserializeJson(doc, payload.c_str());
 
@@ -205,7 +205,7 @@ bool api_vsync(uint8_t serverid)
     return false;
   }
 
-  DynamicJsonDocument doc(jsonsize);
+  JsonDocument doc;
 
   DeserializationError error2 = deserializeJson(doc, payload.c_str());
 

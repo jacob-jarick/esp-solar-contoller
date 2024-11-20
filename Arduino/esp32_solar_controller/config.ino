@@ -2,10 +2,6 @@
 // Config Files
 // =============================================================================================================================================
 
-// #define config_json_size 8192
-
-const size_t config_json_size = 1024 * 5;
-
 void save_config()
 {
   Serial.println("Save Conf");
@@ -13,7 +9,7 @@ void save_config()
   vars_sanity_check();
 
 
-  DynamicJsonDocument doc(config_json_size);
+  JsonDocument doc;
 
   doc["fwver"] = FW_VERSION;
 
@@ -221,7 +217,7 @@ void save_config()
 }
 
 // json doc value to char array
-void docv_to_chara(DynamicJsonDocument &doc, String keyname, char arr[], uint8_t alength, String default_value)
+void docv_to_chara(JsonDocument &doc, String keyname, char arr[], uint8_t alength, String default_value)
 {
     if(doc.containsKey(keyname))
       strlcpy(arr, doc[keyname], alength);
@@ -253,7 +249,7 @@ bool load_config()
     return 0;
   }
 
-  DynamicJsonDocument doc(config_json_size);
+  JsonDocument doc;
   DeserializationError error = deserializeJson(doc, f);
   f.close();
 
