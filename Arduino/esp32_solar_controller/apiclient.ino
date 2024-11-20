@@ -112,7 +112,8 @@ bool api_isync(uint8_t serverid)
   // compare api_vserver1 to json hostname.
 
 
-  if(doc.containsKey("host_name"))
+  // if(doc.containsKey("host_name"))
+  if(doc["host_name"].is<JsonVariant>())
   {
     String rhn = doc["host_name"];
     if(shn != rhn)
@@ -221,7 +222,8 @@ bool api_vsync(uint8_t serverid)
   // compare api_vserver1 to json hostname.
 
 
-  if(doc.containsKey("host_name"))
+  // if(doc.containsKey("host_name"))
+  if(doc["host_name"].is<JsonVariant>())
   {
     String rhn = doc["host_name"];
     if(shn != rhn)
@@ -239,7 +241,8 @@ bool api_vsync(uint8_t serverid)
   }
 
   /// check if cmon has an adc
-  if(doc.containsKey("adc_found"))
+  // if(doc.containsKey("adc_found"))
+  if(doc["adc_found"].is<JsonVariant>())
   {
     if(!doc["adc_found"])
     {

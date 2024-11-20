@@ -219,7 +219,8 @@ void save_config()
 // json doc value to char array
 void docv_to_chara(JsonDocument &doc, String keyname, char arr[], uint8_t alength, String default_value)
 {
-    if(doc.containsKey(keyname))
+    // if(doc.containsKey(keyname))
+    if(doc[keyname].is<JsonVariant>())
       strlcpy(arr, doc[keyname], alength);
     else
       strlcpy(arr, default_value.c_str(), alength);
