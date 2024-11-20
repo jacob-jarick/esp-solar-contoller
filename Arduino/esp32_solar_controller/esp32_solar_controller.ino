@@ -80,9 +80,7 @@ this seems to resolve OTA issues.
 
 #include <ESP32httpUpdate.h>
 
-
 #include <ArduinoJson.h>
-const size_t jsonsize = 1024 * 4;
 
 #include <WebServer.h>
 WebServer server(80);
