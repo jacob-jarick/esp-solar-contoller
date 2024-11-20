@@ -106,6 +106,10 @@ const uint8_t pin_asel4 = 27;
 Ads1115_mux adsmux(pin_asel1, pin_asel2, pin_asel3, pin_asel4);
 
 // -----------------------------------------------------------------------------------------
+
+const uint8_t pin_buzzer = 16;
+
+// -----------------------------------------------------------------------------------------
 // lm75a
 
 // note: modify library and comment out wire.begin and wire.end
@@ -353,8 +357,6 @@ struct Sconfig
   int8_t pin_sda;
   int8_t pin_scl;
 
-  int8_t pin_buzzer;
-
   char update_host[ssmall];
 
   char ntp_server[ssmall];
@@ -488,7 +490,7 @@ void setup()
   const uint8_t toneinc = 45;
   uint16_t tone = 90;
 
-  ledcAttach(16, 1000, 8);  // setup buzzer pin (need to enable before config is loaded....)
+  ledcAttach(pin_buzzer, 1000, 8);
 
   Serial.begin(115200);
 

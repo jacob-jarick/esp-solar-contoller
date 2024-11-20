@@ -1390,7 +1390,6 @@ void port_config()
 
   webpage += js_select_helper(F("sclport"), String(config.pin_scl));
   webpage += js_select_helper(F("sdaport"), String(config.pin_sda));
-  webpage += js_select_helper(F("pin_buzzer"), String(config.pin_buzzer));
 
   webpage += js_radio_helper(F("flip_cpin1"), F("flip_cpin0"), config.flip_cpin);
   webpage += js_radio_helper(F("flip_ipin1"), F("flip_ipin0"), config.flip_ipin);
@@ -1429,8 +1428,6 @@ void port_cfg_submit()
         config.pin_sda = server.arg(i).toInt();
       else if (server.argName(i) == F("sclport"))
         config.pin_scl = server.arg(i).toInt();
-      else if (server.argName(i) == F("pin_buzzer"))
-        config.pin_buzzer = server.arg(i).toInt();
       else if (server.argName(i) == F("flip_cpin"))
         config.flip_cpin = server.arg(i).toInt();
       else if (server.argName(i) == F("flip_ipin"))

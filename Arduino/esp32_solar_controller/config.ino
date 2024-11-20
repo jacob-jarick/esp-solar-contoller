@@ -87,7 +87,6 @@ void save_config()
   doc["pin_flash"]      = (int8_t) config.pin_flash;
   doc["pin_sda"]        = (int8_t) config.pin_sda;
   doc["pin_scl"]        = (int8_t) config.pin_scl;
-  doc["pin_buzzer"]     = (int8_t) config.pin_buzzer;
 
   doc["api_pollsecs"] = config.api_pollsecs;
 
@@ -326,7 +325,6 @@ bool load_config()
   config.pin_flash = doc["pin_flash"];
   config.pin_sda = doc["pin_sda"];
   config.pin_scl = doc["pin_scl"];
-  config.pin_buzzer = doc["pin_buzzer"];
 
   // cell voltage limits
   config.pack_volt_min = doc["pack_volt_min"];
@@ -668,7 +666,6 @@ void vars_sanity_check()
   {
     config.pin_sda = OPT_DEFAULT;
     config.pin_scl = OPT_DEFAULT;
-    config.pin_buzzer = 16;
     config.pin_led = 2;
     config.pin_inverter = 25;
     config.pin_charger = 33;
@@ -677,7 +674,6 @@ void vars_sanity_check()
   {
     config.pin_sda = 21;
     config.pin_scl = 22;
-    config.pin_buzzer = 16;
     config.pin_led = 2;
     config.pin_inverter = 25;
     config.pin_charger = 33;
