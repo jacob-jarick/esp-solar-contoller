@@ -1,20 +1,20 @@
-     HEAD~0	b6dcd12 expose pin mode in api
-     HEAD~1	d88c020 Update configuration.yaml
-     HEAD~2	5f34a1a Update configuration.yaml
-     HEAD~3	f50d760 Create JSONPath Expression Tester.url
-     HEAD~4	27d5b2b Update configuration.yaml
-     HEAD~5	b6071d5 added switch for HASS
-     HEAD~6	deb101d home automation stuff
-     HEAD~7	da855ae NTP update
-     HEAD~8	dd7f7e1 cleanup
-     HEAD~9	946876f mode setting update 2
-    HEAD~10	1d25c04 added Adams feature request
-    HEAD~11	b9c7f2f merging branch.
-    HEAD~12	bf6c44e ansible fixes
-    HEAD~13	7c51523 anisble fixes and updates
-    HEAD~14	5bc649b mmaths patch
-    HEAD~15	675e265 clean compile on latest versions of esp32 base and arduinojson
-    HEAD~16	824c890 update shell
-    HEAD~17	5279eb4 Update esp32 board.png
-    HEAD~18	8bd8ca2 Create jsonhost.yaml
-    HEAD~19	588f0c8 fw 389
+     HEAD~0	0477866 containsKey
+     HEAD~1	7890894 removed jsonsize
+     HEAD~2	e542fd9 no longer using DynamicJsonDocument
+     HEAD~3	619b934 beep fixed !
+     HEAD~4	3cfe7eb WIP
+     HEAD~5	72b58d7 Updating to boards library 3.0
+     HEAD~6	6bced2e migrate to board libs 3.0
+     HEAD~7	af7de4d updated ansible stuff
+     HEAD~8	767b9e8 Update jsonhost.yaml
+     HEAD~9	dbcf0e7 esp32 board fw update, html fix
+    HEAD~10	cb4bff7 HASS stuff
+    HEAD~11	57f0b29 Merge branch 'master' of https://github.com/jacob-jarick/esp-solar-contoller
+    HEAD~12	f5a5de1 more automation
+    HEAD~13	b6dcd12 expose pin mode in api
+    HEAD~14	d88c020 Update configuration.yaml
+    HEAD~15	5f34a1a Update configuration.yaml
+    HEAD~16	f50d760 Create JSONPath Expression Tester.url
+    HEAD~17	27d5b2b Update configuration.yaml
+    HEAD~18	b6071d5 added switch for HASS
+    HEAD~19	deb101d home automation stuff

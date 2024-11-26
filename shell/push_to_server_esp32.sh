@@ -23,6 +23,7 @@ CV=`grep "#define FW_VERSION" "$PROJDIR"/esp32_solar_controller.ino | awk '{prin
 
 echo
 echo Current Version: "$CV"
+
 # echo $CV > $HTMLDIR/cv.txt
 echo "$CV" > "$PUBUPDIR"/cv.txt
 echo "$CV" > "$PUBUPDIR"/data/cv.txt
